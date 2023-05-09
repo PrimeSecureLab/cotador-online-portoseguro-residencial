@@ -14,7 +14,7 @@ const pagamentoRoutes = require('./routes/pagamento');
 const sairRoutes = require('./routes/sair');
 const obrigadoRoutes = require('./routes/obrigado');
 
-// Carrega as variáveis de ambiente do arquivo .env
+/// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
 // Conecta ao banco de dados
