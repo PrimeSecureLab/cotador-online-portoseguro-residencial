@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--CSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
+    <link rel="stylesheet" href="./src/css/custom.css" />
+    <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+
+    <!--Javascript-->
+
+    <link rel="stylesheet" href="./src/css/cotacao.css">
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light nav">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="planos.html">Prime Secure</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="#">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Coberturas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Ajuda</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-content">
+        <div class="wizard-v1-content">
+            <div class="wizard-form">
+                <div id="form-total">
+                    <form action="/enviar-dados" id="form" method="POST">
+                        <div>
+                            <!-- Inicio da Etapa 1 -->
+                            <div id="step-1" class="form-step active">
+                                <h2 class="text-center mt-8">
+                                    Para Iniciar Preencha Seus Dados:
+                                </h2>
+
+                                <div class="row ">
+                                    <div class="col d-none">
+                                        <div class="form-group">
+                                            <label for="susep">susep </label>
+                                            <input type="text" class="form-control col" id="susep" name="susep" required
+                                                minlength="6" maxlength="6" value="COL10J" />
+                                        </div>
+                                    </div>
+                                    <div class="col d-none">
+                                        <div class="form-group">
+                                            <label for="codigooperacao">codigooperacao</label>
+                                            <input type="number" class="form-control col" id="codigooperacao"
+                                                name="codigooperacao" required minlength="1" maxlength="9999"
+                                                value="10" />
+                                        </div>
+                                    </div>
+                                    <div class="col d-none">
+                                        <div class="form-group">
+                                            <label for="flagimprimircodigooperacaoorcamento">imprimir codigo
+                                                operação</label>
+                                            <input type="checkbox" class="form-control col"
+                                                id="flagimprimircodigooperacaoorcamento"
+                                                name="flagimprimircodigooperacaoorcamento" />
+                                        </div>
+                                    </div>
+                                    <div class="col d-none">
+                                        <div class="form-group">
+                                            <label for="codigocanal">codigo canal</label>
+                                            <input type="number" class="form-control col" id="codigocanal"
+                                                name="codigocanal" required minlength="1" maxlength="9999"
+                                                value="999" />
+                                        </div>
+                                    </div>
+                                    <div class="col d-none">
+                                        <div class="form-group">
+                                            <label for="codigocanal">codigo canal</label>
+                                            <input type="number" class="form-control col" id="codigocanal"
+                                                name="codigocanal" required minlength="1" maxlength="9999"
+                                                value="999" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="cpf">CPF:</label>
+                                            <input type="text" class="form-control col" id="cpf" name="cpf" required
+                                                minlength="11" maxlength="11" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="nome">Nome:</label>
+                                            <input type="text" class="form-control col nome" id="nome" name="nome"
+                                                minlength="1" maxlength="160" required />
+                                        </div>
+                                        <div id="aviso-nome"></div>
+                                        <div id="erro-nome"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="numerotelefone">Celular/Telefone:</label>
+                                            <input type="text" class="form-control col numerotelefone"
+                                                id="numerotelefone" name="numerotelefone" minlength="10" maxlength="11"
+                                                placeholder="(DDD) 00000-0000" required />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="tipotelefone">Tipo de Telefone</label>
+                                            <select class="form-control" id="tipotelefone" name="tipotelefone">
+                                                <option value="0">Telefone Celular</option>
+                                                <option value="1">Telefone Fixo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="datanascimento">Data de Nascimento</label>
+                                            <input type="text" class="form-control col datanascimento"
+                                                id="datanascimento" name="datanascimento" minlength="10" maxlength="10"
+                                                placeholder="DD/MM/YYYY" autocomplete="off" required />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary next-step" id="next-step"
+                                    style="width: 100%">
+                                    Iniciar Cotação
+                                </button>
+                            </div>
+                            <!-- Fim da Etapa 1-->
+
+                            <!-- Etapa 2 -->
+                            <div id="step-2" style="display: none" class="form-step">
+                                <h2 class="text-center">Dados de Endereço do Imóvel</h2>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cep">Cep:</label>
+                                            <input type="text" class="form-control col cep" id="cep" name="cep"
+                                                minlength="8" maxlength="8" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="logradouro">Endereço:</label>
+                                            <input type="text" class="form-control col logradouro" id="logradouro"
+                                                name="logradouro" minlength="1" maxlength="200" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="tipo">Tipo</label>
+                                            <select class="form-control tipo" id="tiporua" name="tiporua">
+                                                <option value="0">Rua</option>
+                                                <option value="1">Praça</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="numero">Nº do Imóvel</label>
+                                            <input type="number" class="form-control col numero" id="numero"
+                                                name="numero" minlength="1" maxlength="9999" pattern="^[0-9]{1,4}$"
+                                                required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="bairro">Bairro:</label>
+                                            <input type="text" class="form-control col bairro" id="bairro" name="bairro"
+                                                minlength="1" maxlength="40" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="cidade">Cidade:</label>
+                                            <input type="text" class="form-control col cidade" id="cidade" name="cidade"
+                                                minlength="1" maxlength="40" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uf">Estado (UF):</label>
+                                        <input type="text" class="form-control col uf" id="uf" name="uf" required />
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-secondary prev-step">
+                                    Etapa anterior
+                                </button>
+                                <button type="button" class="btn btn-primary next-step" id="next-step">
+                                    Avançar
+                                </button>
+                            </div>
+                            <!-- Fim da Etapa 2-->
+
+                            <!-- Etapa 3 -->
+                            <div id="step-3" style="display: none" class="form-step">
+                                <h2 class="text-center">
+                                    Agora Você Pode Personalizar o Seu Seguro
+                                </h2>
+                                <div class="form-group">
+                                    <label for="valorcoberturaincendio"
+                                        class="form-label label-coberturas">Incêndio:</label>
+                                    <div class="range-container">
+                                        <input type="range" class="form-range input-coberturas"
+                                            id="valorcoberturaincendio" min="30000" max="1000000" value="10000"
+                                            step="10000" />
+                                        <div class="range-value0"></div>
+                                    </div>
+                                </div>
+                                <!-- valorCoberturaSubstracaoBens -->
+                                <div class="form-group">
+                                    <label for="valorcoberturasubstracaobens"
+                                        class="form-label label-coberturas">Subtração de Bens:</label>
+                                    <div class="range-container">
+                                        <input type="range" class="form-range input-coberturas"
+                                            id="valorcoberturasubstracaobens" min="10000" max="1000000" value="10000"
+                                            step="10000" />
+                                        <div class="range-value1"></div>
+                                    </div>
+                                </div>
+                                <!-- valorCoberturaPagamentoAluguel -->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturapagamentoaluguel"
+                                                class="form-label label-coberturas">Pagamento de Aluguel:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturapagamentoaluguel" min="10000" max="1000000"
+                                                    value="10000" step="10000" />
+                                                <div class="range-value2">R$ 10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snippet de cobertura RC Familiar-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">RC
+                                                Familiar:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturarcfamiliar" min="10000" max="1000000"
+                                                    value="10000" step="10000" />
+                                                <div class="range-value3">R$ 10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Snippet de valorCoberturaVendaval-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturavendaval" class="form-label label-coberturas">
+                                                Cobertura
+                                                Vendaval</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturavendaval" min="10000" max="1000000" value="10000"
+                                                    step="10000" />
+                                                <div class="range-value5">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snippet de valorCoberturaDesmoronamento-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturadesmoronamento"
+                                                class="form-label label-coberturas">Cobertura
+                                                Desmoronamento</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturadesmoronamento" min="10000" max="1000000"
+                                                    value="10000" step="10000" />
+                                                <div class="range-value6">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Snipet de valorCoberturaAlagamento-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturaalagamento"
+                                                class="form-label label-coberturas">Cobertura
+                                                Alagamento</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturaalagamento" min="10000" max="1000000"
+                                                    value="10000" step="10000" />
+                                                <div class="range-value12">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Snippet de flagLMIDiscriminado-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="flaglmidiscriminado" class="form-label label-coberturas">LMI
+                                                Discriminado</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="flaglmidiscriminado" min="10000" max="1000000" value="10000"
+                                                    step="10000" />
+                                                <div class="range-value14">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Snippet de valorSubtracaoBicicleta-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorsubtracaobicicleta"
+                                                class="form-label label-coberturas">Subtração
+                                                Bicicleta</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorsubtracaobicicleta" min="10000" max="1000000" value="10000"
+                                                    step="10000" />
+                                                <div class="range-value18">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Snippet de valorPequenasReformas-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorpequenasreformas"
+                                                class="form-label label-coberturas">Pequenas
+                                                Reformas</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorpequenasreformas" min="10000" max="1000000" value="10000"
+                                                    step="10000" />
+                                                <div class="range-value20">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-secondary prev-step prev-step-3">
+                                    Etapa anterior
+                                </button>
+                                <i class="fa fa-spinner fa-spin loading-icon" style="display: none"></i>
+                                <button type="submit" class="btn btn-success submit-form">
+                                    Enviar cotação
+                                </button>
+                            </div>
+                            <!-- Fim da Etapa 3-->
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-12 bandeiras">
+                <h3 class="text-center">Bandeiras Aceitas:</h3>
+                <div class="payment-logos d-flex justify-content-center">
+                    <img src="./src/img/bandeiras-cartao/visa.png" alt="Visa" class="payment-logo" />
+                    <img src="./src/img/bandeiras-cartao/master-card.png" alt="Mastercard" class="payment-logo" />
+                    <img src="./src/img/bandeiras-cartao/amex.png" alt="American Express" class="payment-logo" />
+                    <img src="./src/img/bandeiras-cartao/dinners.png" alt="Diners Club" class="payment-logo" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start text-muted cor-footer">
+        <!-- Section: Social media -->
+        <section class="d-flex justify-content-center justify-content-lg-between p-4 mt-5 border-bottom">
+            <!-- Left -->
+            <div class="me-5 d-none d-lg-block text-white">
+                <span>Mantenha-se conectado(a) em nossas redes sociais:</span>
+            </div>
+            <!-- Left -->
+
+            <!-- Right -->
+            <div>
+                <a href="https://www.facebook.com/primesecure" class="me-4 link-secondary text-white">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/primesecureoficial/" class="me-4 link-secondary text-white">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/prime-secure" class="me-4 link-secondary text-white">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                </a>
+            </div>
+            <!-- Right -->
+        </section>
+        <!-- Section: Social media -->
+
+        <!-- Section: Links  -->
+        <section class="">
+            <div class="container text-center text-md-start mt-5">
+                <!-- Grid row -->
+                <div class="row mt-3">
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                        <!-- Content -->
+                        <h6 class="text-uppercase fw-bold mb-4 text-white">
+                            <i class=" text-secondary"></i>Prime Secure | Porto Seguro
+                        </h6>
+                        <p class="desc-travel text-white">
+                            Credibilidade, experiência e transparência são características que norteiam a Prime
+                            Secure. Desde 2015 a nossa proposta é inovar na área de corretagem de seguros, através
+                            de tecnologia e eficiência, oferecemos qualidade em serviços para proteger e assegurar
+                            os bens e patrimônios de nossos clientes e parceiros.
+                        </p>
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <!-- Links -->
+                        <h6 class="text-uppercase fw-bold mb-4 text-white">
+                            Links Uteis:
+                        </h6>
+                        <p>
+                            <a href="#emergencia-24h" class="text-reset text-white">Emergência 24H</a>
+                        </p>
+                        <p>
+                            <a href="coberturas.html" class="text-reset text-white">Coberturas</a>
+                        </p>
+                        <p>
+                            <a href="duvidas.html" class="text-reset text-white">Dúvidas</a>
+                        </p>
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4 text-white">
+                        <!-- Links -->
+                        <h6 class="text-uppercase fw-bold mb-4 text-white icon-footer">Contato</h6>
+                        <p class="text-white icon-footer" style="font-size: 16px;"><i
+                                class="fas fa-home me-1 text-white"></i>
+                            Brasil São Paulo, Sp</p>
+                        <p class="text-white" style="font-size: 16px;"><i
+                                class="fas fa-envelope-open mr-1 text-white icon-footer"></i>corretora@primesecure.com.br
+                        </p>
+                        <p class="text-white icon-footer" style="font-size: 16px;"> <i class="fab fa-whatsapp"></i> +55
+                            (11)96653-4903</p>
+                        <p class="text-white icon-footer" style="font-size: 16px;"><i class="fas fa-phone"></i>
+                            +55 (11) 3511-0708</p>
+                    </div>
+                    <!-- Grid column -->
+                </div>
+                <!-- Grid row -->
+            </div>
+        </section>
+        <!-- Section: Links  -->
+
+        <!-- Copyright -->
+        <div class="text-center p-4 text-white">
+            © 2022 Copyright:
+            <a class="text-reset fw-bold text-white" href="https://www.primesecure.com.br/">PrimeSecure.com.br</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+
+    <script src="./src/js/jquery-3.6.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="./src/js/flatpickr.js"></script>
+    <script src="./src/js/bootstrap.min.js"></script>
+    <script src="./src/js/bootstrap.bundle.min.js"></script>
+    <script src="./src/js/jquery.mask.min.js"></script>
+    <script src="./src/js/viaCep.js"></script>
+    <script src="./src/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+    <script src="./src/js/controladorCotacao.js"></script>
+</body>
+
+</html>

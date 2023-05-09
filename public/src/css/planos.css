@@ -1,0 +1,111 @@
+.nav {
+  background-image: linear-gradient(30deg, #323d93 10%, #03a8db 60%)
+}
+
+.nav-link a {
+  color: #fff;
+}
+
+section.pricing {
+  background: #fff;
+}
+
+.pricing .card {
+  border: none;
+  border-radius: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.pricing hr {
+  margin: 1.5rem 0;
+}
+
+.pricing .card-title {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+}
+
+.pricing .card-price {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.pricing .card-price .period {
+  font-size: 0.8rem;
+}
+
+.pricing ul li {
+  margin-bottom: 1rem;
+}
+
+.pricing .text-muted {
+  opacity: 0.7;
+}
+
+.pricing .btn {
+  font-size: 80%;
+  border-radius: 10px;
+  border: none;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  opacity: 0.7;
+  transition: all 0.2s;
+  background-color: #4ed433;
+}
+
+.btn-editar-plano {
+  color: #327be7;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffffff00;
+  padding: 5px;
+  margin-bottom: 15px;
+}
+
+.cor-footer {
+  background-image: linear-gradient(30deg, #323d93 10%, #03a8db 60%);
+}
+
+/* Hover Effects on Card */
+
+@media (min-width: 992px) {
+  .pricing .card:hover {
+    margin-top: -.25rem;
+    margin-bottom: .25rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .pricing .card:hover .btn {
+    opacity: 1;
+  }
+}
+
+.desc-travel {
+  text-align: justify;
+}
+
+.botão-editar {
+  font-size: 80%;
+  border-radius: 10px;
+  border: none;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  /* padding: 1rem; */
+  opacity: 0.7;
+  transition: all 0.2s;
+  /* background-color: #4ed433; */
+}
+
+.bandeiras {
+  margin-bottom: 20px;
+}
+
+.payment-logo {
+  width: 50px;
+  height: 35px;
+  margin: 0 10px;
+}
