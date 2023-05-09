@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Finalização</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="stylesheet" type="text/css" href="css/raleway-font.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./src/css/cadastro.css" />
+  <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+
+
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light nav">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white" href="planos.html">Prime Secure</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active text-white" aria-current="page" href="#">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#">Coberturas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#">Ajuda</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="page-content">
+    <div class="wizard-v1-content">
+      <div class="wizard-preco">
+        <div class="header-preco-content">
+          <div class=" proto">
+            <div class="row custom-row d-flex justify-content-center">
+              <div class="col-md-6">
+                <div class="form-inline">
+                  <label for="plano" class="mr-2">Protocolo:</label>
+                  <input type="text" placeholder="" class="custom-input" id="protocolo" disabled />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-inline">
+                  <label for="plano" class="mr-2">Plano Escolhido:</label>
+                  <input type="text" placeholder="" class="custom-input" id="plano-escolhido" name="plano" disabled />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 d-flex justify-content-center">
+              <div class="price-block">
+                <h2 class="price">Total a Pagar: <span class="installment">12x </span><span class="value">R$--,<span
+                      class="small-zero">--</span></span></h2>
+                <h4 class="cash-price">à vista: <span class="value-120" id="value-120">R$--,<span
+                      class="small-zero-120">--</span></span></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="wizard-v1-content">
+      <div class="wizard-form">
+        <form class="form-register" id="form-register" action="#" method="post">
+          <div id="form-total">
+            <!--Dados de Login-->
+            <section>
+              <h2 class="text-center mb-5">Crie Seu Acesso</h2>
+              <div class="inner">
+                <div class="form-row">
+                  <div class="form-holder">
+                    <label for="email">Email*</label>
+                    <input type="email" placeholder="Insira o Seu Email" class="form-control" id="email" name="email"
+                      required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" />
+                  </div>
+                  <div class="form-holder">
+                    <label for="confirm_email">Confirme o Seu Email*</label>
+                    <input type="email" placeholder="Insira o Seu Email" class="form-control" id="confirm_email" name="confirm_email"
+                      required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-holder">
+                    <label for="senha">Senha*</label>
+                    <input type="password" placeholder="senha" class="form-control" id="senha" name="senha" required />
+                  </div>
+                  <div class="form-holder">
+                    <label for="confirm_senha">Confirme sua Senha*</label>
+                    <input type="password" placeholder="Confirme sua Senha" class="form-control" id="confirm_senha"
+                      name="confirm_senha" required />
+                  </div>
+                </div>
+                <input type="checkbox" id="visualizar_senha" onclick="visualizarSenha()"> Visualizar Senha
+
+                <!--Dados Pessoa Não exposta-->
+                <div class="#">
+                  <div>
+                    <h2 class="text-center mb-5">Seus Dados Pessoais:</h2>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-holder">
+                      <label for="pep">Qual Seu Sexo?</label>
+                      <select class="form-control" id="pep">
+                        <option value="1">Masculino</option>
+                        <option value="2">Feminino</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-holder">
+                      <label for="pep">Estado Civil</label>
+                      <select class="form-control" id="pep">
+                        <option value="1">Solteiro(a)</option>
+                        <option value="2">Casado(a)</option>
+                        <option value="3">Viúvo(a)</option>
+                        <option value="4">Desquitado(a)</option>
+                        <option value="5">Divorciado(a)</option>
+                      </select>
+                    </div>
+                    <div class="form-holder">
+                      <label for="pep">Faixa de Renda</label>
+                      <select class="form-control" id="pep">
+                        <option value="1">Sem renda</option>
+                        <option value="2">Até 2.500,00</option>
+                        <option value="3">De 2.501,00 a 5.000,00</option>
+                        <option value="4">De 5.001,00 a 10.000,00</option>
+                        <option value="5">Acima de 10.000,00</option>
+                        <option value="5">Não desejo informar</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <!--Documento de Identificação-->
+                <div>
+                  <h2 class="text-center mb-5">Documento de Idetificação</h2>
+                </div>
+                <div class="form-row">
+                  <div class="form-holder">
+                    <label for="pep">Tipo de Documento</label>
+                    <select class="form-control" id="pep">
+                      <option value="1">RG</option>
+                      <option value="2">CNH</option>
+                    </select>
+                  </div>
+                  <div class="form-holder">
+                    <label for="numero_documento">Numero do Documento</label>
+                    <input type="text" placeholder="Numero do Documento" class="form-control"
+                      id="numero_documento" name="numero_documento" required />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-holder">
+                    <label for="orgao_expedidor">Orgão Expedidor</label>
+                    <input type="text" placeholder="Qual o Orgão Expedidor" class="form-control"
+                      id="orgao_expedidor" name="orgao_expedidor" required />
+                  </div>
+                  <div class="form-holder">
+                    <label for="data_expedicao">Data de Expedição</label>
+                    <input type="text" class="form-control col data_expedicao" id="data_expedicao" name="data_expedicao"
+                      minlength="10" maxlength="10" placeholder="DD/MM/YYYY" autocomplete="off" required />
+                  </div>
+                </div>
+                <!--Dados da Pessoa Politicamente exposta-->
+                <div class="form-row">
+                  <div class="form-holder">
+                    <label for="pep">Você é Uma Pessoa politicamente exposta?</label>
+                    <select class="form-control" id="pep_status">
+                      <option value="nao">Não</option>
+                      <option value="sim">Sim</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="campos-pep d-none">
+                  <div>
+                    <h2 class="text-center mb-5">Dados Da Pessoa Politicamente Exposta:</h2>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-holder">
+                      <label for="cpf_pessoa_exposta">CPF da Pessoa*</label>
+                      <input type="text" placeholder="CPF da Pessoa" class="form-control" id="cpf_pessoa_exposta"
+                        name="cpf_pessoa_exposta" required />
+                    </div>
+                    <div class="form-holder">
+                      <label for="nome_pessoa_exposta">Nome da Pessoa*</label>
+                      <input type="text" placeholder="Nome da Pessoa" class="form-control" id="nome_pessoa_exposta"
+                        name="nome_pessoa_exposta" required />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-holder">
+                      <label for="pep">Grau de Parentesco</label>
+                      <select class="form-control" id="grau_parentesco_pessoa_exposta">
+                        <option value="1">Pai ou Mãe</option>
+                        <option value="2">Cônjuge</option>
+                        <option value="3">Companheiro(a)</option>
+                        <option value="4">Filho(a)</option>
+                        <option value="5">Enteado(a)</option>
+                        <option value="6">Eu Mesmo(a)</option>
+                        <option value="11">Outros</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+            </section>
+            <button type="submit" class="btn btn-success submit-form" id="btn-enviar">
+              Ir Para o Pagamento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-12 bandeiras">
+        <h3 class="text-center">Bandeiras Aceitas:</h3>
+        <div class="payment-logos d-flex justify-content-center">
+          <img src="./src/img/bandeiras-cartao/visa.png" alt="Visa" class="payment-logo" />
+          <img src="./src/img/bandeiras-cartao/master-card.png" alt="Mastercard" class="payment-logo" />
+          <img src="./src/img/bandeiras-cartao/amex.png" alt="American Express" class="payment-logo" />
+          <img src="./src/img/bandeiras-cartao/dinners.png" alt="Diners Club" class="payment-logo" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="text-center text-lg-start text-muted cor-footer">
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+      <!-- Left -->
+      <div class="me-5 d-none d-lg-block text-white">
+        <span>Mantenha-se conectado(a) em nossas redes sociais:</span>
+      </div>
+      <!-- Left -->
+
+      <!-- Right -->
+      <div>
+        <a href="https://www.facebook.com/primesecure" class="me-4 link-secondary text-white">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/primesecureoficial/" class="me-4 link-secondary text-white">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.linkedin.com/company/prime-secure" class="me-4 link-secondary text-white">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        </a>
+      </div>
+      <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4 text-white">
+              <i class=" text-secondary"></i>Prime Secure | Porto Seguro
+            </h6>
+            <p class="desc-travel text-white">
+              Credibilidade, experiência e transparência são características que norteiam a Prime
+              Secure. Desde 2015 a nossa proposta é inovar na área de corretagem de seguros, através
+              de tecnologia e eficiência, oferecemos qualidade em serviços para proteger e assegurar
+              os bens e patrimônios de nossos clientes e parceiros.
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4 text-white">
+              Links Uteis:
+            </h6>
+            <p>
+              <a href="#emergencia-24h" class="text-reset text-white">Emergência 24H</a>
+            </p>
+            <p>
+              <a href="coberturas.html" class="text-reset text-white">Coberturas</a>
+            </p>
+            <p>
+              <a href="duvidas.html" class="text-reset text-white">Dúvidas</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4 text-white">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4 text-white icon-footer">Contato</h6>
+            <p class="text-white icon-footer" style="font-size: 16px;"><i class="fas fa-home me-1 text-white"></i>
+              Brasil São Paulo, Sp</p>
+            <p class="text-white" style="font-size: 15px;"><i
+                class="fas fa-envelope-open mr-1 text-white icon-footer"></i>corretora@primesecure.com.br
+            </p>
+            <p class="text-white icon-footer" style="font-size: 16px;"> <i class="fab fa-whatsapp"></i> +55
+              (11)96653-4903</p>
+            <p class="text-white icon-footer" style="font-size: 16px;"><i class="fas fa-phone"></i>
+              +55 (11) 3511-0708</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+      </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4 text-white">
+      © 2022 Copyright:
+      <a class="text-reset fw-bold text-white" href="https://www.primesecure.com.br/">PrimeSecure.com.br</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  <style>
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <div id="loading-screen">
+    <div
+      style="height: 100%; width: 100%; background-color: black; position: fixed; top: 0px; left: 0px; opacity: 0.35;">
+    </div>
+    <div
+      style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 85px; height: 85px; border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #007bff; animation: spin 2s linear infinite">
+    </div>
+  </div>
+  <!-- Footer -->
+
+  <script src="./src/js/jquery-3.6.4.js"></script>
+  <script src="./src/js/bootstrap.min.js"></script>
+  <script src="./src/js/flatpickr.js"></script>
+  <script src="./src/js/bootstrap.bundle.min.js"></script>
+  <script src="./src/js/additional-methods.min.js"></script>
+  <script src="./src/js/jquery.validate.min.js"></script>
+  <script src="./src/js/cadastroMain.js"></script>
+  <script src="./src/js/jquery.mask.min.js"></script>
+  <script src="./src/js/controladorCadastro.js"></script>
+  <style>
+    label#email-error {
+      display: none !important;
+    }
+
+    ._error {
+      color: red;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+      $('#pep_status').on('change', function () {
+        if ($(this).val() === 'sim') {
+          $('.campos-pep').removeClass('d-none');
+        } else {
+          $('.campos-pep').addClass('d-none');
+        }
+      });
+    });
+  </script>
+  <script>
+    //Aplica Mascaras nos Inputs
+$(document).ready(function () {
+  $(".data_expedicao").mask("00-00-0000", {
+    translation: {
+      0: {
+        pattern: /[0-9]/,
+      },
+    },
+    pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/,
+  });
+});
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+.nav {
+    background-image: linear-gradient(30deg, #323d93 10%, #03a8db 60%)
+}
+
+.nav-link a {
+    color: #fff;
+}
+
+.cor-footer {
+    background-image: linear-gradient(30deg, #323d93 10%, #03a8db 60%);
+}
+
+.content {
+    margin: 80px;
+}
+
+.desc-travel {
+    text-align: justify;
+}
