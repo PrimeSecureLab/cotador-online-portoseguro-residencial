@@ -19,7 +19,7 @@ dotenv.config();
 
 // Conecta ao banco de dados
 database.mongoose
-.connect( database.url, 
+.connect( database.url,
   { useNewUrlParser: true, useUnifiedTopology: true }
 ).then( () => {
   console.log('Conexão com o banco de dados estabelecida com sucesso!');
@@ -34,10 +34,10 @@ const app = express();
 // Remove extensão .html
 app.use((req, res, next)=>{
   if (req.path.endsWith('.html')) {
-    let newPath = req.path.slice(0, -5);  
+    let newPath = req.path.slice(0, -5);
     res.redirect(301, newPath);
-  } else { 
-    next(); 
+  } else {
+    next();
   }
 });
 
