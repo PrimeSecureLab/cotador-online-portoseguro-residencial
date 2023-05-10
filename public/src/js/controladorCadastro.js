@@ -20,14 +20,15 @@ if (orcamento.listaParcelamento){
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
             if (parcela.quantidadeParcelas == 1){
-            let valor = parcela.valorPrimeiraParcela.toFixed(2);
-            valor = valor.split(".");
-            $("span#value-120").html(`R$${valor[0]},<span class="small-zero-120">${valor[1]}</span>`);
+                let valor = parcela.valorPrimeiraParcela.toFixed(2);
+                valor = valor.split(".");
+                $("span#value-120").html(`R$${valor[0]},<span class="small-zero-120">${valor[1]}</span>`);
             }
-            if (parcela.quantidadeParcelas == 12){
-            let valor = parcela.valorPrimeiraParcela.toFixed(2);
-            valor = valor.split(".");
-            $("h2.price > span.value").html(`R$${valor[0]},<span class="small-zero">${valor[1]}</span>`);
+            if (orcamento.listaParcelamento[index + 1].codigo != 62){
+                let valor = parcela.valorPrimeiraParcela.toFixed(2);
+                valor = valor.split(".");
+                $("h2.price > span.value").html(`R$${valor[0]},<span class="small-zero">${valor[1]}</span>`);
+                $("span.installment").html(`${parcela.quantidadeParcelas}x&nbsp;`)
             }
         }
     });
@@ -126,8 +127,8 @@ function visualizarSenha() {
     }
 }
 
-$(document).ready(function () {
+/*$(document).ready(function () {
     if (loading){ loading = false; }
     //$('#numero-cartao').mask('0000 0000 0000 0000');
     
-});
+});*/

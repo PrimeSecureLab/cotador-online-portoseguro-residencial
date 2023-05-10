@@ -15,7 +15,6 @@ $("#loading-screen").hide();
 
 document.getElementById("form-login").addEventListener("submit", async (event) => {
   event.preventDefault(); 
-  console.log("aaaa")
   let form = { login: $("#login").val(), senha: $("#senha-login").val() }
   if (form.login.length < 5){ 
     if (!$("#error-message").length){ $("#form-login").before('<label id="error-message" style="color: red;"></label>'); } 
