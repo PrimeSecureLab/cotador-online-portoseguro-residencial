@@ -716,3 +716,25 @@ body {
     cursor: pointer;
 }
 
+.card-deck {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .card {
+    flex: 0 0 100%;
+    margin-right: 15px;
+  }
+
+  @media (min-width: 768px) {
+    .card-deck {
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1 0 auto;
+      margin-right: 0;
+    }
+  }

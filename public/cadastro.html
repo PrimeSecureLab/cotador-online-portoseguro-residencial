@@ -98,7 +98,7 @@
                 <div class="form-row">
                   <div class="form-holder">
                     <label for="senha">Senha*</label>
-                    <input type="password" placeholder="senha" class="form-control" id="senha" name="senha" required />
+                    <input type="password" placeholder="Insira uma senha" class="form-control" id="senha" name="senha" required />
                   </div>
                   <div class="form-holder">
                     <label for="confirm_senha">Confirme sua Senha*</label>
@@ -117,6 +117,7 @@
                     <div class="form-holder">
                       <label for="pep">Qual Seu Sexo?</label>
                       <select class="form-control" id="pep">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Masculino</option>
                         <option value="2">Feminino</option>
                       </select>
@@ -126,6 +127,7 @@
                     <div class="form-holder">
                       <label for="pep">Estado Civil</label>
                       <select class="form-control" id="pep">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Solteiro(a)</option>
                         <option value="2">Casado(a)</option>
                         <option value="3">Viúvo(a)</option>
@@ -134,8 +136,9 @@
                       </select>
                     </div>
                     <div class="form-holder">
-                      <label for="pep">Faixa de Renda</label>
+                      <label for="pep">Faixa de Renda:</label>
                       <select class="form-control" id="pep">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Sem renda</option>
                         <option value="2">Até 2.500,00</option>
                         <option value="3">De 2.501,00 a 5.000,00</option>
@@ -154,6 +157,7 @@
                   <div class="form-holder">
                     <label for="pep">Tipo de Documento</label>
                     <select class="form-control" id="pep">
+                      <option value="">Escolha uma Opção</option>
                       <option value="1">RG</option>
                       <option value="2">CNH</option>
                     </select>
@@ -181,6 +185,7 @@
                   <div class="form-holder">
                     <label for="pep">Você é Uma Pessoa politicamente exposta?</label>
                     <select class="form-control" id="pep_status">
+                      <option value="">Escolha uma Opção</option>
                       <option value="nao">Não</option>
                       <option value="sim">Sim</option>
                     </select>
@@ -206,15 +211,18 @@
                   <div class="form-row">
                     <div class="form-holder">
                       <label for="pep">Grau de Parentesco</label>
-                      <select class="form-control" id="grau_parentesco_pessoa_exposta">
-                        <option value="1">Pai ou Mãe</option>
-                        <option value="2">Cônjuge</option>
-                        <option value="3">Companheiro(a)</option>
-                        <option value="4">Filho(a)</option>
-                        <option value="5">Enteado(a)</option>
-                        <option value="6">Eu Mesmo(a)</option>
-                        <option value="11">Outros</option>
-                      </select>
+                      <div class="custom-select-wrapper">
+                        <select class="form-control custom-select" id="grau_parentesco_pessoa_exposta">
+                          <option value="">Escolha uma Opção</option>
+                          <option value="1">Pai ou Mãe</option>
+                          <option value="2">Cônjuge</option>
+                          <option value="3">Companheiro(a)</option>
+                          <option value="4">Filho(a)</option>
+                          <option value="5">Enteado(a)</option>
+                          <option value="6">Eu Mesmo(a)</option>
+                          <option value="11">Outros</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
