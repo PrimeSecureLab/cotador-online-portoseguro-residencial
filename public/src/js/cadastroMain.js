@@ -22,6 +22,8 @@ $(function () {
       nome_impresso: { required: "Campo Obrigatório" },
       data_expedicao: { required: "Campo Obrigatório" },
       numero_documento: { required: "Campo Obrigatório" },
+      orgao_expedidor: { required: "Campo Obrigatório" },
+      pep1: { required: "Campo Obrigatório" },
     },
     errorPlacement: function (error, element) {
       error.insertAfter(element);
