@@ -2,6 +2,9 @@
 <html>
 
 <head>
+  <link rel="icon" href="./src/img/favicon/favicon-256x256.png" sizes="256x256">
+
+
   <meta charset="utf-8" />
   <title>Finalização</title>
 
@@ -19,7 +22,8 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-light nav">
       <div class="container-fluid">
-        <a class="navbar-brand text-white" href="planos.html">Prime Secure</a>
+        <a class="navbar-brand text-white" href="planos.html"><img src="./src/img/logo.png" alt="Prime Secure Residencial"
+          class="img-fluid" style="width: 280px;" /></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -91,14 +95,15 @@
                   </div>
                   <div class="form-holder">
                     <label for="confirm_email">Confirme o Seu Email*</label>
-                    <input type="email" placeholder="Insira o Seu Email" class="form-control" id="confirm_email" name="confirm_email"
-                      required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" />
+                    <input type="email" placeholder="Insira o Seu Email" class="form-control" id="confirm_email"
+                      name="confirm_email" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" />
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-holder">
                     <label for="senha">Senha*</label>
-                    <input type="password" placeholder="Insira uma senha" class="form-control" id="senha" name="senha" required />
+                    <input type="password" placeholder="Insira uma senha" class="form-control" id="senha" name="senha"
+                      required />
                   </div>
                   <div class="form-holder">
                     <label for="confirm_senha">Confirme sua Senha*</label>
@@ -164,15 +169,15 @@
                   </div>
                   <div class="form-holder">
                     <label for="numero_documento">Numero do Documento</label>
-                    <input type="text" placeholder="Numero do Documento" class="form-control"
-                      id="numero_documento" name="numero_documento" required />
+                    <input type="text" placeholder="Numero do Documento" class="form-control" id="numero_documento"
+                      name="numero_documento" required />
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-holder">
                     <label for="orgao_expedidor">Orgão Expedidor</label>
-                    <input type="text" placeholder="Qual o Orgão Expedidor" class="form-control"
-                      id="orgao_expedidor" name="orgao_expedidor" required />
+                    <input type="text" placeholder="Qual o Orgão Expedidor" class="form-control" id="orgao_expedidor"
+                      name="orgao_expedidor" required />
                   </div>
                   <div class="form-holder">
                     <label for="data_expedicao">Data de Expedição</label>
@@ -186,13 +191,14 @@
                     <label for="pep">Você é Uma Pessoa politicamente exposta?</label>
                     <select class="form-control" id="pep_status">
                       <option value="">Escolha uma Opção</option>
-                      <option value="nao">Não</option>
-                      <option value="sim">Sim</option>
+                      <option value="1">Não</option>
+                      <option value="2">Sim</option>
+                      <option value="3">Possui Relacionamento Próximo?</option>
                     </select>
                   </div>
                 </div>
 
-                
+
 
                 <div class="campos-pep d-none">
                   <h2 class="text-center mb-5">Dados Da Pessoa Politicamente Exposta:</h2>
@@ -207,25 +213,24 @@
                           <option value="3">Companheiro(a)</option>
                           <option value="4">Filho(a)</option>
                           <option value="5">Enteado(a)</option>
-                          <option value="6">Eu Mesmo(a)</option>
-                          <option value="11">Outros</option>
+                          <option value="6">Outros</option>
                         </select>
                       </div>
                     </div>
                   </div>
                   <div>
-                    
+
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
                       <label for="cpf_pessoa_exposta">CPF da Pessoa</label>
                       <input type="text" placeholder="CPF da Pessoa" class="form-control" id="cpf_pessoa_exposta"
-                        name="cpf_pessoa_exposta"  />
+                        name="cpf_pessoa_exposta" />
                     </div>
                     <div class="form-holder">
                       <label for="nome_pessoa_exposta">Nome da Pessoa</label>
                       <input type="text" placeholder="Nome da Pessoa" class="form-control" id="nome_pessoa_exposta"
-                        name="nome_pessoa_exposta"  />
+                        name="nome_pessoa_exposta" />
                     </div>
                   </div>
                 </div>
@@ -397,7 +402,7 @@
   <script>
     $(document).ready(function () {
       $('#pep_status').on('change', function () {
-        if ($(this).val() === 'sim') {
+        if ($(this).val() === '3') {
           $('.campos-pep').removeClass('d-none');
         } else {
           $('.campos-pep').addClass('d-none');
@@ -407,16 +412,16 @@
   </script>
   <script>
     //Aplica Mascaras nos Inputs
-$(document).ready(function () {
-  $(".data_expedicao").mask("00-00-0000", {
-    translation: {
-      0: {
-        pattern: /[0-9]/,
-      },
-    },
-    pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/,
-  });
-});
+    $(document).ready(function () {
+      $(".data_expedicao").mask("00-00-0000", {
+        translation: {
+          0: {
+            pattern: /[0-9]/,
+          },
+        },
+        pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/,
+      });
+    });
   </script>
 </body>
 
