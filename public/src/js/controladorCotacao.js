@@ -34,8 +34,8 @@ document.getElementById("form").addEventListener("submit", async (event) => {
             body: JSON.stringify(data),
         });
         if (response.ok) {
-            const { token, form_data } = await response.json(); // Recebe os dados da resposta
-            localStorage.setItem("token", token); // Adiciona o token ao localStorage
+            const { form_data } = await response.json(); // Recebe os dados da resposta
+            //localStorage.setItem("token", token); // Adiciona o token ao localStorage
             localStorage.setItem("formData", form_data); // Adiciona o form encriptado ao localStorage
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {
