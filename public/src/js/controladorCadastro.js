@@ -68,7 +68,11 @@ document.getElementById("form-register").addEventListener("submit", async (event
         if (key == "confirm_email"){ continue; }
         if (key == "senha"){ continue; }
         if (key == "confirm_senha"){ continue; }
-
+        if ($('#politicamente_exposta').val() != 3){ 
+            if (key == "grau_parentesco_pessoa_exposta"){ continue; }
+            if (key == "cpf_pessoa_exposta"){ continue; }
+            if (key == "nome_pessoa_exposta"){ continue; } 
+        }
         let element = $(`#${key}`);
         let label = $(`label#${key}-error`);
         if (!value){
