@@ -120,8 +120,8 @@
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
-                      <label for="pep1">Qual Seu Sexo?</label>
-                      <select class="form-control" id="pep1" required>
+                      <label for="sexo">Qual Seu Sexo?</label>
+                      <select class="form-control" id="sexo">
                         <option value="">Escolha uma Opção</option>
                         <option value="1">Masculino</option>
                         <option value="2">Feminino</option>
@@ -130,8 +130,8 @@
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
-                      <label for="pep">Estado Civil</label>
-                      <select class="form-control" id="pep">
+                      <label for="estado_civil">Estado Civil</label>
+                      <select class="form-control" id="estado_civil">
                         <option value="">Escolha uma Opção</option>
                         <option value="1">Solteiro(a)</option>
                         <option value="2">Casado(a)</option>
@@ -141,15 +141,15 @@
                       </select>
                     </div>
                     <div class="form-holder">
-                      <label for="pep">Faixa de Renda:</label>
-                      <select class="form-control" id="pep">
+                      <label for="faixa_renda">Faixa de Renda:</label>
+                      <select class="form-control" id="faixa_renda">
                         <option value="">Escolha uma Opção</option>
                         <option value="1">Sem renda</option>
                         <option value="2">Até 2.500,00</option>
                         <option value="3">De 2.501,00 a 5.000,00</option>
                         <option value="4">De 5.001,00 a 10.000,00</option>
                         <option value="5">Acima de 10.000,00</option>
-                        <option value="5">Não desejo informar</option>
+                        <option value="6">Não desejo informar</option>
                       </select>
                     </div>
                   </div>
@@ -160,8 +160,8 @@
                 </div>
                 <div class="form-row">
                   <div class="form-holder">
-                    <label for="pep">Tipo de Documento</label>
-                    <select class="form-control" id="pep">
+                    <label for="tipo_documento">Tipo de Documento</label>
+                    <select class="form-control" id="tipo_documento">
                       <option value="">Escolha uma Opção</option>
                       <option value="1">RG</option>
                       <option value="2">CNH</option>
@@ -188,11 +188,11 @@
                 <!--Dados da Pessoa Politicamente exposta-->
                 <div class="form-row">
                   <div class="form-holder">
-                    <label for="pep">Você é Uma Pessoa politicamente exposta?</label>
-                    <select class="form-control" id="pep_status">
+                    <label for="politicamente_exposta">Você é Uma Pessoa politicamente exposta?</label>
+                    <select class="form-control" id="politicamente_exposta">
                       <option value="">Escolha uma Opção</option>
-                      <option value="1">Não</option>
-                      <option value="2">Sim</option>
+                      <option value="2">Não</option>
+                      <option value="1">Sim</option>
                       <option value="3">Possui Relacionamento Próximo?</option>
                     </select>
                   </div>
@@ -213,7 +213,7 @@
                           <option value="3">Companheiro(a)</option>
                           <option value="4">Filho(a)</option>
                           <option value="5">Enteado(a)</option>
-                          <option value="6">Outros</option>
+                          <option value="11">Outros</option>
                         </select>
                       </div>
                     </div>
@@ -390,18 +390,18 @@
   <script src="./src/js/jquery.mask.min.js"></script>
   <script src="./src/js/controladorCadastro.js"></script>
   <style>
-    label#email-error {
+    /*label#email-error {
       display: none !important;
     }
 
     ._error {
       color: red;
-    }
+    }*/
   </style>
 
   <script>
     $(document).ready(function () {
-      $('#pep_status').on('change', function () {
+      $('#politicamente_exposta').on('change', function () {
         if ($(this).val() === '3') {
           $('.campos-pep').removeClass('d-none');
         } else {

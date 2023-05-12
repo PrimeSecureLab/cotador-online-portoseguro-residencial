@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
         if (!user){ req.session.destroy((e) => { return res.redirect('/cadastro'); }); }
     }
     let token = await authToken();
-    console.log(token.data);
+    //console.log(token.data);
     res.sendFile("pagamento.html", { root: "public" });
 });
 
@@ -67,6 +67,7 @@ router.post("/", async (req, res) => {
             errorList.push({message: "Ano inválido", id: "ano"});
         }  
     }
+    if (data.pagamento.numeroCartao){ data.pagamento.numeroCartao = data.pagamento.numeroCartao.replace(/[^0-9]+/g, ""); }
     if (!/^\d{16}$/.test(data.pagamento.numeroCartao)){ 
         errorList.push({message: "Número de cartão inválido", id: "numero-cartao"}); 
     }else{
@@ -138,9 +139,8 @@ router.post("/", async (req, res) => {
 
     let token = await authToken();
     let request_url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual/propostas";
-    let result = await axios.post(request_url, proposta, { 
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    });
+    let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+    let result = await axios.post(request_url, proposta, header);
 
     let novaProposta = {  
         criadoEm: new Date(),      

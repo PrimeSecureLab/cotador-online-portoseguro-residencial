@@ -8,10 +8,14 @@ $(function () {
     },
     messages: {
       nome: { required: "Preencha o Campo Nome" },
-      email: { required: "Campo Obrigatório" },
+      email: { 
+        required: "Campo Obrigatório",
+        email: "Email inválido" 
+      },
       confirm_email: {
         required: "Campo Obrigatório",
         equalTo: "Os campos de email precisam ser iguais.",
+        email: "Email inválido"
       },
       senha: { required: "Campo Obrigatório" },
       confirm_senha: {
