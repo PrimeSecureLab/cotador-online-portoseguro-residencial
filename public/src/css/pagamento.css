@@ -710,3 +710,44 @@ body {
     cursor: pointer;
 }
 
+.pre-footer {
+    margin-top: 80px;
+  }
+  
+  .payment-logo-porto {
+    width: 100%;
+  }
+  
+  .payment-logo-pagarme {
+    width: 80%;
+  }
+  
+  .payment-logo-susep {
+    width: 100%;
+  }
+  
+  .bandeiras {
+    margin-bottom: 20px;
+  }
+  
+  .payment-logo {
+    width: 15%;
+    margin: 0 10px;
+  }
+  
+  .badges {
+    font-weight: 100;
+    color: #5e5e5e;
+  }
+  
+  @media (max-width: 768px) {
+    .payment-logo-porto, .payment-logo-pagarme, .payment-logo-susep {
+      width: 60%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .payment-logo {
+      width: 8%;
+    }
+  }
