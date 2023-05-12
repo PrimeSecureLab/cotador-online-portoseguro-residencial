@@ -35,12 +35,12 @@ router.post("/", async (req, res)=>{
     if (data.senha.length < 8){ fatalError = { code: 4 }; }
     if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
 
-    let user = await Usuarios.findOne({'usuario.email': data.login.trim()});
-    if (!user){ user = await Usuarios.findOne({'usuario.cpf': data.login.trim().replace(/[^0-9]+/g, "")}); }
+    let user = await Usuarios.findOne({'email': data.login.trim()});
+    if (!user){ user = await Usuarios.findOne({'pessoaFisica.cpf': data.login.trim().replace(/[^0-9]+/g, "")}); }
     if (!user){ fatalError = { code: 5 }; }
     if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
 
-    if (data.senha != user.usuario.senha){ fatalError = { code: 6 }; }
+    if (CryptoJS.MD5(data.senha).toString() != user.senha){ fatalError = { code: 6 }; }
     if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
 
     req.session.user_id = user.id;

@@ -81,7 +81,7 @@ async function porto_orcamento_habitual(formData, token){
         let itens = data.item;
         let itemList = {};
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-        console.log(itemList);
+        //console.log(itemList);
 
         let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual/orcamentos";
         let json = {
@@ -151,7 +151,7 @@ async function porto_orcamento_habitual_premium(formData, token){
         let itens = data.item;
         let itemList = {};
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-        console.log(itemList);
+        //console.log(itemList);
 
         let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual-premium/orcamentos";
         let json = {
@@ -221,7 +221,7 @@ async function porto_orcamento_veraneio(formData, token){
         let itens = data.item;
         let itemList = {};
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-        console.log(itemList);
+        //console.log(itemList);
 
         let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/veraneio/orcamentos";
         let json = {

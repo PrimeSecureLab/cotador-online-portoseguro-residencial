@@ -98,7 +98,7 @@
                 <div class="form-row">
                   <div class="form-holder">
                     <label for="senha">Senha*</label>
-                    <input type="password" placeholder="senha" class="form-control" id="senha" name="senha" required />
+                    <input type="password" placeholder="Insira uma senha" class="form-control" id="senha" name="senha" required />
                   </div>
                   <div class="form-holder">
                     <label for="confirm_senha">Confirme sua Senha*</label>
@@ -115,8 +115,9 @@
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
-                      <label for="pep">Qual Seu Sexo?</label>
-                      <select class="form-control" id="pep">
+                      <label for="sexo">Qual Seu Sexo?</label>
+                      <select class="form-control" id="sexo">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Masculino</option>
                         <option value="2">Feminino</option>
                       </select>
@@ -124,8 +125,9 @@
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
-                      <label for="pep">Estado Civil</label>
-                      <select class="form-control" id="pep">
+                      <label for="estado_civil">Estado Civil</label>
+                      <select class="form-control" id="estado_civil">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Solteiro(a)</option>
                         <option value="2">Casado(a)</option>
                         <option value="3">Viúvo(a)</option>
@@ -134,8 +136,9 @@
                       </select>
                     </div>
                     <div class="form-holder">
-                      <label for="pep">Faixa de Renda</label>
-                      <select class="form-control" id="pep">
+                      <label for="faixa_renda">Faixa de Renda:</label>
+                      <select class="form-control" id="faixa_renda">
+                        <option value="">Escolha uma Opção</option>
                         <option value="1">Sem renda</option>
                         <option value="2">Até 2.500,00</option>
                         <option value="3">De 2.501,00 a 5.000,00</option>
@@ -152,8 +155,9 @@
                 </div>
                 <div class="form-row">
                   <div class="form-holder">
-                    <label for="pep">Tipo de Documento</label>
-                    <select class="form-control" id="pep">
+                    <label for="tipo_documento">Tipo de Documento</label>
+                    <select class="form-control" id="tipo_documento">
+                      <option value="">Escolha uma Opção</option>
                       <option value="1">RG</option>
                       <option value="2">CNH</option>
                     </select>
@@ -179,15 +183,16 @@
                 <!--Dados da Pessoa Politicamente exposta-->
                 <div class="form-row">
                   <div class="form-holder">
-                    <label for="pep">Você é Uma Pessoa politicamente exposta?</label>
-                    <select class="form-control" id="pep_status">
-                      <option value="nao">Não</option>
-                      <option value="sim">Sim</option>
+                    <label for="politicamente_exposta">Você é Uma Pessoa politicamente exposta?</label>
+                    <select class="form-control" id="politicamente_exposta">
+                      <option value="">Escolha uma Opção</option>
+                      <option value="2">Não</option>
+                      <option value="1">Sim</option>
                     </select>
                   </div>
                 </div>
 
-                <div class="campos-pep d-none">
+                <div class="campos-politicamente_exposta d-none">
                   <div>
                     <h2 class="text-center mb-5">Dados Da Pessoa Politicamente Exposta:</h2>
                   </div>
@@ -205,16 +210,19 @@
                   </div>
                   <div class="form-row">
                     <div class="form-holder">
-                      <label for="pep">Grau de Parentesco</label>
-                      <select class="form-control" id="grau_parentesco_pessoa_exposta">
-                        <option value="1">Pai ou Mãe</option>
-                        <option value="2">Cônjuge</option>
-                        <option value="3">Companheiro(a)</option>
-                        <option value="4">Filho(a)</option>
-                        <option value="5">Enteado(a)</option>
-                        <option value="6">Eu Mesmo(a)</option>
-                        <option value="11">Outros</option>
-                      </select>
+                      <label for="grau_parentesco_pessoa_exposta">Grau de Parentesco</label>
+                      <div class="custom-select-wrapper">
+                        <select class="form-control custom-select" id="grau_parentesco_pessoa_exposta">
+                          <option value="">Escolha uma Opção</option>
+                          <option value="1">Pai ou Mãe</option>
+                          <option value="2">Cônjuge</option>
+                          <option value="3">Companheiro(a)</option>
+                          <option value="4">Filho(a)</option>
+                          <option value="5">Enteado(a)</option>
+                          <option value="6">Eu Mesmo(a)</option>
+                          <option value="11">Outros</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -374,22 +382,22 @@
   <script src="./src/js/jquery.mask.min.js"></script>
   <script src="./src/js/controladorCadastro.js"></script>
   <style>
-    label#email-error {
+    /*label#email-error {
       display: none !important;
     }
 
     ._error {
       color: red;
-    }
+    }*/
   </style>
 
   <script>
     $(document).ready(function () {
-      $('#pep_status').on('change', function () {
+      $('#politicamente_exposta').on('change', function () {
         if ($(this).val() === 'sim') {
-          $('.campos-pep').removeClass('d-none');
+          $('.campos-politicamente_exposta').removeClass('d-none');
         } else {
-          $('.campos-pep').addClass('d-none');
+          $('.campos-politicamente_exposta').addClass('d-none');
         }
       });
     });
