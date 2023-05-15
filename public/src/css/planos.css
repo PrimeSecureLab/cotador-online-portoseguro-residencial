@@ -1,3 +1,4 @@
+
 .nav {
   background-image: linear-gradient(30deg, #323d93 10%, #03a8db 60%)
 }
@@ -15,6 +16,7 @@ section.pricing {
   border-radius: 1rem;
   transition: all 0.2s;
   box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+  margin: 15px;
 }
 
 .pricing hr {
@@ -99,7 +101,6 @@ section.pricing {
   transition: all 0.2s;
   /* background-color: #4ed433; */
 }
-
 .bandeiras {
   margin-bottom: 20px;
 }
@@ -112,4 +113,71 @@ section.pricing {
 
 .cardspprecos {
   margin-bottom: 10px;
+}
+
+.titulo {
+  margin: 0;
+  padding-top: 15px;
+  background-color: #ffffff;
+}
+.titulo h1{
+  margin: 0;
+}
+
+.move {
+  color: #03a8db;
+}
+
+@media (min-width: 992px) {
+  .move {
+    display: none;
+  }
+}
+
+body, html {
+  background: #ffffff;
+  overflow-x: hidden;
+
+}
+
+.pre-footer {
+  margin-top: 80px;
+}
+
+.payment-logo-porto {
+  width: 100%;
+}
+
+.payment-logo-pagarme {
+  width: 80%;
+}
+
+.payment-logo-susep {
+  width: 100%;
+}
+
+.bandeiras {
+  margin-bottom: 20px;
+}
+
+.payment-logo {
+  width: 15%;
+  margin: 0 10px;
+}
+
+.badges {
+  font-weight: 100;
+  color: #5e5e5e;
+}
+
+@media (max-width: 768px) {
+  .payment-logo-porto, .payment-logo-pagarme, .payment-logo-susep {
+    width: 60%;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-logo {
+    width: 8%;
+  }
 }
