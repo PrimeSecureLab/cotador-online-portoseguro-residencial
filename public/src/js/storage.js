@@ -1,5 +1,5 @@
 function saveFormData(formdata) {
-    localStorage.setItem('formdata', JSON.stringify(formdata));
+    //localStorage.setItem('formdata', JSON.stringify(formdata));
 }
 
 function getFormData() {

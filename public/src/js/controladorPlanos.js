@@ -207,6 +207,7 @@ $(document).ready(function() {
 
     var currentData = {};
     var planos = [];
+    var encryptedData = null;
 
     async function api_call(data) {
         $("#loading-screen").show();
@@ -223,6 +224,7 @@ $(document).ready(function() {
                 console.log(res);
             } else if (response.status === 400) {
                 const errorData = await response.json();
+                if (errorData.redirect){ window.location.href = errorData.redirect; }
                 console.error("Erro:", errorData);
             } else {
                 console.error("Ocorreu um erro inesperado.");
@@ -236,28 +238,11 @@ $(document).ready(function() {
     }
 
     function validacaoInicial() {
-        let localData = localStorage.getItem("formData");
-        if (!localData) { window.location.href = "/"; return; }
-        
-        let bytes = CryptoJS.AES.decrypt(localData, "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a");
-        if (!bytes){ window.location.href = "/"; return; }
-  
-        let decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        if (!decrypted){ window.location.href = "/"; return; }
-  
-        let data = decrypted;
-        if (!data.segurado){ window.location.href = "/"; return; }
-  
-        let dataCadastro = new Date(data.segurado.dataCadastro);
-        if (!dataCadastro){ window.location.href = "/"; return; }
-  
-        let hoje = new Date();
-        let dataDif = Math.abs(hoje - dataCadastro);
-        dataDif = Math.ceil(dataDif / (1000 * 60 * 60 * 24));
-        if (dataDif > 5){ localStorage.removeItem("formData"); window.location.href = "/"; return; }
-  
-        currentData = data;
-        api_call(data);
+        encryptedData = localStorage.getItem("formData");
+        if (!encryptedData) { window.location.href = "/"; return; }
+        encryptedData = JSON.parse(encryptedData);
+        console.log(encryptedData);
+        api_call(encryptedData);
     }
 
     function atualizarCards(res){
@@ -283,12 +268,12 @@ $(document).ready(function() {
         if (planos.length < 3){ return; }
         if (planos[index].error){ return; }
         if (!planos[index].data){ return; }
-        currentData.orcamento = planos[index].data;
-        console.log(currentData);
-        localStorage.setItem("finalData", JSON.stringify(currentData));
+        encryptedData.orcamento = planos[index].data;
+        localStorage.setItem("finalData", JSON.stringify(encryptedData));
         window.location.href = "./login";
         return;
     }
+
     function atualizarInputs(data){
         //console.log(data);
         let lowerCaseData = {};
@@ -308,6 +293,7 @@ $(document).ready(function() {
             $(label_id).css("left", "calc(100% * (" + $(input_id).val() + " - " + $(input_id).attr("min") + ") / (" + $(input_id).attr("max") + " - " + $(input_id).attr("min") + "))");
         }
     }
+
     function salvarItens(){  
         let inputList = $("input");
         let item = {};
@@ -318,16 +304,16 @@ $(document).ready(function() {
             key = relacaoItemId[key];
             item[key] = $(`input#${inputList[i].id}`).val();
         }
-        currentData.item = item;
-        api_call(currentData);
+        encryptedData.itemData = item;
+        api_call(encryptedData);
     }
 
     $(".modal-dialog").on("click", function(e) { e.stopPropagation(); });
     $("div#modal-editar-plano1").on("click", function() { salvarItens(); })
     $("button#btn-save").on("click", function() { salvarItens(); });
     $("button.btn-close").on("click", function() { salvarItens(); });
-    $("button#btn-cancel").on("click", function() { atualizarInputs(currentData.item); });
-    $("button.btn-editar-plano").on("click", function() { atualizarInputs(currentData.item); });
+    $("button#btn-cancel").on("click", function() { atualizarInputs(encryptedData.itemData); });
+    $("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
 
     $("#btn-plano-1").on("click", function(e) { e.preventDefault(); salvarOrcamento(0); });
     $("#btn-plano-2").on("click", function(e) { e.preventDefault(); salvarOrcamento(1); });

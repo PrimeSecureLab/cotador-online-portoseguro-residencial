@@ -1,10 +1,27 @@
 
 $("#loading-screen").hide();
 
-var finalData = localStorage.getItem("finalData");
+var localData = localStorage.getItem("finalData");
 var loading = false;
 
-if (finalData){ finalData = JSON.parse(finalData); }
+if (localData){ localData = JSON.parse(localData); }
+if (!localData.itemData){ window.location.href = './planos'; loading = true; }
+if (!localData.orcamento && !loading){ window.location.href = './planos'; loading = true; }
+
+var orcamento = localData.orcamento;
+if (!orcamento.numeroOrcamento && !loading){ window.location.href = './planos'; loading = true; }
+if (!orcamento.criadoEm && !loading){ window.location.href = './planos'; loading = true; }
+
+if (!loading){
+    let dataOrcamento = new Date(orcamento.criadoEm.toString());
+    let hoje = new Date();
+    let outdated = Math.abs(hoje - dataOrcamento);
+    outdated = Math.ceil(outdated / (1000 * 60 * 60 * 24));
+    if (outdated > 10){ localStorage.removeItem("finalData"); window.location.href = './planos'; loading = true; }
+}
+
+//console.log(localData);
+
 $(document).ready(function () {
     $('#numero-cartao').mask('0000 0000 0000 0000');
 
@@ -26,13 +43,12 @@ $(document).ready(function () {
     $("input#ano").on("input", ()=>{ 
         if ($('label#_ano-error').length){ $('label#_ano-error').html(""); } 
     });
-
-    let orcamento = finalData.orcamento;
+    
     $("input#protocolo").val(orcamento.numeroOrcamento);
-    console.log(orcamento);
-    if (finalData.orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
-    if (finalData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
-    if (finalData.orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
+
+    if (localData.orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
+    if (localData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
+    if (localData.orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
 
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
@@ -47,9 +63,6 @@ $(document).ready(function () {
                 $("h2.price > span.value").html(`R$${valor[0]},<span class="small-zero">${valor[1]}</span>`);
                 $("span.installment").html(`${parcela.quantidadeParcelas}x&nbsp;`)
             }
-            /*if (parcela.quantidadeParcelas == 12){
-                
-            }*/
         }
     });
     $("#btn-enviar").on("click", async function(){
@@ -110,7 +123,7 @@ $(document).ready(function () {
             });
             return;
         }
-        finalData.pagamento = {
+        localData.pagamento = {
             parcelas: 1,
             nomeImpresso: $("input#nome_impresso").val(),
             numeroCpf: $("input#cpf").val(),
@@ -124,10 +137,11 @@ $(document).ready(function () {
             const response = await fetch( "/pagamento", { 
                 method: "POST", 
                 headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(finalData)
+                body: JSON.stringify(localData)
             });
             if (response.ok) {
                 let data = await response.json();
+                localStorage.removeItem("finalData");
                 $("#loading-screen").hide();
                 window.location.href = "./obrigado";
             } else if (response.status === 400) {
