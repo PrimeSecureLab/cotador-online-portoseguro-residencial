@@ -13,6 +13,18 @@ dotenv.config();
 router.get("/", async (req, res) => { res.sendFile("cotacao.html", { root: "public" }); });
 
 router.post("/enviar-dados", async (req, res) => {
+    var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
+        'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
+        'valorCoberturaPagamentoCondominio', 'valorCoberturaMorteAcidental', 'valorCoberturaTremorTerraTerremoto', 'valorCoberturaAlagamento', 'flagContratarValorDeNovo', 'flagLMIDiscriminado',
+        'valorCoberturaEdificio', 'valorCoberturaConteudo', 'valorImpactoVeiculos', 'valorSubtracaoBicicleta', 'valorNegocioCasa', 'valorPequenasReformas', 'valorFuneralFamiliar', 
+        'valorDanosMorais', 'valorRCEmpregador', 'valorCoberturaHoleinOne', 'valorCoberturaDanosJardim', 'valorCoberturaObrasObjetosArte', 'valorCoberturaJoiasRelogios' ];
+    var _allItems = [];
+    allItems.map((item, index)=>{ _allItems[item.toLocaleLowerCase()] = item; });
+    
+    let items = {};
+    for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
+    
+    console.log(items);
     const susep = req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;
@@ -40,34 +52,9 @@ router.post("/enviar-dados", async (req, res) => {
     const cidade = req.body.cidade;
     const uf = req.body.uf;
 
-    //dados das coberturas (Terceiro Step)
-    const valorcoberturaincendio = req.body.valorcoberturaincendio; ///*
-    const valorcoberturasubstracaobens = req.body.valorcoberturasubstracaobens; //
-    const valorcoberturapagamentoaluguel = req.body.valorcoberturapagamentoaluguel; //
-    const valorcoberturarcfamiliar = req.body.valorcoberturarcfamiliar; //
-    const codigoclausulasportoseguroservicos = req.body.codigoclausulasportoseguroservicos; //* ?
-    const valorcoberturavendaval = req.body.valorcoberturavendaval; //
-    const valorcoberturadesmoronamento = req.body.valorcoberturadesmoronamento; //
-    const valorcoberturavazamentostanquestubulacoes = req.body.valorcoberturavazamentostanquestubulacoes;
-    const valorcoberturaquebravidros = req.body.valorcoberturaquebravidros;
-    const valorcoberturapagamentocondominio = req.body.valorcoberturapagamentocondominio;
-    const valorcoberturamorteacidental = req.body.valorcoberturamorteacidental;
-    const valorcoberturatremorterraterremoto = req.body.valorcoberturatremorterraterremoto;
-    const valorcoberturaalagamento = req.body.valorcoberturaalagamento; //
-    const flagcontratarvalordenovo = req.body.flagcontratarvalordenovo;
-    const flaglmidiscriminado = req.body.flaglmidiscriminado; //*
-    const valorcoberturaedificio = req.body.valorcoberturaedificio;
-    const valorcoberturaconteudo = req.body.valorcoberturaconteudo;
-    const valorimpactoveiculos = req.body.valorimpactoveiculos;
-    const valorsubtracaobicicleta = req.body.valorsubtracaobicicleta;//
-    const valornegociocasa = req.body.valornegociocasa;
-    const valorpequenasreformas = req.body.valorpequenasreformas;//
-    const valorfuneralfamiliar = req.body.valorfuneralfamiliar;
-    const valordanosmorais = req.body.valordanosmorais;
-    const valorrcempregador = req.body.valorrcempregador;
-
     // Criar o objeto com os dados para enviar para a Porto Seguro
-    const data = {
+    var data = {
+        criadoEm: new Date(),
         susep: susep,
         codigo: codigooperacao,
         flagImprimirCodigoOperacaoOrcamento: false,
@@ -94,57 +81,12 @@ router.post("/enviar-dados", async (req, res) => {
                 uf: uf,
                 complemento: null,
             },
-        },
-        item: {
-            valorCoberturaIncendio: valorcoberturaincendio,
-            valorCoberturaSubstracaoBens: valorcoberturasubstracaobens,
-            valorCoberturaPagamentoAluguel: valorcoberturapagamentoaluguel,
-            valorCoberturaRCFamiliar: valorcoberturarcfamiliar,
-            codigoClausulasPortoSeguroServicos: codigoclausulasportoseguroservicos,
-            valorCoberturaVendaval: valorcoberturavendaval,
-            valorCoberturaDesmoronamento: valorcoberturadesmoronamento,
-            valorCoberturaVazamentosTanquesTubulacoes: valorcoberturavazamentostanquestubulacoes,
-            valorCoberturaQuebraVidros: valorcoberturaquebravidros,
-            valorCoberturaPagamentoCondominio: valorcoberturapagamentocondominio,
-            valorCoberturaMorteAcidental: valorcoberturamorteacidental,
-            valorCoberturaTremorTerraTerremoto: valorcoberturatremorterraterremoto,
-            valorCoberturaAlagamento: valorcoberturaalagamento,
-            flagContratarValorDeNovo: flagcontratarvalordenovo,
-            flagLMIDiscriminado: flaglmidiscriminado,
-            valorCoberturaEdificio: valorcoberturaedificio,
-            valorCoberturaConteudo: valorcoberturaconteudo,
-            valorImpactoVeiculos: valorimpactoveiculos,
-            valorSubtracaoBicicleta: valorsubtracaobicicleta,
-            valorNegocioCasa: valornegociocasa,
-            valorPequenasReformas: valorpequenasreformas,
-            valorFuneralFamiliar: valorfuneralfamiliar,
-            valorDanosMorais: valordanosmorais,
-            valorRCEmpregador: valorrcempregador,
-        },
+        }
     };
 
     var arrayErros = [];
-
     try {
-        // Gerar o token JWT
-        //const token = jwt.sign(data, process.env.CRYPTO_TOKEN);
-        //const encodedToken = CryptoJS.AES.encrypt(
-        //token,
-        //process.env.CRYPTO_TOKEN
-        //).toString();
-
-        //const url = `http://127.0.0.1:3000/planos.html?token=${encodedToken}`;
-
-        // Limpa a array de erros a cada novo submit
         arrayErros = [];
-
-        // Adicionar console.log para verificar o valor do CPF recebido no lado do servidor
-        //console.log("Valor do CPF no lado do servidor:", cpf);
-        //console.log("CPF recebido:", req.body.cpf);
-
-        // Verificar se os dados são válidos antes de inserir no banco de dados e enviar para a API
-        //console.log("Valor do CPF no lado do servidor:", cpf); // Adicione essa linha
-        
         //Etapa 1:
         if (!validation.cpfPattern.test(cpf)){ 
             arrayErros.push({error: "CPF inválido.", field: "cpf", step: "1"}); 
@@ -199,14 +141,12 @@ router.post("/enviar-dados", async (req, res) => {
         try { lead = await lead.save(); data.id = lead.id; } catch (err) { console.log(err); }
         
         // Encripta dados a serem enviados
-        var encrypted_form = CryptoJS.AES.encrypt( JSON.stringify(data), process.env.CRYPTO_TOKEN ).toString();
+        var encryptedForm = CryptoJS.AES.encrypt( JSON.stringify(data), process.env.CRYPTO_TOKEN ).toString();
 
-        res.json({ form_data: encrypted_form });    
+        res.json({ formData: encryptedForm, itemData: items });    
     } catch (error) {
         console.error(error);
-        return res
-        .status(500)
-        .send("Ocorreu um erro ao enviar os dados para a Porto Seguro.");
+        return res.status(500).send("Ocorreu um erro ao enviar os dados para a Porto Seguro.");
     }
 });
 

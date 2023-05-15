@@ -1,0 +1,13 @@
+{
+    "append": true,
+    "watch": true,
+    "script": "/home/ubuntu/www/index.js",
+    "sourceDir": "/home/ubuntu/meu-projeto",
+    "outFile": "/home/ubuntu/www/logs/output.log",
+    "errFile": "/home/ubuntu/www/logs/error.log",
+    "pidFile": "/home/ubuntu/wwww/forever.pid",
+    "logFile": "/home/ubuntu/www/logs/forever.log",
+    "minUptime": 2000,
+    "spinSleepTime": 1000,
+    "max": 10
+}

@@ -7,25 +7,6 @@ document.getElementById("form").addEventListener("submit", async (event) => {
     // Insere as inputs e selects no objeto data
     inputArray.forEach((input)=>{ data[input.id] = input.value; });
     selectArray.forEach((select)=>{ data[select.id] = select.value; });
-
-    /*const cpfField = document.getElementById("cpf");
-    let cpf = cpfField.value;
-
-    cpf = cpf.replace(/\D/g, "");
-
-    console.log("Valor do CPF antes da verificação:", cpf); // Adicione essa linha
-
-    if (!validaCPF(cpf)) {
-        cpfField.classList.add("is-invalid");
-        return;
-    }
-
-    cpf = cpf.replace(/\D/g, "").substring(0, 11);
-
-    cpfField.value = cpf;
-
-    // Adicionar console.log para verificar o objeto data
-    console.log("Dados enviados ao servidor:", JSON.stringify(data));*/
   
     try {
         const response = await fetch("/enviar-dados", {
@@ -34,9 +15,8 @@ document.getElementById("form").addEventListener("submit", async (event) => {
             body: JSON.stringify(data),
         });
         if (response.ok) {
-            const { form_data } = await response.json(); // Recebe os dados da resposta
-            //localStorage.setItem("token", token); // Adiciona o token ao localStorage
-            localStorage.setItem("formData", form_data); // Adiciona o form encriptado ao localStorage
+            const formData = await response.json(); // Recebe os dados da resposta
+            localStorage.setItem("formData", JSON.stringify(formData)); // Adiciona o form encriptado ao localStorage
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {
             const errorData = await response.json();

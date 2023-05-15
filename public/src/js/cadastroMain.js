@@ -4,13 +4,13 @@ $(function () {
       senha: { required: true },
       confirm_senha: { equalTo: "#senha" },
       email: { required: true },
-      confirm_email: { equalTo: "#email" },
+      confirm_email: { equalTo: "#email" }
     },
     messages: {
       nome: { required: "Preencha o Campo Nome" },
       email: { 
         required: "Campo Obrigatório",
-        email: "Email inválido" 
+        email: "Email inválido"
       },
       confirm_email: {
         required: "Campo Obrigatório",
@@ -26,8 +26,7 @@ $(function () {
       nome_impresso: { required: "Campo Obrigatório" },
       data_expedicao: { required: "Campo Obrigatório" },
       numero_documento: { required: "Campo Obrigatório" },
-      orgao_expedidor: { required: "Campo Obrigatório" },
-      pep1: { required: "Campo Obrigatório" },
+      orgao_expedidor: { required: "Campo Obrigatório" }
     },
     errorPlacement: function (error, element) {
       error.insertAfter(element);

@@ -12,15 +12,12 @@ const validation = require('../configs/validation');
 dotenv.config();
 
 router.get("/", async (req, res) => {
-    //console.log(req.session);
     if (!req.session){ return res.redirect('/cadastro'); }
     if (!req.session.user_id){ return res.redirect('/cadastro'); }
     if (req.session.user_id){ 
         let user = await Usuarios.findOne({_id: req.session.user_id})
         if (!user){ req.session.destroy((e) => { return res.redirect('/cadastro'); }); }
     }
-    let token = await authToken();
-    //console.log(token.data);
     res.sendFile("pagamento.html", { root: "public" });
 });
 
@@ -29,19 +26,24 @@ router.post("/", async (req, res) => {
     if (!session.user_id){ return res.status(400).json({fatal: 1}); }
     
     let user = await Usuarios.findOne({_id: session.user_id});
-    if (!user){ req.session.destroy((e) => { return res.status(400).json({fatal: 2}); }); }
+    if (!user){ req.session.destroy((e) => { return res.status(400).json({redirect: '/login'}); }); }
 
     let data = req.body;
     let errorList = [];
 
     if (!data){ return res.status(400).json({fatal: 3}); }
+    if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.pagamento){ return res.status(400).json({fatal: 4}); }
+
+    let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
+    if (!bytes){ return res.status(400).json({redirect: '/'}); }
     
+    let formData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    if (!formData){ return res.status(400).json({redirect: '/'}); }
+    formData.item = data.itemData;
     
     data.pagamento.codigoBandeira = 0;
-    data.segurado.email = user.usuario.email;
-    
-    console.log(data);
+    formData.segurado.email = user.email;
 
     if (data.pagamento.nomeImpresso.length < 3){ 
         errorList.push({message: "Nome inválido", id: "nome_impresso"}); 
@@ -89,36 +91,61 @@ router.post("/", async (req, res) => {
     if (!validation.masterCardPattern.test(data.pagamento.numeroCartao)){ data.pagamento.codigoBandeira = 2; }
     if (!validation.visaCardPattern.test(data.pagamento.numeroCartao)){ data.pagamento.codigoBandeira = 1; }
 
-    if (data.segurado.numeroTelefone){ data.segurado.numeroTelefone = data.segurado.numeroTelefone.replace(/\D/g, ''); }
+    if (formData.segurado.numeroTelefone){ formData.segurado.numeroTelefone = formData.segurado.numeroTelefone.replace(/\D/g, ''); }
 
+    let pessoaFisica = user.pessoaFisica;
+    
+    let dataNascimento = pessoaFisica.dataNascimento.toString();
+    dataNascimento = dataNascimento.split('-');
+    dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
+    
+    let documento = pessoaFisica.documento;
+
+    let dataExpedicao = documento.dataExpedicao.toString();
+    dataExpedicao = dataExpedicao.split('-');
+    dataExpedicao = `${dataExpedicao[2]}-${dataExpedicao[1]}-${dataExpedicao[0]}`;
+    
     let proposta = {
         "numeroOrcamento": data.orcamento.numeroOrcamento,
-        "codigoPessoaPoliticamenteExposta": 2, // 1 - Sim, 2 - Não
+        "codigoPessoaPoliticamenteExposta": user.pessoaFisica.pessoaPoliticamenteExposta, // 1 - Sim, 2 - Não
         "segurado": {
-          "enderecoCobranca": {
-            "cep": data.segurado.endereco.cep,
-            "tipoLogradouro": data.segurado.endereco.tipo,
-            "logradouro": data.segurado.endereco.logradouro,
-            "numero": data.segurado.endereco.numero,
-            "bairro": data.segurado.endereco.bairro,
-            "complemento": data.segurado.endereco.complemento,
-            "cidade": data.segurado.endereco.cidade,
-            "uf": data.segurado.endereco.uf
-          },
-          "enderecoCorrespondencia": {
-            "cep": data.segurado.endereco.cep,
-            "tipoLogradouro": data.segurado.endereco.tipo,
-            "logradouro": data.segurado.endereco.logradouro,
-            "numero": data.segurado.endereco.numero,
-            "bairro": data.segurado.endereco.bairro,
-            "complemento": data.segurado.endereco.complemento,
-            "cidade": data.segurado.endereco.cidade,
-            "uf": data.segurado.endereco.uf
-          },
-          "contato": {
-            "email": data.segurado.email,
-            "numeroTelefoneResidencial": data.segurado.numeroTelefone, //
-          }
+            "enderecoCobranca": {
+                "cep": formData.segurado.endereco.cep,
+                "tipoLogradouro": formData.segurado.endereco.tipo,
+                "logradouro": formData.segurado.endereco.logradouro,
+                "numero": formData.segurado.endereco.numero,
+                "bairro": formData.segurado.endereco.bairro,
+                "complemento": formData.segurado.endereco.complemento,
+                "cidade": formData.segurado.endereco.cidade,
+                "uf": formData.segurado.endereco.uf
+            },
+            "enderecoCorrespondencia": {
+                "cep": formData.segurado.endereco.cep,
+                "tipoLogradouro": formData.segurado.endereco.tipo,
+                "logradouro": formData.segurado.endereco.logradouro,
+                "numero": formData.segurado.endereco.numero,
+                "bairro": formData.segurado.endereco.bairro,
+                "complemento": formData.segurado.endereco.complemento,
+                "cidade": formData.segurado.endereco.cidade,
+                "uf": formData.segurado.endereco.uf
+            },
+            "contato": {
+                "email": formData.segurado.email,
+                "numeroTelefoneResidencial": formData.segurado.numeroTelefone, //
+            },
+            "pessoaFisica": {
+                "dataNascimento": dataNascimento,
+                "codigoSexo": pessoaFisica.sexo,
+                "codigoEstadoCivil": pessoaFisica.estadoCivil,
+                "codigoPaisResidencia": 55,
+                "codigoFaixaRenda": pessoaFisica.faixaRenda,
+                "documentoIdentificacao": {
+                    "tipoDocumento": documento.tipo,
+                    "numeroDocumento": documento.numero,
+                    "orgaoExpedidor": documento.orgaoExpedidor,
+                    "dataExpedicao": documento.dataExpedicao
+                }
+            }
         },
         "pagamento": {
           "formaPagamento": "CARTAO_DE_CREDITO_62", //
@@ -131,10 +158,18 @@ router.post("/", async (req, res) => {
           }
         },
         "contatoInspecao": {
-          "numeroTelefone": data.segurado.numeroTelefone, //
-          "contato": data.segurado.nome
+          "numeroTelefone": formData.segurado.numeroTelefone, //
+          "contato": formData.segurado.nome
         }
-    }
+    };
+
+    let politicamenteExposta = {
+        "cpf": pessoaFisica.politicamenteExposta.cpf,
+        "nome": pessoaFisica.politicamenteExposta.nome,
+        "codigoGrauRelacionamento": pessoaFisica.politicamenteExposta.grauRelacionamento
+    };
+
+    if (pessoaFisica.pessoaPoliticamenteExposta == 3){ proposta.pessoaFisica.pessoaPoliticamenteExposta = politicamenteExposta; }
     console.log(proposta);
 
     let token = await authToken();
@@ -150,9 +185,9 @@ router.post("/", async (req, res) => {
         },
         usuario: {
             id: user.id,
-            nome: user.usuario.nome,
-            cpf: user.usuario.cpf,
-            email: user.usuario.email
+            nome: user.pessoaFisica.nome,
+            cpf: user.pessoaFisica.cpf,
+            email: user.email
         },
         pagamento: {
             formaPagamento: "CARTAO_DE_CREDITO_62",
@@ -160,7 +195,8 @@ router.post("/", async (req, res) => {
             codigoBandeira: data.pagamento.codigoBandeira
         },
         orcamento: data.orcamento
-    }
+    };
+
     proposta = new Propostas(novaProposta);
     proposta = await proposta.save();
     console.log(result.data);
