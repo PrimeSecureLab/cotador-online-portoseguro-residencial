@@ -35,7 +35,7 @@ router.post("/", async (req, res)=>{
     if (form.email.length < 5 || !form.email.includes('@') || !form.email.includes('.')){
         errorList.push({message: 'Email inválido', id: 'email'});
     }else{
-        let user = await Usuarios.findOne({email: form.email.trim()});
+        let user = await Usuarios.findOne({ email: form.email.trim().toLowerCase() });
         if (user){ errorList.push({message: 'O email já esta em uso', id: 'email'}); }
     }
     if (form.senha.length < 8){
@@ -180,7 +180,7 @@ router.post("/", async (req, res)=>{
 
     let entry = {
         dataCadastro: new Date(),
-        email: form.email.trim(),
+        email: form.email.trim().toLowerCase(),
         senha: CryptoJS.MD5(form.senha).toString(),
         pessoaFisica: {
             nome: segurado.nome,

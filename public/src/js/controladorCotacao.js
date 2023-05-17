@@ -20,9 +20,7 @@ document.getElementById("form").addEventListener("submit", async (event) => {
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {
             const errorData = await response.json();
-            console.error("Erro no campo:", errorData.field);
-            console.error("Mensagem de erro:", errorData.error);
-
+            console.error("Erros:", errorData);
             //Loop por array com erros vindos da API
             errorData.map((erro, index)=>{ 
                 //erro = {error: mensagem de erro, field: id do campo com erro, step: etapa com erro}
