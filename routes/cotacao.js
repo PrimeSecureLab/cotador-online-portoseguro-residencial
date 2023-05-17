@@ -2,6 +2,7 @@ const express = require("express");
 const CryptoJS = require("crypto-js");
 const router = express.Router();
 const dotenv = require('dotenv');
+const axios = require("axios");
 
 const Leads = require("../collections/leads");
 const validation = require("../configs/validation");
@@ -24,7 +25,13 @@ router.post("/enviar-dados", async (req, res) => {
     let items = {};
     for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
     
-    console.log(items);
+    let dataLayer = items;
+    dataLayer.etapa = 'step-3';
+
+    let header = { headers: { "Content-Type": "application/json" } }
+    let request = await axios.post('http://localhost:3000/datalayer', dataLayer, header);
+
+    //console.log(items);
     const susep = req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;

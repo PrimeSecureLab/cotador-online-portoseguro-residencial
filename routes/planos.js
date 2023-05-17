@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     if (!user){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
-    if (!user.segurado.endereco){ return res.status(400).json({redirect: '/'})}
+    if (!user.segurado.endereco){ return res.status(400).json({redirect: '/'}); }
     
     
     if (/^\d{11}$/.test(user.segurado.cpf.replace(/[^0-9]+/g, ""))){
