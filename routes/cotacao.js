@@ -129,6 +129,10 @@ router.post("/enviar-dados", async (req, res) => {
         }
         if (!validation.ufPattern.test(uf.toUpperCase())) { 
             arrayErros.push({error: "UF inválido.", field: "uf", step: "2"}); 
+        }else{
+            if (!validation.listaUF.includes(uf.toUpperCase())){ 
+                arrayErros.push({error: "UF inválido.", field: "uf", step: "2"}); 
+            }
         }
         
         //Retorna campos com erro ao enviar formulário

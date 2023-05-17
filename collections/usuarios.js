@@ -36,6 +36,10 @@ const usuarioSchema = new mongoose.Schema({
         bairro: { type: String },
         cidade: { type: String },
         uf: { type: String }
+    },
+    recuperarSenha: {
+        token: { type: String },
+        criadoEm: { type: Date }
     }
 });
 

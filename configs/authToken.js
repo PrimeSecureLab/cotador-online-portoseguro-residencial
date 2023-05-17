@@ -15,7 +15,7 @@ const authToken = async ()=>{
             if (tokenDate && tokenAccess){
                 let now = new Date();
                 let difference = now.getTime() - tokenDate.getTime();
-                let timeThreshold = 45;
+                let timeThreshold = 55;
                 difference = difference / ( 1000 * 60 );
                 if (difference < timeThreshold){ 
                     if (tokenAccess){ return resolve(tokenAccess); } 

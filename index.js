@@ -13,6 +13,8 @@ const loginRoutes = require('./routes/login');
 const pagamentoRoutes = require('./routes/pagamento');
 const sairRoutes = require('./routes/sair');
 const obrigadoRoutes = require('./routes/obrigado');
+const recuperarSenhaRoutes = require('./routes/recuperar-senha');
+const dataLayerRoutes = require('./routes/datalayer');
 
 /// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
@@ -65,6 +67,8 @@ app.use('/cadastro', cadastroRoutes);
 app.use('/pagamento', pagamentoRoutes);
 app.use('/sair', sairRoutes);
 app.use('/obrigado', obrigadoRoutes);
+app.use('/recuperar-senha', recuperarSenhaRoutes);
+app.use('/datalayer', dataLayerRoutes);
 
 // Inicia o servidor
 const port = process.env.PORT || 3000;

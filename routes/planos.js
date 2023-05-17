@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
     
     let user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     user.item = data.itemData;
-    user.item.flagLMIDiscriminado = 1;
+    user.item.flagLMIDiscriminado = 0;
 
     if (!user){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado){ return res.status(400).json({redirect: '/'}); }
@@ -56,50 +56,21 @@ router.post('/', async (req, res) => {
 
     promise_array.map((response, index)=>{
         let tipo = ["habitual", "premium", "veraneio"];
-        if (response.status == 200){
-            response.data.tipo = tipo[index];
-            response.data.criadoEm = new Date();
-            response_array[index] = { error: false, status: response.status, data: response.data, redirect: redirect };
+        if (response){
+            if (response.status == 200){
+                response.data.tipo = tipo[index];
+                response.data.criadoEm = new Date();
+                response_array[index] = { error: false, status: response.status, data: response.data, redirect: redirect };
+            }else{
+                response_array[index] = { error: true, status: response.status, data: { tipo: tipo[index]}, redirect: false };
+            }
         }else{
-            response_array[index] = { error: true, status: response.status, data: { tipo: tipo[index]}, redirect: false };
+            response_array[index] = { error: true, status: 504, data: { tipo: tipo[index]}, redirect: false };
         }
     });
 
     res.status(200).json(response_array);
 });
-
-async function porto_api_call(data){
-    let response_array = [];
-    let token = await authToken();
-    let user = data;
-
-    if (!user){ user = {}; }
-    if (!user.segurado){ user.segurado = {}; }
-    if (!user.segurado.cpf){ user.segurado.cpf = ""; }
-    
-    let redirect = "./cadastro";
-    if (/^\d{11}$/.test(user.segurado.cpf.replace(/[^0-9]+/g, ""))){ 
-        user = await Usuarios.findOne({"usuario.cpf": user.segurado.cpf}); 
-        if (user){ redirect = "./login"; }
-    }
-
-    let promise_array = [];
-    promise_array[0] = await porto_orcamento_habitual(data, token);
-    promise_array[1] = await porto_orcamento_habitual_premium(data, token);
-    promise_array[2] = await porto_orcamento_veraneio(data, token);
-
-    promise_array.map((response, index)=>{
-        let tipo = ["habitual", "premium", "veraneio"];
-        if (response.status == 200){
-            response.data.tipo = tipo[index];
-            response.data.criadoEm = new Date();
-            response_array[index] = { error: false, status: response.status, data: response.data, redirect: redirect };
-        }else{
-            response_array[index] = { error: true, status: response.status, data: { tipo: tipo[index]}, redirect: false };
-        }
-    });
-    return response_array;
-}
 
 async function porto_orcamento_habitual(formData, token){
     return new Promise(async (resolve, reject)=>{
@@ -153,7 +124,7 @@ async function porto_orcamento_habitual(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post( url, json, header);
+        let request = await axios.post( url, json, header).catch((error)=>{ console.log(error); reject(error); });
         if (request.status == 200){ 
             let novoOrcamento = {
                 criadoEm: new Date(),
@@ -218,7 +189,8 @@ async function porto_orcamento_habitual_premium(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post(url, json, header);
+        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
+            
         if (request.status == 200){ 
             let novoOrcamento = {
                 criadoEm: new Date(),
@@ -282,7 +254,7 @@ async function porto_orcamento_veraneio(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
-        let request = await axios.post(url, json, header);
+        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
         if (request.status == 200){ 
             let novoOrcamento = {
                 criadoEm: new Date(),

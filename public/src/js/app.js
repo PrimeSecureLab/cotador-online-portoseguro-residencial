@@ -1,9 +1,10 @@
 $(document).ready(function() {
     // Ao clicar no botão "next-step", avança para a próxima etapa do formulário
-    $(".next-step").click(function() {
+    $(".next-step").click(async function() {
         var currentStep = $(this).closest(".form-step");
         var nextStep = currentStep.next(".form-step");
         if (nextStep.length > 0) {
+            console.log(currentStep[0].id);
             currentStep.removeClass("active").fadeOut(250, function() {
                 nextStep.addClass("active").fadeIn(250);
             });
