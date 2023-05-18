@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 var newLead = true;
 $(document).ready(function() {
     // Ao clicar no botão "next-step", avança para a próxima etapa do formulário
@@ -72,7 +70,6 @@ $(document).ready(function() {
     });
 });
 
->>>>>>> Stashed changes
 document.getElementById("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     var data = {};
