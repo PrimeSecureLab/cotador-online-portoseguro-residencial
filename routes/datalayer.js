@@ -6,7 +6,6 @@ const CryptoJS = require("crypto-js");
 const DataLayer = require('../collections/dataLayer');
 const Usuarios = require('../collections/usuarios');
 const PortoCoberturas = require('../configs/coberturas');
-const Usuarios = require('../collections/usuarios');
 
 dotenv.config();
 
@@ -124,7 +123,11 @@ router.post("/", async (req, res)=>{
         dados[etapa][key].push(value);
     }
 
-    if (!entry.listaInteracoes){ entry.listaInteracoes = [new Date()]; }else{ entry.listaInteracoes.push(new Date()); }
+    if (!entry.listaInteracoes){ 
+        entry.listaInteracoes = [{etapa: etapa.replace(/[^0-9]+/g, ''), data: new Date()}]; 
+    }else{ 
+        entry.listaInteracoes.push({etapa: etapa.replace(/[^0-9]+/g, ''), data: new Date()}); 
+    }
     entry.ultimaInteracao = new Date();
 
     console.log(dados)

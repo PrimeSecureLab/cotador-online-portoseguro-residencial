@@ -200,7 +200,7 @@ router.post("/", async (req, res) => {
     proposta = new Propostas(novaProposta);
     proposta = await proposta.save();
     //console.log(result.data);
-    return res.status(200).json({mesage: "", proposta: result.data});
+    return res.status(200).json({proposta: result.data});
 });
 
 module.exports = router;

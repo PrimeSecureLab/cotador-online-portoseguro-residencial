@@ -125,15 +125,17 @@ async function porto_orcamento_habitual(formData, token){
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let request = await axios.post( url, json, header).catch((error)=>{ console.log(error); reject(error); });
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "habitual"
-            };
-            let orcamento = new Orcamentos(novoOrcamento);
-            orcamento = await orcamento.save();
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "habitual"
+                };
+                let orcamento = new Orcamentos(novoOrcamento);
+                orcamento = await orcamento.save();
+            }
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
@@ -190,17 +192,20 @@ async function porto_orcamento_habitual_premium(formData, token){
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
-            
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "premium"
-            };
-            let orcamento = new Orcamentos(novoOrcamento);
-            orcamento = await orcamento.save();
+        
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "premium"
+                };
+                let orcamento = new Orcamentos(novoOrcamento);
+                orcamento = await orcamento.save();
+            }
         }
+        
         setTimeout(() => { resolve( request ); }, 200);
     });
 }
@@ -255,16 +260,19 @@ async function porto_orcamento_veraneio(formData, token){
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "veraneio"
-            };
-            let orcamento = new Orcamentos(novoOrcamento)
-            orcamento = await orcamento.save();
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "veraneio"
+                };
+                let orcamento = new Orcamentos(novoOrcamento)
+                orcamento = await orcamento.save();
+            }
         }
+        
         setTimeout(() => { resolve( request ); }, 200);
     });
 }
