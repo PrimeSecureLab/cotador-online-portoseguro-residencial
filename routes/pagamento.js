@@ -170,7 +170,7 @@ router.post("/", async (req, res) => {
     };
 
     if (pessoaFisica.pessoaPoliticamenteExposta == 3){ proposta.pessoaFisica.pessoaPoliticamenteExposta = politicamenteExposta; }
-    console.log(proposta);
+    //console.log(proposta);
 
     let token = await authToken();
     let request_url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual/propostas";
@@ -199,8 +199,8 @@ router.post("/", async (req, res) => {
 
     proposta = new Propostas(novaProposta);
     proposta = await proposta.save();
-    console.log(result.data);
-    return res.status(200).json({mesage: "Ok"});
+    //console.log(result.data);
+    return res.status(200).json({mesage: "", proposta: result.data});
 });
 
 module.exports = router;

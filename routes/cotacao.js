@@ -24,14 +24,13 @@ router.post("/enviar-dados", async (req, res) => {
     
     let items = {};
     for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
+<<<<<<< Updated upstream
     
-    let dataLayer = items;
-    dataLayer.etapa = 'step-3';
-
-    let header = { headers: { "Content-Type": "application/json" } }
-    let request = await axios.post('http://localhost:3000/datalayer', dataLayer, header);
+    console.log(items);
+=======
 
     //console.log(items);
+>>>>>>> Stashed changes
     const susep = req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;

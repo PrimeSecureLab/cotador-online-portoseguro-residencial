@@ -1,3 +1,6 @@
+<<<<<<< Updated upstream
+=======
+var newLead = true;
 $(document).ready(function() {
     // Ao clicar no botão "next-step", avança para a próxima etapa do formulário
     $(".next-step").click(async function() {
@@ -10,15 +13,11 @@ $(document).ready(function() {
             let inputArray = currentStep[0].querySelectorAll('input');
             let selectArray = currentStep[0].querySelectorAll('select');
 
-            inputArray.forEach((input)=>{ 
-                if (input.id == 'codigocanal'){ return; }
-                if (input.id == 'susep'){ return; }
-                if (input.id == 'flagimprimircodigooperacaoorcamento'){ return; }
-                if (input.id == 'codigooperacao'){ return; }
-                data[input.id] = input.value; 
-            });
+            inputArray.forEach((input)=>{ data[input.id] = input.value; });
             selectArray.forEach((select)=>{ data[select.id] = select.value; });
             data.etapa = currentStep[0].id;
+            data.newLead = newLead;
+            newLead = false;
 
             $.ajax({
                 url: '/datalayer',
@@ -28,7 +27,7 @@ $(document).ready(function() {
                 success: function(res) { console.log('Sucesso:', res); },
                 error: function(xhr, status, error) { console.error('Error:', error); }
             });
-            
+
             if (data.etapa == 'step-1'){
                 if (data.cpf.replace(/[^0-9]+/g, '').length != 11){ errorList.push({id: 'cpf'}); }
                 if (!data.nome){ errorList.push({id: 'nome'}); }
@@ -44,7 +43,6 @@ $(document).ready(function() {
                 if (!data.uf){ errorList.push({id: 'uf'}); }
             }
         }
-        
         if (errorList.length > 0){
             errorList.map((error, index)=>{
                 let input = $(`input#${error.id}`); //Input do campo com erro
@@ -58,7 +56,6 @@ $(document).ready(function() {
             });
             return;
         }
-        
         if (nextStep.length > 0) {
             currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); });
         }
@@ -66,6 +63,7 @@ $(document).ready(function() {
 
     // Ao clicar no botão "prev-step", volta para a etapa anterior do formulário
     $(".prev-step").click(function() {
+        newLead = false;
         var currentStep = $(this).closest(".form-step");
         var prevStep = currentStep.prev(".form-step");
         if (prevStep.length > 0) {
@@ -74,15 +72,29 @@ $(document).ready(function() {
     });
 });
 
+>>>>>>> Stashed changes
 document.getElementById("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     var data = {};
+
     let inputArray = document.querySelectorAll('#form input');
     let selectArray = document.querySelectorAll('#form select');
 
     // Insere as inputs e selects no objeto data
     inputArray.forEach((input)=>{ data[input.id] = input.value; });
     selectArray.forEach((select)=>{ data[select.id] = select.value; });
+
+    let _data = data;
+    _data.etapa = 'step-3';
+
+    $.ajax({
+        url: '/datalayer',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(_data),
+        success: function(res) { console.log('Sucesso:', res); },
+        error: function(xhr, status, error) { console.error('Error:', error); }
+    });
   
     try {
         const response = await fetch("/enviar-dados", {

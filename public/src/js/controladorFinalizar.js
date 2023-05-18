@@ -12,6 +12,15 @@ var orcamento = localData.orcamento;
 if (!orcamento.numeroOrcamento && !loading){ window.location.href = './planos'; loading = true; }
 if (!orcamento.criadoEm && !loading){ window.location.href = './planos'; loading = true; }
 
+$.ajax({
+    url: '/datalayer',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({etapa: 'step-6', page: 'pagamento', orcamento: orcamento}),
+    success: function(res) { console.log('Sucesso:', res); },
+    error: function(xhr, status, error) { console.error('Error:', error); }
+});
+
 if (!loading){
     let dataOrcamento = new Date(orcamento.criadoEm.toString());
     let hoje = new Date();
@@ -141,6 +150,14 @@ $(document).ready(function () {
             });
             if (response.ok) {
                 let data = await response.json();
+                $.ajax({
+                    url: '/datalayer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({etapa: 'step-7', page: 'pagamento', proposta: data}),
+                    success: function(res) { console.log('Sucesso:', res); },
+                    error: function(xhr, status, error) { console.error('Error:', error); }
+                });
                 localStorage.removeItem("finalData");
                 $("#loading-screen").hide();
                 window.location.href = "./obrigado";
