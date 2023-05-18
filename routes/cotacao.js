@@ -23,8 +23,13 @@ router.post("/enviar-dados", async (req, res) => {
     
     let items = {};
     for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
+<<<<<<< Updated upstream
     
     console.log(items);
+=======
+
+    //console.log(items);
+>>>>>>> Stashed changes
     const susep = req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;

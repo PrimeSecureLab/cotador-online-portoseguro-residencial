@@ -269,6 +269,7 @@ $(document).ready(function() {
         if (planos[index].error){ return; }
         if (!planos[index].data){ return; }
         encryptedData.orcamento = planos[index].data;
+        console.log(planos[index].data)
         localStorage.setItem("finalData", JSON.stringify(encryptedData));
         window.location.href = "./login";
         return;
@@ -304,6 +305,16 @@ $(document).ready(function() {
             key = relacaoItemId[key];
             item[key] = $(`input#${inputList[i].id}`).val();
         }
+        let _item = item;
+        _item.etapa = 'step-4';
+        $.ajax({
+            url: '/datalayer',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(_item),
+            success: function(res) { console.log('Sucesso:', res); },
+            error: function(xhr, status, error) { console.error('Error:', error); }
+        });
         encryptedData.itemData = item;
         api_call(encryptedData);
     }

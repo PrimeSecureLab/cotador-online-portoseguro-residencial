@@ -1,7 +1,5 @@
 $("#loading-screen").hide();
-$(document).ready(function () {
-
-});
+$(document).ready(function () { });
 
 var loading = false;
 var finalData = localStorage.getItem("finalData");
@@ -15,6 +13,15 @@ if (orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); 
 if (orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
 if (orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
 if (orcamento.numeroOrcamento){ $("input#protocolo").val(orcamento.numeroOrcamento); }
+
+$.ajax({
+    url: '/datalayer',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({etapa: 'step-5', page: 'cadastro', orcamento: orcamento}),
+    success: function(res) { console.log('Sucesso:', res); },
+    error: function(xhr, status, error) { console.error('Error:', error); }
+});
 
 if (orcamento.listaParcelamento){
     orcamento.listaParcelamento.map((parcela, index)=>{
@@ -34,7 +41,7 @@ if (orcamento.listaParcelamento){
     });
 }
 
-console.log(finalData);
+//console.log(finalData);
 $("input#email").on("input", ()=>{ 
     if ($('label#_email-error').length){  $('label#_email-error').html(""); } 
 });
@@ -60,7 +67,7 @@ document.getElementById("form-register").addEventListener("submit", async (event
     inputArray.forEach((input)=>{ formCadastro[input.id] = input.value; });
     selectArray.forEach((select)=>{ formCadastro[select.id] = select.value; });
 
-    console.log(formCadastro);
+    //console.log(formCadastro);
 
     for(let [key, value] of Object.entries(formCadastro)){
         if (key == "visualizar_senha"){ continue; }
@@ -91,8 +98,8 @@ document.getElementById("form-register").addEventListener("submit", async (event
         });
         if (response.ok) {
             let data = await response.json();
-            console.log(data);
-            //window.location.href = "/pagamento";
+            //console.log(data);
+            window.location.href = "/pagamento";
         } else if (response.status === 400) {
             $('#form-register input').removeClass('error');
             $('#form-register select').removeClass('error');

@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
 async function porto_orcamento_habitual(formData, token){
     return new Promise(async (resolve, reject)=>{
         let data = formData;
-        console.log(data)
+        //console.log(data)
 
         let dataInicio = new Date();
         dataInicio = dataInicio.toISOString().split('T')[0];
