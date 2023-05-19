@@ -39,6 +39,7 @@ const usuarioSchema = new mongoose.Schema({
     },
     recuperarSenha: {
         token: { type: String },
+        tokenCancelar: { type: String },
         criadoEm: { type: Date }
     }
 });

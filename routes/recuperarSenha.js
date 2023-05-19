@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const CryptoJS = require("crypto-js");
 
 const Usuarios = require('../collections/usuarios');
+const NodeMailer = require('../configs/nodeMailer');
 
 router.post('/esqueceu-a-senha', async (req, res) => {
     let data = req.body;
@@ -16,10 +17,31 @@ router.post('/esqueceu-a-senha', async (req, res) => {
     let user = await Usuarios.findOne({email: data.email});
     if (!user){ return res.status(400).json({message: ''}); }
 
-    let token = '';
-    for(let i=0; i < 5; i++){ token += Math.random(0).toString(36).slice(-10); }
-    user = await Usuarios.findOneAndUpdate({ email: data.email }, { recuperarSenha: { token: token, criadoEm: new Date() }});
+    if (user.recuperarSenha){
+        const criadoEm = user.recuperarSenha.criadoEm;
+        let hoje = new Date();
+        if (!criadoEm){ criadoEm = new Date(); }else{ criadoEm = new Date(user.recuperarSenha.criadoEm.toString()); }
+
+        let outdated = Math.abs(hoje.getTime() - criadoEm.getTime());
+        outdated = outdated / (1000 * 60 * 60);
+
+        if (outdated < 1){ return res.status(400).json({message: 'Not outdated'}); }
+    }
+
+    let tokenA = '';
+    let tokenB = '';
+    for(let i=0; i < 10; i++){ 
+        tokenA += Math.random(0).toString(36).slice(-10); 
+        tokenB += Math.random(0).toString(36).slice(-10); 
+    }
+    user = await Usuarios.findOneAndUpdate(
+        { email: data.email }, 
+        { recuperarSenha: { token: tokenA, criadoEm: new Date(), tokenCancelar: tokenB }}
+    );
     user = await user.save();
+
+    let mailer = new NodeMailer(user);
+    mailer.sendEmail(user, 'recuperar-senha');
 
     return res.status(200).json({message: ''});
 });

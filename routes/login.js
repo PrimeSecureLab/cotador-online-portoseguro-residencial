@@ -29,19 +29,19 @@ router.post("/", async (req, res)=>{
     if (!data){ arrayErros.push({message: "Ocorreu um erro durante o envio dos dados"}); }
     if (!data.login){ fatalError = { code: 1 }; }
     if (!data.senha){ fatalError = { code: 2 }; }
-    if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}) }
+    if (fatalError){ return res.status(400).json({message: "Email, CPF ou senha incorretos"}) }
 
     if (data.login.length < 5){ fatalError = { code: 3 }; }
     if (data.senha.length < 8){ fatalError = { code: 4 }; }
-    if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
+    if (fatalError){ return res.status(400).json({message: "Email, CPF ou senha incorretos"}); }
 
     let user = await Usuarios.findOne({'email': data.login.trim().toLowerCase()});
     if (!user){ user = await Usuarios.findOne({'pessoaFisica.cpf': data.login.trim().replace(/[^0-9]+/g, "")}); }
     if (!user){ fatalError = { code: 5 }; }
-    if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
+    if (fatalError){ return res.status(400).json({message: "Email, CPF ou senha incorretos"}); }
 
     if (CryptoJS.MD5(data.senha).toString() != user.senha){ fatalError = { code: 6 }; }
-    if (fatalError){ return res.status(400).json({message: "Email/CPF ou senha incorretos"}); }
+    if (fatalError){ return res.status(400).json({message: "Email, CPF ou senha incorretos"}); }
 
     req.session.user_id = user.id;
     req.session.sessionStart = new Date(); 
