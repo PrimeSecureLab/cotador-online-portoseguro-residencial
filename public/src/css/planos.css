@@ -181,3 +181,32 @@ body, html {
     width: 8%;
   }
 }
+
+.nome-plano-style {
+  color: #03a8db;
+}
+
+.off-price-badge,
+.price-table-showcase {
+  display: inline-block;
+
+}
+
+.price-table-showcase {
+  color: #db0303;
+  font-size: 1.2em;
+  text-decoration: line-through;
+}
+
+.off-price-badge {
+  background-color: #4ed433;
+  border-radius: 15px;
+  color: #313131;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0px 10px;
+}
+
+.parcela {
+  font-size: 20px;
+}
