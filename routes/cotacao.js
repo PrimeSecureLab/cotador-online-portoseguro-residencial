@@ -10,7 +10,9 @@ const authToken = require('../configs/authToken');
 dotenv.config();
 
 // Define a rota para a página HTML
-router.get("/", async (req, res) => { res.sendFile("cotacao.html", { root: "public" }); });
+router.get("/", async (req, res) => { 
+    res.sendFile("cotacao.html", { root: "public" }); 
+});
 
 router.post("/enviar-dados", async (req, res) => {
     var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 

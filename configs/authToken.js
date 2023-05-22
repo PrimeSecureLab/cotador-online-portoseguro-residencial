@@ -22,16 +22,17 @@ const authToken = async ()=>{
                 }
             }
         } 
-        let url = 'https://portoapi-sandbox.portoseguro.com.br/oauth/v2/access-token';
+        let url = 'https://portoapi-hml.portoseguro.com.br/oauth/v2/access-token';
         let buffer =  Buffer.from(process.env.AUTH_USERNAME + ':' + process.env.AUTH_PASSWORD);
         let dataBase64 = buffer.toString('base64');
         let header = { headers: { "Content-Type": "application/json", "Authorization": `Basic ${dataBase64}` } };
-        let newToken = await axios.post( url, { grant_type : "client_credentials"}, header );
+        let newToken = await axios.post( url, { grant_type : "client_credentials"}, header ).catch((error)=>{ console.log(error.response) });
         let token = {
             access_token: newToken.data.access_token,
             token_type: newToken.data.token_type,
             expires_in: newToken.data.expires_in,
-            created_at: new Date()
+            created_at: new Date(),
+            ambiente: "hml"
         };
         token = new Tokens(token);
         token = await token.save();

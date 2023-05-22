@@ -48,6 +48,11 @@ class PortoCoberturas {
                 coberturas['premium'].map((item, index)=>{ cobertura.push(item.toLowerCase()); });
                 return cobertura;
                 break;
+            case 'habitual-premium':
+                if (!lowerCase){ return coberturas['premium']; }
+                coberturas['premium'].map((item, index)=>{ cobertura.push(item.toLowerCase()); });
+                return cobertura;
+                break;
 
             case 'veraneio':
                 if (!lowerCase){ return coberturas['veraneio']; }

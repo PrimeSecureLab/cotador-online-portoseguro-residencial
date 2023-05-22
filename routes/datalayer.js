@@ -137,7 +137,7 @@ router.post("/", async (req, res)=>{
     if (!entry.listaInteracoes){ entry.listaInteracoes = [new Date()]; }else{ entry.listaInteracoes.push(new Date()); }
     entry.ultimaInteracao = new Date();
 
-    console.log(dados)
+    //console.log(dados)
 
     const lastEntry = { user: entry.user, listaInteracoes: entry.listaInteracoes };
     entry.dados = undefined;

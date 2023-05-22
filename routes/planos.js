@@ -33,13 +33,11 @@ router.post('/', async (req, res) => {
     
     let user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     user.item = data.itemData;
-    user.item.flagLMIDiscriminado = 0;
 
     if (!user){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
     if (!user.segurado.endereco){ return res.status(400).json({redirect: '/'})}
-    
     
     if (/^\d{11}$/.test(user.segurado.cpf.replace(/[^0-9]+/g, ""))){
         let _user = await Usuarios.findOne({"pessoaFisica.cpf": user.segurado.cpf}); 
@@ -50,13 +48,14 @@ router.post('/', async (req, res) => {
     let promise_array = [];
     let response_array = [];
 
-    promise_array[0] = await porto_orcamento_habitual(user, token);
-    promise_array[1] = await porto_orcamento_habitual_premium(user, token);
-    promise_array[2] = await porto_orcamento_veraneio(user, token);
+    promise_array[0] = await portoOrcamentoApi('habitual', user, token);
+    promise_array[1] = await portoOrcamentoApi('habitual-premium', user, token);
+    promise_array[2] = await portoOrcamentoApi('veraneio', user, token);
 
     promise_array.map((response, index)=>{
         let tipo = ["habitual", "premium", "veraneio"];
         if (response){
+            //console.log(index);
             if (response.status == 200){
                 response.data.tipo = tipo[index];
                 response.data.criadoEm = new Date();
@@ -71,6 +70,78 @@ router.post('/', async (req, res) => {
 
     res.status(200).json(response_array);
 });
+
+const PortoCoberturas = require('../configs/coberturas');
+var portoCoberturas = new PortoCoberturas;
+
+async function portoOrcamentoApi(produto, formData, token){
+    return new Promise(async (resolve, reject)=>{
+        let data = formData;
+        
+        data.susep = "5600PJ";
+        data.codigoOperacao = 40;
+        data.flagImprimirCodigoOperacaoOrcamento = false;
+        data.codigoCanal = 60;
+        data.flagSinistrosUltimos12Meses = false;
+
+        let dataInicio = new Date();
+        dataInicio = dataInicio.toISOString().split('T')[0];
+
+        let dataFim = new Date();
+        dataFim.setDate(dataFim.getDate() + 366);
+        dataFim = dataFim.toISOString().split('T')[0];
+
+        let dataNascimento = data.segurado.dataNascimento.toString();
+        dataNascimento = dataNascimento.split("-");
+        dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
+
+        let itemList = {};
+        let itens = data.item;
+
+        let allItens = portoCoberturas.listaCoberturas(produto, false);
+        allItens.map((item)=>{ if (itens[item]){ itemList[item] = parseInt(itens[item]); } });
+
+        itemList.flagLMIDiscriminado = 0;
+        itemList.flagContratarValorDeNovo = 0;
+        itemList.codigoClausulasPortoSeguroServicos = 577;
+        itemList.valorCoberturaMorteAcisdental = 0;
+        
+        let url = `https://portoapi-hml.portoseguro.com.br/re/residencial/v1/${produto}/orcamentos`;
+        let payload = {
+            "susep": data.susep,
+            "codigoOperacao": data.codigoOperacao,
+            "codigoCanal": data.codigoCanal,
+            "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
+            "tipoResidencia": 2,
+            "tipoVigencia": 1,
+            "dataInicioVigencia": dataInicio,
+            "dataFimVigencia": dataFim,
+            "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
+            "segurado": {
+                "nome": data.segurado.nome,
+                "numeroTelefone": data.segurado.numeroTelefone.replace(/[^0-9]+/g, ''),
+                "tipoTelefone": 3,
+                "cpfCnpj": data.segurado.cpf,
+                "dataNascimento": dataNascimento,
+                "endereco": {
+                    "cep": data.segurado.endereco.cep.replace(/[^0-9]+/g, ''),
+                    "logradouro": data.segurado.endereco.logradouro,
+                    "tipo": "R",
+                    "numero": parseInt(data.segurado.endereco.numero.replace(/[^0-9]+/g, '')),
+                    "bairro": data.segurado.endereco.bairro,
+                    "cidade": data.segurado.endereco.cidade,
+                    "uf": data.segurado.endereco.uf
+                }
+            },
+            "item": itemList
+        }
+        console.log(produto);
+        let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+        let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.data); resolve(error.response); });
+        setTimeout(() => { resolve( request ); }, 100);
+
+    });
+}
 
 async function porto_orcamento_habitual(formData, token){
     return new Promise(async (resolve, reject)=>{
@@ -93,7 +164,7 @@ async function porto_orcamento_habitual(formData, token){
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
         //console.log(itemList);
 
-        let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual/orcamentos";
+        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual/orcamentos";
         let json = {
             "susep": data.susep,
             "codigoOperacao": data.codigo, 
@@ -124,6 +195,7 @@ async function porto_orcamento_habitual(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+<<<<<<< Updated upstream
         let request = await axios.post( url, json, header).catch((error)=>{ console.log(error); reject(error); });
         if (request.status == 200){ 
             let novoOrcamento = {
@@ -134,6 +206,21 @@ async function porto_orcamento_habitual(formData, token){
             };
             let orcamento = new Orcamentos(novoOrcamento);
             orcamento = await orcamento.save();
+=======
+        let request = await axios.post( url, json, header).catch((error)=>{ console.log(error.response); resolve(error.response); });
+        
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "habitual"
+                };
+                let orcamento = new Orcamentos(novoOrcamento);
+                orcamento = await orcamento.save();
+            }
+>>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
@@ -158,7 +245,7 @@ async function porto_orcamento_habitual_premium(formData, token){
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
         //console.log(itemList);
 
-        let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual-premium/orcamentos";
+        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual-premium/orcamentos";
         let json = {
             "susep": data.susep,
             "codigoOperacao": data.codigo,
@@ -189,6 +276,7 @@ async function porto_orcamento_habitual_premium(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+<<<<<<< Updated upstream
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
             
         if (request.status == 200){ 
@@ -200,6 +288,21 @@ async function porto_orcamento_habitual_premium(formData, token){
             };
             let orcamento = new Orcamentos(novoOrcamento);
             orcamento = await orcamento.save();
+=======
+        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
+        
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "premium"
+                };
+                let orcamento = new Orcamentos(novoOrcamento);
+                orcamento = await orcamento.save();
+            }
+>>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
@@ -223,7 +326,7 @@ async function porto_orcamento_veraneio(formData, token){
         let itemList = {};
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
 
-        let url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/veraneio/orcamentos";
+        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/veraneio/orcamentos";
         let json = {
             "susep": data.susep,
             "codigoOperacao": data.codigo,
@@ -254,6 +357,7 @@ async function porto_orcamento_veraneio(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
+<<<<<<< Updated upstream
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
         if (request.status == 200){ 
             let novoOrcamento = {
@@ -264,6 +368,20 @@ async function porto_orcamento_veraneio(formData, token){
             };
             let orcamento = new Orcamentos(novoOrcamento)
             orcamento = await orcamento.save();
+=======
+        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
+        if (request){
+            if (request.status == 200){ 
+                let novoOrcamento = {
+                    criadoEm: new Date(),
+                    numeroOrcamento: request.data.numeroOrcamento,
+                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
+                    tipo: "veraneio"
+                };
+                let orcamento = new Orcamentos(novoOrcamento)
+                orcamento = await orcamento.save();
+            }
+>>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
