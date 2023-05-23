@@ -96,7 +96,9 @@ router.post('/', async (req, res) => {
 });
 
 const PortoCoberturas = require('../configs/coberturas');
+const CodigoServicos = require('../configs/servicos');
 var portoCoberturas = new PortoCoberturas;
+var codigoServicos = new CodigoServicos;
 
 async function portoOrcamentoApi(produto, formData, token){
     return new Promise(async (resolve, reject)=>{
@@ -104,8 +106,8 @@ async function portoOrcamentoApi(produto, formData, token){
         
         data.susep = "5600PJ";
         data.codigoOperacao = 40;
-        data.flagImprimirCodigoOperacaoOrcamento = false;
         data.codigoCanal = 60;
+        data.flagImprimirCodigoOperacaoOrcamento = false;
         data.flagSinistrosUltimos12Meses = false;
 
         let dataInicio = new Date();
@@ -131,8 +133,18 @@ async function portoOrcamentoApi(produto, formData, token){
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
-        itemList.codigoClausulasPortoSeguroServicos = 577;
         itemList.valorCoberturaMorteAcisdental = 0;
+
+        let servico = null;
+        if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(1, data.tipoResidencia); }
+        if (produto == 'habitual-premium'){ servico = codigoServicos.listaServicosHabitualPremium(1, data.tipoResidencia); }
+        if (produto == 'veraneio'){ servico = codigoServicos.listaServicosVeraneio(1, data.tipoResidencia); }
+
+        servico = servico[1];
+        if (!servico){ servico = []; }
+        servico = servico[0];
+        if (!servico){ servico = {cod: null, desc: ''}; }
+        itemList.codigoClausulasPortoSeguroServicos = servico.cod;
         
         let subUrl = '-sandbox';
         if (process.env.AMBIENTE == 'HOMOLOGACAO'){ subUrl = '-hml'; }
@@ -144,7 +156,7 @@ async function portoOrcamentoApi(produto, formData, token){
             "codigoOperacao": data.codigoOperacao,
             "codigoCanal": data.codigoCanal,
             "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
-            "tipoResidencia": 2,
+            "tipoResidencia": parseInt(data.tipoResidencia),
             "tipoVigencia": 1,
             "dataInicioVigencia": dataInicio,
             "dataFimVigencia": dataFim,
@@ -158,7 +170,7 @@ async function portoOrcamentoApi(produto, formData, token){
                 "endereco": {
                     "cep": data.segurado.endereco.cep.replace(/[^0-9]+/g, ''),
                     "logradouro": data.segurado.endereco.logradouro,
-                    "tipo": "R",
+                    "tipo": data.segurado.endereco.tipo,
                     "numero": parseInt(data.segurado.endereco.numero.replace(/[^0-9]+/g, '')),
                     "bairro": data.segurado.endereco.bairro,
                     "cidade": data.segurado.endereco.cidade,
@@ -167,7 +179,7 @@ async function portoOrcamentoApi(produto, formData, token){
             },
             "item": itemList
         }
-        console.log(produto);
+        //console.log(payload);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.data); resolve(error.response); });
         let delay = 100

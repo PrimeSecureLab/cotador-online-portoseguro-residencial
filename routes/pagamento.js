@@ -35,6 +35,7 @@ router.post("/", async (req, res) => {
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.pagamento){ return res.status(400).json({fatal: 4}); }
     if (!data.produto){ return res.status(400).json({fatal: 5}); }
+    
 
     let produto = data.produto;
     if (produto != 'habitual' && produto != 'habitual-premium' && produto != 'veraneiro'){ return res.status(400).json({fatal: 6}); }
@@ -135,13 +136,13 @@ router.post("/", async (req, res) => {
             },
             "contato": {
                 "email": formData.segurado.email,
-                "numeroTelefoneResidencial": formData.segurado.numeroTelefone, //
+                //"numeroTelefoneResidencial": formData.segurado.numeroTelefone, //
             },
             "pessoaFisica": {
                 "dataNascimento": dataNascimento,
                 "codigoSexo": pessoaFisica.sexo,
                 "codigoEstadoCivil": pessoaFisica.estadoCivil,
-                "codigoPaisResidencia": 55,
+                "codigoPaisResidencia": 237,
                 "codigoFaixaRenda": pessoaFisica.faixaRenda,
                 "documentoIdentificacao": {
                     "tipoDocumento": documento.tipo,
@@ -155,7 +156,7 @@ router.post("/", async (req, res) => {
           "formaPagamento": "CARTAO_DE_CREDITO_62", //
           "quantidadeParcelas": data.pagamento.parcelas, //
           "cartao": {
-            "numeroCartao": data.pagamento.numeroCartao,
+            "numeroCartao": '',
             "codigoBandeira": data.pagamento.codigoBandeira, //1 - VISA, 2 - MASTER, 3 - DINERS, 5 - ELO
             "mesValidade": data.pagamento.mesValidade,// MM
             "anoValidade": data.pagamento.anoValidade //AAAA
@@ -181,9 +182,32 @@ router.post("/", async (req, res) => {
     if (process.env.AMBIENTE == 'HOMOLOGACAO'){ subUrl = '-hml'; }
     if (process.env.AMBIENTE == 'PRODUCAO'){ subUrl = ''; }
 
-    let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
     let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-    let result = await axios.post(request_url, proposta, header);
+
+    let card_url = `https://portoapi${subUrl}.portoseguro.com.br/re/cartoes/v1/cartoes?numeroCartao=${data.pagamento.numeroCartao}`;
+    let payload = {"numeroCartao": data.pagamento.numeroCartao};
+    let cardResult = await axios.post(card_url, payload, header).catch((error)=>{ 
+        console.log(error.response.data); 
+        return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao"}]});
+    });
+    if (!cardResult){ return res.status(400).json({fatal: true, errors: [{message: "Ocorreu um erro inesperado", id: ""}]}); }
+    if (!cardResult.data){ 
+        console.log(cardResult);
+        return res.status(400).json({fatal: true, errors: [{message: "Ocorreu um erro inesperado", id: ""}]}); 
+    }
+    if (cardResult.data.status != 200){ 
+        console.log(cardResult.data); 
+        return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao"}]});
+    }
+    if (!cardResult.data.ticket){
+        console.log(cardResult.data); 
+        return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao"}]});
+    }
+    
+    proposta.pagamento.cartao.numeroCartao = cardResult.data.ticket;
+
+    let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
+    let result = await axios.post(request_url, proposta, header).catch((error)=>{ console.log(error.response.data); });
 
     let novaProposta = {  
         criadoEm: new Date(),      

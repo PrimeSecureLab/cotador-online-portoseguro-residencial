@@ -57,7 +57,7 @@ $(document).ready(function () {
 
     if (localData.orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
     if (localData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
-    if (localData.orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
+    if (localData.orcamento.tipo == "habitual-premium"){ $("input#plano-escolhido").val("Exclusive"); }
 
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
@@ -143,10 +143,12 @@ $(document).ready(function () {
         }
         try{
             $("#loading-screen").show();
+            let _localData = localData;
+            _localData.produto = localData.orcamento.tipo;
             const response = await fetch( "/pagamento", { 
                 method: "POST", 
                 headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(localData)
+                body: JSON.stringify(_localData)
             });
             if (response.ok) {
                 let data = await response.json();

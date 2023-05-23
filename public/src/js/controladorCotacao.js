@@ -59,11 +59,14 @@ $(document).ready(function() {
             if (data.etapa == 'step-1'){
                 if (data.cpf.replace(/[^0-9]+/g, '').length != 11){ errorList.push({id: 'cpf'}); }
                 if (!data.nome){ errorList.push({id: 'nome'}); }
+                if (!data.tipotelefone){ errorList.push({id: 'tipotelefone'}); }
                 if (data.numerotelefone.replace(/[^0-9]+/g, '').length < 10){ errorList.push({id: 'numerotelefone'}); }
                 if (data.datanascimento.replace(/[^0-9]+/g, '').length < 8){ errorList.push({id: 'datanascimento'}); }
             }
             if (data.etapa == 'step-2'){
                 if (data.cep.replace(/[^0-9]+/g, '').length != 8){ errorList.push({id: 'cep'}); }
+                if (!data.tiporesidencia){ errorList.push({id: 'tiporesidencia'}); }
+                if (!data.tiporua){ errorList.push({id: 'tiporua'}); }
                 if (!data.logradouro){ errorList.push({id: 'logradouro'}); }
                 if (!/^[0-9]{1,4}$/.test(data.numero)){ errorList.push({id: 'numero'}); }
                 if (!data.bairro){ errorList.push({id: 'bairro'}); }
@@ -73,7 +76,7 @@ $(document).ready(function() {
         }
         if (errorList.length > 0){
             errorList.map((error, index)=>{
-                let input = $(`input#${error.id}`); //Input do campo com erro
+                let input = $(`#${error.id}`); //Input do campo com erro
                 let label = $(`label[for="${error.id}"]`); //Label do campo com erro
                 input.addClass('error');
                 label.addClass('error');
@@ -137,12 +140,16 @@ document.getElementById("form").addEventListener("submit", async (event) => {
             const errorData = await response.json();
             console.error("Erros:", errorData);
             //Loop por array com erros vindos da API
-            errorData.map((erro, index)=>{ 
+            errorData.map((error, index)=>{ 
                 //erro = {error: mensagem de erro, field: id do campo com erro, step: etapa com erro}
-                let input = $(`input#${erro.field}`); //Input do campo com erro
-                let label = $(`label[for="${erro.field}"]`); //Label do campo com erro
-                label.css("color", "red");
-                input.css("color", "red");
+                let input = $(`#${error.field}`); //Input do campo com erro
+                let label = $(`label[for="${error.field}"]`); //Label do campo com erro
+                input.addClass('error');
+                label.addClass('error');
+                input.on('change keydown paste input', {label: label, input: input} ,(e)=>{ 
+                    e.data.label.removeClass('error'); 
+                    e.data.input.removeClass('error'); 
+                });
             });
 
             let currentStep = $(".form-step.active"); //JQuery para etapa atual

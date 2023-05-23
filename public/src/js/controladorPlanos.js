@@ -226,15 +226,15 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
                 success: function(res) { 
-                    atualizarCards(res);
+                    
                     responseArray.push(res);
-                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); }
+                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); atualizarCards(responseArray); }
                     console.log(produtos[i], 'Sucesso:', res); 
                 },
                 error: function(xhr, status, error) { 
                     if (error.redirect){ /*window.location.href = errorData.redirect;*/ }
                     responseArray.push(error);
-                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); }
+                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); atualizarCards(responseArray); }
                     console.error(produtos[i], 'Error:', error, 'Status:', status); 
                 }
             });

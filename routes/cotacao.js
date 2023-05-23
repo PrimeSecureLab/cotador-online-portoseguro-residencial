@@ -27,7 +27,7 @@ router.post("/enviar-dados", async (req, res) => {
     for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
 
     //console.log(items);
-    const susep = req.body.susep;
+    const susep = '5600PJ'//req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;
     const codigocanal = req.body.codigocanal;
@@ -46,13 +46,14 @@ router.post("/enviar-dados", async (req, res) => {
     const datanascimento = (req.body.datanascimento) ? req.body.datanascimento.replace(/\//g, "-") : req.body.datanascimento;
 
     //dados do endereço (Segundo Step)
+    const tiporesidencia = req.body.tiporesidencia;
     const cep = req.body.cep || "";
     const logradouro = req.body.logradouro;
-    const tiporua = req.body.tiporua;
+    const tiporua = req.body.tiporua || "";
     const numero = req.body.numero;
     const bairro = req.body.bairro;
     const cidade = req.body.cidade;
-    const uf = req.body.uf;
+    const uf = req.body.uf || "";
 
     // Criar o objeto com os dados para enviar para a Porto Seguro
     var data = {
@@ -62,7 +63,7 @@ router.post("/enviar-dados", async (req, res) => {
         flagImprimirCodigoOperacaoOrcamento: false,
         codigoCanal: codigocanal,
         melhorDataPagamento: null,
-        tipoResidencia: null,
+        tipoResidencia: tiporesidencia,
         tipoVigencia: null,
         dataInicioVigencia: null,
         dataFimVigencia: null,
@@ -87,6 +88,7 @@ router.post("/enviar-dados", async (req, res) => {
     };
 
     var arrayErros = [];
+
     try {
         arrayErros = [];
         //Etapa 1:
@@ -96,11 +98,18 @@ router.post("/enviar-dados", async (req, res) => {
         if (!validation._nomePattern.test(nome)) { 
             arrayErros.push({error: "Nome inválido.", field: "nome", step: "1"}); 
         }
+        if (tipotelefone != 1 && tipotelefone != 2 && tipotelefone != 3) { 
+            arrayErros.push({error: "Tipo de telefone inválido.", field: "tipotelefone", step: "1"}); //0: Celular, 1: Fixo
+        }
         if (!validation.numeroTelefonePattern.test(numerotelefone.replace(/[^0-9]+/g, ""))) { 
             arrayErros.push({error: "Número de telefone inválido.", field: "numerotelefone", step: "1"}); 
-        }
-        if (!validation._tipoTelefonePattern.test(tipotelefone)) { 
-            arrayErros.push({error: "Tipo de telefone inválido.", field: "tipotelefone", step: "1"}); //0: Celular, 1: Fixo
+        }else{
+            if ((tipotelefone == 1 || tipotelefone == 2) && numerotelefone.replace(/[^0-9]+/g, "").length != 10){
+                arrayErros.push({error: "Telefone fixo deve ter 10 digitos.", field: "numerotelefone", step: "1"});
+            }
+            if (tipotelefone == 3 && numerotelefone.replace(/[^0-9]+/g, "").length != 11){
+                arrayErros.push({error: "Telefone celular deve ter 11 digitos.", field: "numerotelefone", step: "1"});
+            }
         }
         if (datanascimento){
             if (!validation._dataNascimentoPattern.test(datanascimento)) { 
@@ -114,10 +123,13 @@ router.post("/enviar-dados", async (req, res) => {
         if (!validation._cepPattern.test(cep.replace(/[^0-9]+/g, ""))) { 
             arrayErros.push({error: "CEP inválido.", field: "cep", step: "2"}); 
         }
+        if (!validation.tipoResidenciaPattern.test(tiporesidencia)){
+            arrayErros.push({error: "Tipo de residencia inválido.", field: "tiporesidencia", step: "2"});
+        }
         if (!validation._enderecoPattern.test(logradouro)) { 
             arrayErros.push({error: "Endereço inválido.", field: "logradouro", step: "2"}); 
         }
-        if (!validation._tipoRuaPattern.test(tiporua)) { 
+        if (!validation.listaTipoRua.includes(tiporua)) { 
             arrayErros.push({error: "Tipo de rua inválido.", field: "tiporua", step: "2"}); //0: Rua, 1: Avenida
         }
         if (!validation.numeroPattern.test(numero)) { 
