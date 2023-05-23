@@ -1,9 +1,9 @@
 // Função que preenche os campos com as informações do endereço
 function preencherCamposEndereco(dados) {
-    document.querySelector("#logradouro").value = dados.logradouro;
-    document.querySelector("#bairro").value = dados.bairro;
-    document.querySelector("#cidade").value = dados.localidade;
-    document.querySelector("#uf").value = dados.uf;
+    document.querySelector("#logradouro").value = dados.logradouro || "";
+    document.querySelector("#bairro").value = dados.bairro || "";
+    document.querySelector("#cidade").value = dados.localidade || "";
+    document.querySelector("#uf").value = dados.uf || "";
   }
   
   // função que limpa os campos do endereço

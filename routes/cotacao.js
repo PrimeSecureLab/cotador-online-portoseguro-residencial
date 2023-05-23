@@ -25,13 +25,8 @@ router.post("/enviar-dados", async (req, res) => {
     
     let items = {};
     for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
-<<<<<<< Updated upstream
-    
-    console.log(items);
-=======
 
     //console.log(items);
->>>>>>> Stashed changes
     const susep = req.body.susep;
     const codigooperacao = req.body.codigooperacao;
     //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;
@@ -44,14 +39,14 @@ router.post("/enviar-dados", async (req, res) => {
     //const flagsinistrosultimos12meses = req.body.flagsinistrosultimos12meses;
 
     //dados do usuário (Primeiro Step)
-    const cpf = req.body.cpf;
+    const cpf = req.body.cpf || "";
     const nome = req.body.nome;
-    const numerotelefone = req.body.numerotelefone;
+    const numerotelefone = req.body.numerotelefone || "";
     const tipotelefone = req.body.tipotelefone;
     const datanascimento = (req.body.datanascimento) ? req.body.datanascimento.replace(/\//g, "-") : req.body.datanascimento;
 
     //dados do endereço (Segundo Step)
-    const cep = req.body.cep;
+    const cep = req.body.cep || "";
     const logradouro = req.body.logradouro;
     const tiporua = req.body.tiporua;
     const numero = req.body.numero;
@@ -95,7 +90,7 @@ router.post("/enviar-dados", async (req, res) => {
     try {
         arrayErros = [];
         //Etapa 1:
-        if (!validation.cpfPattern.test(cpf)){ 
+        if (!validation.cpfPattern.test(cpf.replace(/[^0-9]+/g, ""))){ 
             arrayErros.push({error: "CPF inválido.", field: "cpf", step: "1"}); 
         }
         if (!validation._nomePattern.test(nome)) { 

@@ -34,6 +34,10 @@ router.post("/", async (req, res) => {
     if (!data){ return res.status(400).json({fatal: 3}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.pagamento){ return res.status(400).json({fatal: 4}); }
+    if (!data.produto){ return res.status(400).json({fatal: 5}); }
+
+    let produto = data.produto;
+    if (produto != 'habitual' && produto != 'habitual-premium' && produto != 'veraneiro'){ return res.status(400).json({fatal: 6}); }
 
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
     if (!bytes){ return res.status(400).json({redirect: '/'}); }
@@ -173,7 +177,11 @@ router.post("/", async (req, res) => {
     //console.log(proposta);
 
     let token = await authToken();
-    let request_url = "https://portoapi-sandbox.portoseguro.com.br/re/residencial/v1/habitual/propostas";
+    let subUrl = '-sandbox';
+    if (process.env.AMBIENTE == 'HOMOLOGACAO'){ subUrl = '-hml'; }
+    if (process.env.AMBIENTE == 'PRODUCAO'){ subUrl = ''; }
+
+    let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
     let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
     let result = await axios.post(request_url, proposta, header);
 

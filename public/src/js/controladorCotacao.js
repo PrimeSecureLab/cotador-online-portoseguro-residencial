@@ -1,7 +1,35 @@
-<<<<<<< Updated upstream
-=======
 var newLead = true;
 $(document).ready(function() {
+    //Aplica Mascaras nos Inputs
+    $("#cpf").mask("999.999.999-99");
+    $("#cep").mask("00000-000",{
+        translation: { 0: { pattern: /[0-9]/, }, },
+        pattern: /^[0-9]{5}-[0-9]{3}/      
+    });
+
+    $(".datanascimento").mask("00-00-0000", {
+        translation: { 0: { pattern: /[0-9]/, }, },
+        pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/
+    });
+    
+    let numeroTelefone = $(".numerotelefone");
+    let maskFixo = 1;
+    numeroTelefone.mask("(00) 0000-00000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
+    numeroTelefone.on("input, keyup", (e)=>{
+        if (numeroTelefone.val().length < 15 && maskFixo == 0){
+            maskFixo = 1;
+            numeroTelefone.unmask();
+            numeroTelefone.mask("(00) 0000-00000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
+            e.target.selectionStart = numeroTelefone.val().length; //Posiciona o cursor no final do input
+        }
+        if (numeroTelefone.val().length > 14 && maskFixo == 1){
+            maskFixo = 0;
+            numeroTelefone.unmask();
+            numeroTelefone.mask("(00) 00000-0000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
+            e.target.selectionStart = numeroTelefone.val().length; //Posiciona o cursor no final do input
+        }
+    });
+
     // Ao clicar no botão "next-step", avança para a próxima etapa do formulário
     $(".next-step").click(async function() {
         var currentStep = $(this).closest(".form-step");
@@ -72,7 +100,6 @@ $(document).ready(function() {
     });
 });
 
->>>>>>> Stashed changes
 document.getElementById("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     var data = {};

@@ -10,7 +10,7 @@ const Usuarios = require('../collections/usuarios');
 
 dotenv.config();
 
-const allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
+const _allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
 'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
 'valorCoberturaPagamentoCondominio', 'valorCoberturaMorteAcidental', 'valorCoberturaTremorTerraTerremoto', 'valorCoberturaAlagamento', 'flagContratarValorDeNovo', 'flagLMIDiscriminado',
 'valorCoberturaEdificio', 'valorCoberturaConteudo', 'valorImpactoVeiculos', 'valorSubtracaoBicicleta', 'valorNegocioCasa', 'valorPequenasReformas', 'valorFuneralFamiliar', 
@@ -24,33 +24,57 @@ router.post('/', async (req, res) => {
     let data = req.body;
     let redirect = '/cadastro';
 
+
     if (!data){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário."}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.itemData){ return res.status(400).json({redirect: '/'}); }
+    if (!data.produto){ return res.status(400).json({error: "Produto não identificado.", redirect: false}); }
+    let produto = data.produto;
+    if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
+        return res.status(400).json({error: "Produto não identificado.", redirect: false});
+    }
 
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
     if (!bytes){ return res.status(400).json({redirect: '/'}); }
-    
-    let user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    user.item = data.itemData;
 
-    if (!user){ return res.status(400).json({redirect: '/'}); }
-    if (!user.segurado){ return res.status(400).json({redirect: '/'}); }
-    if (!user.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
-    if (!user.segurado.endereco){ return res.status(400).json({redirect: '/'})}
+    let coberturas = data.itemData
     
-    if (/^\d{11}$/.test(user.segurado.cpf.replace(/[^0-9]+/g, ""))){
-        let _user = await Usuarios.findOne({"pessoaFisica.cpf": user.segurado.cpf}); 
-        if (_user){ redirect = "/login"; }
+    data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    data.item = coberturas;
+
+    if (!data){ return res.status(400).json({redirect: '/'}); }
+    if (!data.segurado){ return res.status(400).json({redirect: '/'}); }
+    if (!data.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
+    if (!data.segurado.endereco){ return res.status(400).json({redirect: '/'})}
+    
+    if (/^\d{11}$/.test(data.segurado.cpf.replace(/[^0-9]+/g, ""))){
+        let user = await Usuarios.findOne({"pessoaFisica.cpf": data.segurado.cpf}); 
+        if (user){ redirect = "/login"; }
     }
     
     let token = await authToken();
-    let promise_array = [];
+    let orcamento = await portoOrcamentoApi(produto, data, token);
+
+    //console.log('A:', orcamento.data);
+    let response = {};
+    if (orcamento){
+        if (orcamento.status == 200){
+            orcamento.data.tipo = produto;
+            orcamento.data.criadoEm = new Date();
+            response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
+        }else{
+            response = { error: true, status: response.status, data: { tipo: produto }, redirect: false };
+        }
+    }else{
+        response = { error: true, status: 504, data: { tipo: produto }, redirect: false };
+    }
+    res.status(200).json(response);
+    /*let promise_array = [];
     let response_array = [];
 
-    promise_array[0] = await portoOrcamentoApi('habitual', user, token);
-    promise_array[1] = await portoOrcamentoApi('habitual-premium', user, token);
-    promise_array[2] = await portoOrcamentoApi('veraneio', user, token);
+    promise_array[0] = await portoOrcamentoApi('habitual', data, token);
+    promise_array[1] = await portoOrcamentoApi('habitual-premium', data, token);
+    promise_array[2] = await portoOrcamentoApi('veraneio', data, token);
 
     promise_array.map((response, index)=>{
         let tipo = ["habitual", "premium", "veraneio"];
@@ -68,7 +92,7 @@ router.post('/', async (req, res) => {
         }
     });
 
-    res.status(200).json(response_array);
+    res.status(200).json(response_array);*/
 });
 
 const PortoCoberturas = require('../configs/coberturas');
@@ -95,18 +119,26 @@ async function portoOrcamentoApi(produto, formData, token){
         dataNascimento = dataNascimento.split("-");
         dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
 
-        let itemList = {};
-        let itens = data.item;
-
         let allItens = portoCoberturas.listaCoberturas(produto, false);
-        allItens.map((item)=>{ if (itens[item]){ itemList[item] = parseInt(itens[item]); } });
+        let itens = data.item;
+        let itemList = {};
+
+        for(let i in allItens){
+            let item = allItens[i];
+            if (!item){ continue; }
+            if (itens[item]){ itemList[item] = itens[item]; } 
+        }
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
         itemList.codigoClausulasPortoSeguroServicos = 577;
         itemList.valorCoberturaMorteAcisdental = 0;
         
-        let url = `https://portoapi-hml.portoseguro.com.br/re/residencial/v1/${produto}/orcamentos`;
+        let subUrl = '-sandbox';
+        if (process.env.AMBIENTE == 'HOMOLOGACAO'){ subUrl = '-hml'; }
+        if (process.env.AMBIENTE == 'PRODUCAO'){ subUrl = ''; }
+
+        let url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/orcamentos`;
         let payload = {
             "susep": data.susep,
             "codigoOperacao": data.codigoOperacao,
@@ -121,7 +153,7 @@ async function portoOrcamentoApi(produto, formData, token){
                 "nome": data.segurado.nome,
                 "numeroTelefone": data.segurado.numeroTelefone.replace(/[^0-9]+/g, ''),
                 "tipoTelefone": 3,
-                "cpfCnpj": data.segurado.cpf,
+                "cpfCnpj": data.segurado.cpf.replace(/[^0-9]+/g, ''),
                 "dataNascimento": dataNascimento,
                 "endereco": {
                     "cep": data.segurado.endereco.cep.replace(/[^0-9]+/g, ''),
@@ -138,8 +170,10 @@ async function portoOrcamentoApi(produto, formData, token){
         console.log(produto);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.data); resolve(error.response); });
-        setTimeout(() => { resolve( request ); }, 100);
-
+        let delay = 100
+        if (produto == 'habitual-premiu'){ delay = 200; }
+        if (produto == 'veraneio'){ delay = 300; }
+        setTimeout(() => { resolve( request ); }, delay);
     });
 }
 
@@ -161,6 +195,7 @@ async function porto_orcamento_habitual(formData, token){
 
         let itens = data.item;
         let itemList = {};
+
         allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
         //console.log(itemList);
 
@@ -195,18 +230,6 @@ async function porto_orcamento_habitual(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-<<<<<<< Updated upstream
-        let request = await axios.post( url, json, header).catch((error)=>{ console.log(error); reject(error); });
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "habitual"
-            };
-            let orcamento = new Orcamentos(novoOrcamento);
-            orcamento = await orcamento.save();
-=======
         let request = await axios.post( url, json, header).catch((error)=>{ console.log(error.response); resolve(error.response); });
         
         if (request){
@@ -220,7 +243,6 @@ async function porto_orcamento_habitual(formData, token){
                 let orcamento = new Orcamentos(novoOrcamento);
                 orcamento = await orcamento.save();
             }
->>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
@@ -276,19 +298,6 @@ async function porto_orcamento_habitual_premium(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-<<<<<<< Updated upstream
-        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
-            
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "premium"
-            };
-            let orcamento = new Orcamentos(novoOrcamento);
-            orcamento = await orcamento.save();
-=======
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
         
         if (request){
@@ -302,7 +311,6 @@ async function porto_orcamento_habitual_premium(formData, token){
                 let orcamento = new Orcamentos(novoOrcamento);
                 orcamento = await orcamento.save();
             }
->>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });
@@ -357,18 +365,6 @@ async function porto_orcamento_veraneio(formData, token){
             "item": itemList
         };
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
-<<<<<<< Updated upstream
-        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error); reject(error); });
-        if (request.status == 200){ 
-            let novoOrcamento = {
-                criadoEm: new Date(),
-                numeroOrcamento: request.data.numeroOrcamento,
-                numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                tipo: "veraneio"
-            };
-            let orcamento = new Orcamentos(novoOrcamento)
-            orcamento = await orcamento.save();
-=======
         let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
         if (request){
             if (request.status == 200){ 
@@ -381,7 +377,6 @@ async function porto_orcamento_veraneio(formData, token){
                 let orcamento = new Orcamentos(novoOrcamento)
                 orcamento = await orcamento.save();
             }
->>>>>>> Stashed changes
         }
         setTimeout(() => { resolve( request ); }, 200);
     });

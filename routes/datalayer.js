@@ -4,24 +4,13 @@ const dotenv = require('dotenv');
 const CryptoJS = require("crypto-js");
 
 const DataLayer = require('../collections/dataLayer');
-<<<<<<< Updated upstream
-=======
 const Usuarios = require('../collections/usuarios');
 const PortoCoberturas = require('../configs/coberturas');
->>>>>>> Stashed changes
 
 dotenv.config();
 
 router.post("/", async (req, res)=>{
     let session = req.session ? req.session : {};
-<<<<<<< Updated upstream
-    if (!session.accessToken){
-        let token = '' ;
-        for(i=0; i < 15; i++){ token += Math.random(0).toString(36).slice(-10); } 
-        session.accessToken = token;
-    }
-    console.log(req.session);
-=======
     let data = req.body || {};
     let user = false;
     let dados = {};
@@ -153,7 +142,6 @@ router.post("/", async (req, res)=>{
     if (etapa == 'etapa_7'){ req.session.accessToken = ''; }
 
     return res.status(200).json({message: 'ok'});
->>>>>>> Stashed changes
 });
 
 module.exports = router;

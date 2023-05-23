@@ -208,10 +208,38 @@ $(document).ready(function() {
     var currentData = {};
     var planos = [];
     var encryptedData = null;
+    var responseArray = [];
+    var loading = false;
 
     async function api_call(data) {
+        if (loading == true){ return; }
+        loading = true;
         $("#loading-screen").show();
-        try {
+        responseArray = [];
+        let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        for(let i in produtos){
+            let payload = data;
+            payload.produto = produtos[i];
+            $.ajax({
+                url: '/planos',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function(res) { 
+                    atualizarCards(res);
+                    responseArray.push(res);
+                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); }
+                    console.log(produtos[i], 'Sucesso:', res); 
+                },
+                error: function(xhr, status, error) { 
+                    if (error.redirect){ /*window.location.href = errorData.redirect;*/ }
+                    responseArray.push(error);
+                    if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); }
+                    console.error(produtos[i], 'Error:', error, 'Status:', status); 
+                }
+            });
+        }
+        /*try {
             const response = await fetch( "/planos", { 
                 method: "POST", 
                 headers: { "Content-Type": "application/json" }, 
@@ -234,7 +262,7 @@ $(document).ready(function() {
             console.error(error);
             console.error("Não foi possível estabeleces uma conexão com o servidor.");
             $("#loading-screen").hide();
-        }
+        }*/
     }
 
     function validacaoInicial() {

@@ -62,7 +62,7 @@
         <div class="wizard-v1-content">
             <div class="wizard-form">
                 <div id="form-total">
-                    <form action="/enviar-dados" id="form" method="POST">
+                    <form id="form">
                         <div>
                             <!-- Inicio da Etapa 1 -->
                             <div id="step-1" class="form-step active">
@@ -142,7 +142,7 @@
                                             <label for="tipotelefone">Tipo de Telefone</label>
                                             <select class="form-control" id="tipotelefone" name="tipotelefone">
                                                 <option value="3">Telefone Celular</option>
-                                                <option value="2">Telefone Fixo</option>
+                                                <option value="1">Telefone Fixo</option>
                                             </select>
                                         </div>
                                     </div>
@@ -174,7 +174,7 @@
                                         <div class="form-group">
                                             <label for="cep">Cep:</label>
                                             <input type="text" class="form-control col cep" id="cep" name="cep"
-                                                minlength="8" maxlength="8" required />
+                                                minlength="9" maxlength="9" required />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
