@@ -65,525 +65,554 @@
 
   <div class="text-center titulo">
     <h1>Escolha o Melhor Plano Para Sua Residência.</h1>
-    <span class="move"><i class="fas fa-arrows-alt-h"></i> Arraste Para o Lado e Veja as Opções</span>
+
   </div>
 
-  <section class="pricing py-5">
-    <div class="container cardspprecos">
-      <div class="slick-carousel">
-        <!-- Habitual -->
-        <div class="col-lg-4" id="plano-basico">
-          <div class="card mb-5 mb-lg-0">
-            <div class="card-body">
-              <h5 class="card-title text-muted text-uppercase text-center">Essencial</h5>
-              <!--<div class="price-table-showcase-holder text-center">
-
-                <div class="price-table-showcase">
-                  R$ Valor Fictício
+  <div class="text-center">
+    <ul class="my-pills mb-3 mt-3" id="pills-tab" role="tablist">
+      <li class="my-pills-item" role="presentation">
+        <button class="my-pills-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
+          type="button" role="tab" aria-controls="pills-home" aria-selected="true">1 Ano</button>
+      </li>
+      <li class="my-pills-item" role="presentation">
+        <button class="my-pills-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
+          type="button" role="tab" aria-controls="pills-profile" aria-selected="false">2 Anos</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+      <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <section class="pricing py-1">
+          <div class="container cardspprecos">
+            <div class="slick-carousel">
+              <!-- Habitual -->
+              <div class="col-lg-4" id="plano-basico">
+                <div class="card mb-5 mb-lg-0">
+                  <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center">Essencial</h5>
+                    <!--<div class="price-table-showcase-holder text-center">
+      
+                      <div class="price-table-showcase">
+                        R$ Valor Fictício
+                      </div>
+                      <div class="off-price-badge">
+                        10% OFF
+                      </div>
+                    </div>-->
+                    <div class="text-center">
+                      <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period">
+                          Sem
+                          Juros</span></h6>
+                      <p class="text-center">Valor Total: -- </p>
+                    </div>
+                    <div class="price-table-showcase-holder text-center">
+                    </div>
+                    <hr>
+                    <ul class="fa-ul">
+                      <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
+                      <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
+                      <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
+                      <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
+                      <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
+                      <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
+                    </ul>
+                    <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
+                      data-bs-target="#modal-editar-plano1">
+                      <i class="fas fa-edit"></i></i> editar plano
+                    </button>
+                    <div class="d-grid">
+                      <a href="#" class="btn btn-primary text-uppercase botao" id="btn-plano-1">Contratar</a>
+                    </div>
+                  </div>
                 </div>
-                <div class="off-price-badge">
-                  10% OFF
+              </div>
+              <!-- Veraneio -->
+              <div class="col-lg-4">
+                <div class="card mb-5 mb-lg-0 p-1">
+                  <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center">Conforto</h5>
+                    <!--<div class="price-table-showcase-holder text-center">
+      
+                      <div class="price-table-showcase">
+                        R$ Valor Fictício
+                      </div>
+                      <div class="off-price-badge">
+                        10% OFF
+                      </div>
+                    </div>-->
+                    <div class="text-center">
+                      <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period">
+                          Sem
+                          Juros</span></h6>
+                      <p class="text-center">Valor Total: -- </p>
+                    </div>
+                    <div class="price-table-showcase-holder text-center">
+                    </div>
+                    <hr>
+                    <ul class="fa-ul">
+                      <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
+                      <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
+                      <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
+                      <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
+                      <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
+                      <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
+                    </ul>
+                    <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
+                      data-bs-target="#modal-editar-plano1">
+                      <i class="fas fa-edit"></i></i> editar plano
+                    </button>
+                    <div class="d-grid">
+                      <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-2">Contratar</a>
+                    </div>
+                  </div>
                 </div>
-              </div>-->
-              <div class="text-center">
-                <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period"> Sem
-                  Juros</span></h6>
-              <p class="text-center">Valor Total: -- </p>
               </div>
-              <div class="price-table-showcase-holder text-center">
-              </div>
-              <hr>
-              <ul class="fa-ul">
-                <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
-                <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
-                <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
-                <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
-                <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
-                <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
-              </ul>
-              <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                data-bs-target="#modal-editar-plano1">
-                <i class="fas fa-edit"></i></i> editar plano
-              </button>
-              <div class="d-grid">
-                <a href="#" class="btn btn-primary text-uppercase botao" id="btn-plano-1">Contratar</a>
+              <!-- Premium -->
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center">Exclusive</h5>
+                    <!--<div class="price-table-showcase-holder text-center">
+      
+                      <div class="price-table-showcase">
+                        R$ Valor Fictício
+                      </div>
+                      <div class="off-price-badge">
+                        10% OFF
+                      </div>
+                    </div>-->
+                    <div class="text-center">
+                      <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period">
+                          Sem
+                          Juros</span></h6>
+                      <p class="text-center">Valor Total: -- </p>
+                    </div>
+                    <div class="price-table-showcase-holder text-center">
+                    </div>
+                    <hr>
+                    <ul class="fa-ul">
+                      <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
+                      <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
+                      <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
+                      <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
+                      <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
+                      <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
+                    </ul>
+                    <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
+                      data-bs-target="#modal-editar-plano1">
+                      <i class="fas fa-edit"></i></i> editar plano
+                    </button>
+                    <div class="d-grid">
+                      <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-3">Contratar</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <!-- Veraneio -->
-        <div class="col-lg-4">
-          <div class="card mb-5 mb-lg-0 p-1">
-            <div class="card-body">
-              <h5 class="card-title text-muted text-uppercase text-center">Conforto</h5>
-              <!--<div class="price-table-showcase-holder text-center">
-
-                <div class="price-table-showcase">
-                  R$ Valor Fictício
-                </div>
-                <div class="off-price-badge">
-                  10% OFF
-                </div>
-              </div>-->
-              <div class="text-center">
-                <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period"> Sem
-                  Juros</span></h6>
-              <p class="text-center">Valor Total: -- </p>
-              </div>
-              <div class="price-table-showcase-holder text-center">
-              </div>
-              <hr>
-              <ul class="fa-ul">
-                <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
-                <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
-                <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
-                <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
-                <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
-                <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
-              </ul>
-              <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                data-bs-target="#modal-editar-plano1">
-                <i class="fas fa-edit"></i></i> editar plano
-              </button>
-              <div class="d-grid">
-                <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-2">Contratar</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Premium -->
-        <div class="col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title text-muted text-uppercase text-center">Exclusive</h5>
-              <!--<div class="price-table-showcase-holder text-center">
-
-                <div class="price-table-showcase">
-                  R$ Valor Fictício
-                </div>
-                <div class="off-price-badge">
-                  10% OFF
-                </div>
-              </div>-->
-              <div class="text-center">
-                <h6 class="card-price " id="card-price-1"><span class="parcela">--x</span> --,--<span class="period"> Sem
-                  Juros</span></h6>
-              <p class="text-center">Valor Total: -- </p>
-              </div>
-              <div class="price-table-showcase-holder text-center">
-              </div>
-              <hr>
-              <ul class="fa-ul">
-                <li><span class="fa-li"><i class="fas fa-fire"></i></span>Incêndio</li>
-                <li><span class="fa-li"><i class="fas fa-shopping-bag"></i></span>Subtração de Bens</li>
-                <li><span class="fa-li"><i class="fas fa-bolt"></i></span>Dados Elétricos</li>
-                <li><span class="fa-li"><i class="fas fa-poo-storm"></i></span>Vendaval</li>
-                <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
-                <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
-              </ul>
-              <button type="button" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                data-bs-target="#modal-editar-plano1">
-                <i class="fas fa-edit"></i></i> editar plano
-              </button>
-              <div class="d-grid">
-                <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-3">Contratar</a>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
+      </div>
+      <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        ...
+      </div>
+      <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+        ...
       </div>
     </div>
+  </div>
+  <div class="text-center">
+    <span class="move"><i class="fas fa-arrows-alt-h"></i> Arraste Para o Lado e Veja as Opções </span>
+  </div>
 
-    <!-- Modal -->
-    <div class="modal fade modal-edit" id="modal-editar-plano1" tabindex="-1" aria-labelledby="modal-editar-plano1"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modal-editar-plano1">Personalize Mais Ainda o Seu Plano</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- Modal -->
+  <div class="modal fade modal-edit" id="modal-editar-plano1" tabindex="-1" aria-labelledby="modal-editar-plano1"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-editar-plano1">Personalize Mais Ainda o Seu Plano</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="valorcoberturaincendio" class="form-label label-coberturas">Incêndio:</label>
+            <div class="range-container">
+              <input type="range" class="form-range input-coberturas" id="valorcoberturaincendio" min="100000"
+                max="1000000" value="10000" step="10000" />
+              <div class="range-value0" id="valorcoberturaincendio-label"></div>
+            </div>
           </div>
-          <div class="modal-body">
+          <!-- valorCoberturaSubstracaoBens -->
+          <div class="form-group">
+            <label for="valorcoberturasubstracaobens" class="form-label label-coberturas">Subtração de Bens:</label>
+            <div class="range-container">
+              <input type="range" class="form-range input-coberturas" id="valorcoberturasubstracaobens" min="2000"
+                max="300000" value="2000" step="1000" />
+              <div class="range-value1" id="valorcoberturasubstracaobens-label"></div>
+            </div>
+          </div>
+          <!-- valorCoberturaPagamentoAluguel -->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturapagamentoaluguel" class="form-label label-coberturas">Pagamento de
+                  Aluguel:</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturapagamentoaluguel" min="3000"
+                    max="200000" value="3000" step="1000" />
+                  <div class="range-value2" id="valorcoberturapagamentoaluguel-label">R$ 10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Snippet de cobertura RC Familiar-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">RC
+                  Familiar:</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturarcfamiliar" min="2000"
+                    max="200000" value="2000" step="1000" />
+                  <div class="range-value3" id="valorcoberturarcfamiliar-label">R$ 10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <!--Snippet de valorCoberturaDanosEletricos-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturadanoseletricos" class="form-label label-coberturas">Danos Elétricos</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturadanoseletricos" min="2000"
+                    max="500000" value="2000" step="1000" />
+                  <div class="range-value4" id="valorcoberturadanoseletricos-label"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorCoberturaVendaval-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturavendaval" class="form-label label-coberturas"> Cobertura
+                  Vendaval</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturavendaval" min="2000"
+                    max="50000" value="2000" step="1000" />
+                  <div class="range-value5" id="valorcoberturavendaval-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Snippet de valorCoberturaDesmoronamento-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturadesmoronamento" class="form-label label-coberturas">Cobertura
+                  Desmoronamento</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturadesmoronamento" min="2000"
+                    max="500000" value="2000" step="1000" />
+                  <div class="range-value6" id="valorcoberturadesmoronamento-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorcoberturavazamentostanquestubulacoes-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturavazamentostanquestubulacoes"
+                  class="form-label label-coberturas">Vazamentos</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturavazamentostanquestubulacoes"
+                    min="2000" max="100000" value="5000" step="1000" />
+                  <div class="range-value7" id="valorcoberturavazamentostanquestubulacoes-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorcoberturaquebravidros-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturaquebravidros" class="form-label label-coberturas">Quebra de Vidros</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturaquebravidros" min="2000"
+                    max="20000" value="2000" step="1000" />
+                  <div class="range-value8" id="valorcoberturaquebravidros-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorcoberturapagamentocondominio-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturapagamentocondominio" class="form-label label-coberturas">Pagamento
+                  Condominio</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturapagamentocondominio"
+                    min="1000" max="5000" value="1000" step="1000" />
+                  <div class="range-value9" id="valorcoberturapagamentocondominio-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snipet de valorcoberturamorteacidental
+        <div class="row">
+          <div class="col">
             <div class="form-group">
-              <label for="valorcoberturaincendio" class="form-label label-coberturas">Incêndio:</label>
+              <label for="valorcoberturamorteacidental" class="form-label label-coberturas">Morte Acidental</label>
               <div class="range-container">
-                <input type="range" class="form-range input-coberturas" id="valorcoberturaincendio" min="100000"
+                <input type="range" class="form-range input-coberturas" id="valorcoberturamorteacidental"
+                  min="10000" max="1000000" value="10000" step="10000" />
+                <div class="range-value10" id="valorcoberturamorteacidental-label">R$10.000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+          <!--Snipet de valorcoberturatremorterraterremoto-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturatremorterraterremoto"
+                  class="form-label label-coberturas">Tremor/Teremoto</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturatremorterraterremoto"
+                    min="2000" max="500000" value="2000" step="1000" />
+                  <div class="range-value11" id="valorcoberturatremorterraterremoto-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorcoberturaalagamento-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorcoberturaalagamento" class="form-label label-coberturas">Alagamento</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorcoberturaalagamento" min="5000"
+                    max="50000" value="5000" step="1000" />
+                  <div class="range-value12" id="valorcoberturaalagamento-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de flagcontratarvalordenovo
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="flagcontratarvalordenovo" class="form-label label-coberturas">Flag Contratar
+                Denono</label>
+              <div class="range-container">
+                <input type="range" class="form-range input-coberturas" id="flagcontratarvalordenovo" min="10000"
                   max="1000000" value="10000" step="10000" />
-                <div class="range-value0" id="valorcoberturaincendio-label"></div>
+                <div class="range-value13" id="flagcontratarvalordenovo-label">R$10.000</div>
               </div>
             </div>
-            <!-- valorCoberturaSubstracaoBens -->
+          </div>
+        </div>
+        -->
+
+          <!--Snippet de valorcoberturaedificio
+        <div class="row">
+          <div class="col">
             <div class="form-group">
-              <label for="valorcoberturasubstracaobens" class="form-label label-coberturas">Subtração de Bens:</label>
+              <label for="valorcoberturaedificio" class="form-label label-coberturas">Edifício</label>
               <div class="range-container">
-                <input type="range" class="form-range input-coberturas" id="valorcoberturasubstracaobens" min="2000"
-                  max="300000" value="2000" step="1000" />
-                <div class="range-value1" id="valorcoberturasubstracaobens-label"></div>
+                <input type="range" class="form-range input-coberturas" id="valorcoberturaedificio" min="10000"
+                  max="1000000" value="10000" step="10000" />
+                <div class="range-value15" id="valorcoberturaedificio-label">R$10.000</div>
               </div>
             </div>
-            <!-- valorCoberturaPagamentoAluguel -->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturapagamentoaluguel" class="form-label label-coberturas">Pagamento de
-                    Aluguel:</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturapagamentoaluguel"
-                      min="3000" max="200000" value="3000" step="1000" />
-                    <div class="range-value2" id="valorcoberturapagamentoaluguel-label">R$ 10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!--Snippet de cobertura RC Familiar-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">RC
-                    Familiar:</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturarcfamiliar" min="2000"
-                      max="200000" value="2000" step="1000" />
-                    <div class="range-value3" id="valorcoberturarcfamiliar-label">R$ 10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorCoberturaDanosEletricos-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturadanoseletricos" class="form-label label-coberturas">Danos Elétricos</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturadanoseletricos"
-                      min="2000" max="500000" value="2000" step="1000" />
-                    <div class="range-value4" id="valorcoberturadanoseletricos-label"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorCoberturaVendaval-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturavendaval" class="form-label label-coberturas"> Cobertura
-                    Vendaval</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturavendaval" min="2000"
-                      max="50000" value="2000" step="1000" />
-                    <div class="range-value5" id="valorcoberturavendaval-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!--Snippet de valorCoberturaDesmoronamento-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturadesmoronamento" class="form-label label-coberturas">Cobertura
-                    Desmoronamento</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturadesmoronamento"
-                      min="2000" max="500000" value="2000" step="1000" />
-                    <div class="range-value6" id="valorcoberturadesmoronamento-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorcoberturavazamentostanquestubulacoes-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturavazamentostanquestubulacoes"
-                    class="form-label label-coberturas">Vazamentos</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas"
-                      id="valorcoberturavazamentostanquestubulacoes" min="2000" max="100000" value="5000"
-                      step="1000" />
-                    <div class="range-value7" id="valorcoberturavazamentostanquestubulacoes-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorcoberturaquebravidros-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturaquebravidros" class="form-label label-coberturas">Quebra de Vidros</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturaquebravidros" min="2000"
-                      max="20000" value="2000" step="1000" />
-                    <div class="range-value8" id="valorcoberturaquebravidros-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorcoberturapagamentocondominio-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturapagamentocondominio" class="form-label label-coberturas">Pagamento
-                    Condominio</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturapagamentocondominio"
-                      min="1000" max="5000" value="1000" step="1000" />
-                    <div class="range-value9" id="valorcoberturapagamentocondominio-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snipet de valorcoberturamorteacidental
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturamorteacidental" class="form-label label-coberturas">Morte Acidental</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturamorteacidental"
-                      min="10000" max="1000000" value="10000" step="10000" />
-                    <div class="range-value10" id="valorcoberturamorteacidental-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
-            <!--Snipet de valorcoberturatremorterraterremoto-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturatremorterraterremoto"
-                    class="form-label label-coberturas">Tremor/Teremoto</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturatremorterraterremoto"
-                      min="2000" max="500000" value="2000" step="1000" />
-                    <div class="range-value11" id="valorcoberturatremorterraterremoto-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorcoberturaalagamento-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturaalagamento" class="form-label label-coberturas">Alagamento</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturaalagamento" min="5000"
-                      max="50000" value="5000" step="1000" />
-                    <div class="range-value12" id="valorcoberturaalagamento-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de flagcontratarvalordenovo
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="flagcontratarvalordenovo" class="form-label label-coberturas">Flag Contratar
-                    Denono</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="flagcontratarvalordenovo" min="10000"
-                      max="1000000" value="10000" step="10000" />
-                    <div class="range-value13" id="flagcontratarvalordenovo-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
-            <!--Snippet de valorcoberturaedificio
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturaedificio" class="form-label label-coberturas">Edifício</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturaedificio" min="10000"
-                      max="1000000" value="10000" step="10000" />
-                    <div class="range-value15" id="valorcoberturaedificio-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
-            <!--Snippet de valorcoberturaconteudo
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorcoberturaconteudo" class="form-label label-coberturas">Conteúdo</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorcoberturaconteudo" min="10000"
-                      max="1000000" value="10000" step="10000" />
-                    <div class="range-value16" id="valorcoberturaconteudo-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
-            <!--Snippet de valorimpactoveiculos-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorimpactoveiculos" class="form-label label-coberturas">Impacto de Veículos</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorimpactoveiculos" min="2000"
-                      max="20000" value="2000" step="1000" />
-                    <div class="range-value17" id="valorimpactoveiculos-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valorSubtracaoBicicleta-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorsubtracaobicicleta" class="form-label label-coberturas">Subtração
-                    Bicicleta</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorsubtracaobicicleta" min="2500"
-                      max="10000" value="2500" step="500" />
-                    <div class="range-value18" id="valorsubtracaobicicleta-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Snippet de valornegociocasa-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valornegociocasa" class="form-label label-coberturas">Negócio em Casa</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valornegociocasa" min="2000"
-                      max="50000" value="2000" step="1000" />
-                    <div class="range-value19" id="valornegociocasa-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Snippet de valorPequenasReformas-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorpequenasreformas" class="form-label label-coberturas">Pequenas
-                    Reformas</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorpequenasreformas" min="5000"
-                      max="200000" value="5000" step="1000" />
-                    <div class="range-value20" id="valorpequenasreformas-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Snippet de valorfuneralfamiliar
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorfuneralfamiliar" class="form-label label-coberturas">Funeral Familiar</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorfuneralfamiliar" min="5000"
-                      max="25000" value="5000" step="1000" />
-                    <div class="range-value21" id="valorfuneralfamiliar-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
-            <!-- Snippet de valordanosmorais-->
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valordanosmorais" class="form-label label-coberturas">Danos Morais</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valordanosmorais" min="2000"
-                      max="100000" value="2000" step="1000" />
-                    <div class="range-value22" id="valordanosmorais-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Snippet de valorrcempregador
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="valorrcempregador" class="form-label label-coberturas">Rc Empregador</label>
-                  <div class="range-container">
-                    <input type="range" class="form-range input-coberturas" id="valorrcempregador" min="2000"
-                      max="200000" value="10000" step="1000" />
-                    <div class="range-value23" id="valorrcempregador-label">R$10.000</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
-
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel">Fechar</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-save">Salvar</button>
+        </div>
+        -->
+
+          <!--Snippet de valorcoberturaconteudo
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="valorcoberturaconteudo" class="form-label label-coberturas">Conteúdo</label>
+              <div class="range-container">
+                <input type="range" class="form-range input-coberturas" id="valorcoberturaconteudo" min="10000"
+                  max="1000000" value="10000" step="10000" />
+                <div class="range-value16" id="valorcoberturaconteudo-label">R$10.000</div>
+              </div>
+            </div>
           </div>
+        </div>
+        -->
+
+          <!--Snippet de valorimpactoveiculos-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorimpactoveiculos" class="form-label label-coberturas">Impacto de Veículos</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorimpactoveiculos" min="2000"
+                    max="20000" value="2000" step="1000" />
+                  <div class="range-value17" id="valorimpactoveiculos-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valorSubtracaoBicicleta-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorsubtracaobicicleta" class="form-label label-coberturas">Subtração
+                  Bicicleta</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorsubtracaobicicleta" min="2500"
+                    max="10000" value="2500" step="500" />
+                  <div class="range-value18" id="valorsubtracaobicicleta-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Snippet de valornegociocasa-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valornegociocasa" class="form-label label-coberturas">Negócio em Casa</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valornegociocasa" min="2000" max="50000"
+                    value="2000" step="1000" />
+                  <div class="range-value19" id="valornegociocasa-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Snippet de valorPequenasReformas-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valorpequenasreformas" class="form-label label-coberturas">Pequenas
+                  Reformas</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valorpequenasreformas" min="5000"
+                    max="200000" value="5000" step="1000" />
+                  <div class="range-value20" id="valorpequenasreformas-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Snippet de valorfuneralfamiliar
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="valorfuneralfamiliar" class="form-label label-coberturas">Funeral Familiar</label>
+              <div class="range-container">
+                <input type="range" class="form-range input-coberturas" id="valorfuneralfamiliar" min="5000"
+                  max="25000" value="5000" step="1000" />
+                <div class="range-value21" id="valorfuneralfamiliar-label">R$10.000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+          <!-- Snippet de valordanosmorais-->
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="valordanosmorais" class="form-label label-coberturas">Danos Morais</label>
+                <div class="range-container">
+                  <input type="range" class="form-range input-coberturas" id="valordanosmorais" min="2000" max="100000"
+                    value="2000" step="1000" />
+                  <div class="range-value22" id="valordanosmorais-label">R$10.000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Snippet de valorrcempregador
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="valorrcempregador" class="form-label label-coberturas">Rc Empregador</label>
+              <div class="range-container">
+                <input type="range" class="form-range input-coberturas" id="valorrcempregador" min="2000"
+                  max="200000" value="10000" step="1000" />
+                <div class="range-value23" id="valorrcempregador-label">R$10.000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel">Fechar</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-save">Salvar</button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <div class="container pre-footer">
     <div class="row">
       <div class="col-md-4">
-            <div class=" d-flex justify-content-center">
-                <div class=" badges">
-                    <h3 class="text-center">Bandeiras Aceitas:</h3>
-                    <div class="payment-logos d-flex justify-content-center">
-                        <img src="./src/img/Desconto Exclusivo Cartão Porto.png" alt="cartão porto seguro" class="payment-logo-porto" />
-                        
-                    </div>
-                </div>
+        <div class=" d-flex justify-content-center">
+          <div class=" badges">
+            <h3 class="text-center">Bandeiras Aceitas:</h3>
+            <div class="payment-logos d-flex justify-content-center">
+              <img src="./src/img/Desconto Exclusivo Cartão Porto.png" alt="cartão porto seguro"
+                class="payment-logo-porto" />
+
             </div>
-        
-            <div class=" d-flex justify-content-center">
-                <div class=" bandeiras">
-                    <div class="payment-logos d-flex justify-content-center">
-                        <img src="./src/img/bandeiras-cartao/visa.png" alt="Visa" class="payment-logo" />
-                        <img src="./src/img/bandeiras-cartao/master-card.png" alt="Mastercard" class="payment-logo" />
-                        <img src="./src/img/bandeiras-cartao/amex.png" alt="American Express" class="payment-logo" />
-                        <img src="./src/img/bandeiras-cartao/dinners.png" alt="Diners Club" class="payment-logo" />
-                    </div>
-                </div>
+          </div>
+        </div>
+
+        <div class=" d-flex justify-content-center">
+          <div class=" bandeiras">
+            <div class="payment-logos d-flex justify-content-center">
+              <img src="./src/img/bandeiras-cartao/visa.png" alt="Visa" class="payment-logo" />
+              <img src="./src/img/bandeiras-cartao/master-card.png" alt="Mastercard" class="payment-logo" />
+              <img src="./src/img/bandeiras-cartao/amex.png" alt="American Express" class="payment-logo" />
+              <img src="./src/img/bandeiras-cartao/dinners.png" alt="Diners Club" class="payment-logo" />
             </div>
-        
+          </div>
+        </div>
+
       </div>
       <div class="col-md-4">
         <div class="row d-flex justify-content-center">
-            <div class="col-md-12 badges">
-                <h3 class="text-center">Compra Segura:</h3>
-                <div class="payment-logos d-flex justify-content-center">
-                    <img src="./src/img/selos/selo-pagarme.png" alt="selo de compra segura da Pagar me" class="payment-logo-pagarme" />
-                </div>
+          <div class="col-md-12 badges">
+            <h3 class="text-center">Compra Segura:</h3>
+            <div class="payment-logos d-flex justify-content-center">
+              <img src="./src/img/selos/selo-pagarme.png" alt="selo de compra segura da Pagar me"
+                class="payment-logo-pagarme" />
             </div>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="row d-flex justify-content-center">
-            <div class="badges">
-                <h3 class="text-center">Uma Corretora Oficial:</h3>
-                <div class="payment-logos d-flex justify-content-center">
-                    <img src="./src/img/selos/selo susep.png" alt="cartão porto seguro" class="payment-logo-susep" /> <br>
-                </div>
+          <div class="badges">
+            <h3 class="text-center">Uma Corretora Oficial:</h3>
+            <div class="payment-logos d-flex justify-content-center">
+              <img src="./src/img/selos/selo susep.png" alt="cartão porto seguro" class="payment-logo-susep" /> <br>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -748,6 +777,30 @@
           }
         ]
       });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get all the tab buttons
+      var tabButtons = document.querySelectorAll(".my-pills-link");
+
+      // Function to remove 'active' class
+      function removeActiveClass() {
+        tabButtons.forEach(function (btn) {
+          btn.classList.remove('active');
+          document.querySelector(btn.getAttribute('data-bs-target')).classList.remove('show', 'active');
+        });
+      }
+
+      // Adding click event listeners to the buttons
+      tabButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          removeActiveClass();
+          btn.classList.add('active');
+          document.querySelector(btn.getAttribute('data-bs-target')).classList.add('show', 'active');
+        });
+      });
+
     });
   </script>
 
