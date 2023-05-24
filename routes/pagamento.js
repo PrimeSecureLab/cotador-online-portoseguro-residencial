@@ -135,8 +135,7 @@ router.post("/", async (req, res) => {
                 "uf": formData.segurado.endereco.uf
             },
             "contato": {
-                "email": formData.segurado.email,
-                //"numeroTelefoneResidencial": formData.segurado.numeroTelefone, //
+                "email": formData.segurado.email
             },
             "pessoaFisica": {
                 "dataNascimento": dataNascimento,
@@ -163,10 +162,14 @@ router.post("/", async (req, res) => {
           }
         },
         "contatoInspecao": {
-          "numeroTelefone": formData.segurado.numeroTelefone, //
+          "numeroTelefone": formData.segurado.numeroTelefone.replace(/[^0-9]+/g, ""),
           "contato": formData.segurado.nome
         }
     };
+
+    let numeroTelefone = formData.segurado.numeroTelefone.replace(/[^0-9]+/g, "");
+    if (numeroTelefone.length == 10){ proposta.segurado.contato.numeroTelefoneResidencial = numeroTelefone; }
+    if (numeroTelefone.length == 11){ proposta.segurado.contato.numeroTelefoneCelular = numeroTelefone; }
 
     let politicamenteExposta = {
         "cpf": pessoaFisica.politicamenteExposta.cpf,

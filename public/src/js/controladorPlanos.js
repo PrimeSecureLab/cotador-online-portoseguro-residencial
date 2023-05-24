@@ -205,8 +205,6 @@ $(document).ready(function() {
 
     allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
 
-    var currentData = {};
-    var planos = [];
     var encryptedData = null;
     var responseArray = [];
     var loading = false;
@@ -226,7 +224,6 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
                 success: function(res) { 
-                    
                     responseArray.push(res);
                     if (responseArray.length > 2){ loading = false; $("#loading-screen").hide(); atualizarCards(responseArray); }
                     console.log(produtos[i], 'Sucesso:', res); 
@@ -273,31 +270,68 @@ $(document).ready(function() {
         api_call(encryptedData);
     }
 
-    function atualizarCards(res){
-        if (!Array.isArray(res)){ return; } // Erro na requisição do plano
-        planos = res;
-        res.forEach((plano, index)=>{
+    function atualizarCards(arrayPlanos){
+        if (!Array.isArray(arrayPlanos)){ return; } // Erro na requisição do plano
+        let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        console.log(responseArray);
+        arrayPlanos.forEach((plano)=>{
             if (plano.error){ return; } // Erro durante a requisição do plano.
             if (!plano.data){ return; } // Erro na formatação da resposta
-            if (!plano.data.listaParcelamento){ return; } // Erro na formatação da resposta
-            plano.data.listaParcelamento.forEach((parcelamento, i)=>{
+
+            let data = plano.data;
+            if (!data.tipo){ return; }
+            if (!data.listaParcelamento){ return; } // Erro na formatação da resposta
+
+            let index = produtos.indexOf(data.tipo);
+            if (index < 0){ return; }else{ index += 1; }
+
+            let mainContainer = $(`.card-price#card-price-${index}`).parent();
+            let priceContainer = $(`.card-price#card-price-${index}`);
+            let totalContainer = mainContainer.children('p.text-center');
+            let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
+            let jurosFlag = $(`.card-price#card-price-${index} > .period`);
+
+            let valorSemJuros = 0;
+            let juros = true;
+            data.listaParcelamento.forEach((parcelamento, i)=>{
                 if (parcelamento.codigo != 62){ return; } // Pula se não for cartão de crédito (cod. 62)
-                if (parcelamento.quantidadeParcelas != 1){ return; } // Pula se não for 1x no crédito
-                let value = parcelamento.valorPrimeiraParcela.toFixed(2).replace(".", ","); // Formata valores para exibição
-                document.getElementById(`card-price-${index+1}`).innerHTML = `R$${value}<span class="period">/mês</span>`;
-                console.log(`${index+1}: ${value}`);
+                if (parcelamento.quantidadeParcelas == 1){ valorSemJuros = parcelamento.valorPrimeiraParcela; } // Pula se não for 1x no crédito
+                
+                if (data.listaParcelamento[i + 1].codigo != 62){ 
+                    let numeroParcelas = parcelamento.quantidadeParcelas; 
+                    let primeiraParcela = parcelamento.valorPrimeiraParcela;
+                    let demaisParcelas = parcelamento.valorDemaisParcelas;
+                    let valorTotal = (numeroParcelas - 1) * demaisParcelas + primeiraParcela;
+
+                    if (Math.abs(valorSemJuros - valorTotal) < 0.05){ juros = false; }
+
+                    primeiraParcela = primeiraParcela.toFixed(2).replace(".", ",");
+                    valorTotal = valorTotal.toFixed(2).replace(".", ",");
+                    
+                    let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+                    textParcela.each(function() { this.textContent = primeiraParcela; });
+                    totalContainer.html(`Valor Total: R$${valorTotal}`);
+                    parcelasContainer.html(`${numeroParcelas}x`);
+                    if (!juros){ jurosFlag.css('display', 'inline'); }
+                }
             });
         });
     }
 
-    function salvarOrcamento(index){
-        console.log(planos);
-        if (!planos){ return; }
-        if (planos.length < 3){ return; }
-        if (planos[index].error){ return; }
-        if (!planos[index].data){ return; }
-        encryptedData.orcamento = planos[index].data;
-        console.log(planos[index].data)
+    function salvarOrcamento(produto){
+        if (!responseArray){ return; }
+        if (responseArray.length < 3){ return; }
+        let data = {};
+        responseArray.forEach((plano, index)=>{
+            if (!plano){ return; }
+            if (!plano.data){ return; }
+            if (plano.error){ return; }
+            if (plano.status != 200){ return; }
+            if (!plano.data.tipo){ return; }
+            if (plano.data.tipo == produto){ data = plano.data; }
+        });
+        if (!data){ return; }
+        encryptedData.orcamento = data;
         localStorage.setItem("finalData", JSON.stringify(encryptedData));
         window.location.href = "./login";
         return;
@@ -354,9 +388,81 @@ $(document).ready(function() {
     $("button#btn-cancel").on("click", function() { atualizarInputs(encryptedData.itemData); });
     $("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
 
-    $("#btn-plano-1").on("click", function(e) { e.preventDefault(); salvarOrcamento(0); });
-    $("#btn-plano-2").on("click", function(e) { e.preventDefault(); salvarOrcamento(1); });
-    $("#btn-plano-3").on("click", function(e) { e.preventDefault(); salvarOrcamento(2); });
+    $("#btn-plano-1").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual'); });
+    $("#btn-plano-2").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual-premium'); });
+    $("#btn-plano-3").on("click", function(e) { e.preventDefault(); salvarOrcamento('veraneio'); });
 
     validacaoInicial();
+
+    function controleCoberturas(cobertura){
+        let regraCoberturaBase = {
+            valorCoberturaIncendio: {min: 100000, max: ((residencia == 2 || residencia == 6) ? 700000 : 1000000)},
+            valorCoberturaDanosEletricos: {min: 2000, max: '50%'},
+            valorCoberturaSubstracaoBens: {min: 2000, max: '30%; 150000'},
+            valorCoberturaAlagamento: {min: 5000, max: 30000, req: (residencia == 1 || residencia == 2 || residencia == 4)},
+            valorNegocioCasa: {min: 2000, max: 50000},
+            valorCoberturaRCFamiliar: {min: 2000, max: '50%'},
+            valorDanosMorais: {min: 2000, max: '50% - RCFamiliar; 50000'},
+            valorCoberturaDesmoronamento: {min: 2000, max: '10%; 100000'},
+            valorImpactoVeiculos: {min: 2000, max: '100%'},
+            valorPequenasReformas: {min: 2000, max: 100000, req: (residencia != 5 || residencia != 6 || residencia != 7)},
+            valorCoberturaPagamentoCondominio: {min: 300, max: 5000},
+            valorCoberturaQuebraVidros: {min: 2000, max: '50%'},
+            valorSubtracaoBicicleta: {min: 2500, max: '30%; 50000', req: 'incendio > 250000 && somatoria < 500000'},
+            valorCoberturaTremorTerraTerremoto: {min: 2000, max: '15%; 500000'},
+            valorCoberturaVazamentosTanquesTubulacoes: {min: 2000, max: '30%; 100000'},
+            valorCoberturaVendaval: {min: 2000, max: '50%'},
+            valorCoberturaPagamentoAluguel: {min: 3000, max: '50%; 200000'}
+
+        }
+        if (cobertura == 'valorCoberturaIncendio')
+
+    }
+
+    /*var coberturas = ['habitual', 'habitual-premium', 'veraneio'];
+    var coberturasDisponiveis = ['habitual', 'habitual-premium', 'veraneio']
+    coberturasDisponiveis['habitual'] = [ 
+        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorNegocioCasa', 
+        'valorCoberturaRCFamiliar', 'valorDanosMorais', 'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorPequenasReformas', 
+        'valorCoberturaPagamentoCondominio', 'valorCoberturaQuebraVidros', 'valorSubtracaoBicicleta', 'valorCoberturaTremorTerraTerremoto', 
+        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval', 'valorCoberturaPagamentoAluguel' ];
+    coberturasDisponiveis['habitual-premium'] = [ 
+        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorNegocioCasa', 
+        'valorCoberturaRCFamiliar', 'valorDanosMorais', 'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorPequenasReformas', 
+        'valorCoberturaPagamentoCondominio', 'valorCoberturaQuebraVidros', 'valorSubtracaoBicicleta', 'valorCoberturaTremorTerraTerremoto', 
+        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval', 'valorCoberturaPagamentoAluguel' ];
+    coberturasDisponiveis['veraneio'] = [
+        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorCoberturaRCFamiliar', 
+        'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorCoberturaQuebraVidros', 'valorCoberturaTremorTerraTerremoto', 
+        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval'
+    ]
+    function regrasCoberturas(cobertura){
+        let 
+    }
+    
+    let tipoResidencia = 0; 
+    let coberturaBase = 0;
+    let coberturaRCFamiliar = 2000;
+    regrasCoberturas = {
+        valorCoberturaIncendio: { produtos: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaDanosEletricos: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaSubstracaoBens: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaAlagamento: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorNegocioCasa: { disponivel: ['habitual', 'habitual-premium'] },
+        valorCoberturaRCFamiliar: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorDanosMorais: { disponivel: ['habitual', 'habitual-premium'] },
+        valorCoberturaDesmoronamento: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorImpactoVeiculos: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorPequenasReformas: { disponivel: ['habitual', 'habitual-premium'] },
+        valorCoberturaPagamentoCondominio: { disponivel: ['habitual', 'habitual-premium'] },
+        valorCoberturaQuebraVidros: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorSubtracaoBicicleta: { disponivel: ['habitual', 'habitual-premium'] },
+        valorCoberturaTremorTerraTerremoto: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaVazamentosTanquesTubulacoes: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaVendaval: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
+        valorCoberturaPagamentoAluguel: { disponivel: ['habitual', 'habitual-premium'] }
+    };
+    */
+
+    
 });

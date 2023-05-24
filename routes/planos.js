@@ -10,12 +10,6 @@ const Usuarios = require('../collections/usuarios');
 
 dotenv.config();
 
-const _allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
-'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
-'valorCoberturaPagamentoCondominio', 'valorCoberturaMorteAcidental', 'valorCoberturaTremorTerraTerremoto', 'valorCoberturaAlagamento', 'flagContratarValorDeNovo', 'flagLMIDiscriminado',
-'valorCoberturaEdificio', 'valorCoberturaConteudo', 'valorImpactoVeiculos', 'valorSubtracaoBicicleta', 'valorNegocioCasa', 'valorPequenasReformas', 'valorFuneralFamiliar', 
-'valorDanosMorais', 'valorRCEmpregador', 'valorCoberturaHoleinOne', 'valorCoberturaDanosJardim', 'valorCoberturaObrasObjetosArte', 'valorCoberturaJoiasRelogios' ];
-
 // Define a rota para a página HTML
 router.get('/', (req, res) => { res.sendFile('planos.html', { root: 'public' }); });
 
@@ -24,11 +18,11 @@ router.post('/', async (req, res) => {
     let data = req.body;
     let redirect = '/cadastro';
 
-
     if (!data){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário."}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.itemData){ return res.status(400).json({redirect: '/'}); }
     if (!data.produto){ return res.status(400).json({error: "Produto não identificado.", redirect: false}); }
+    
     let produto = data.produto;
     if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
         return res.status(400).json({error: "Produto não identificado.", redirect: false});
@@ -55,7 +49,6 @@ router.post('/', async (req, res) => {
     let token = await authToken();
     let orcamento = await portoOrcamentoApi(produto, data, token);
 
-    //console.log('A:', orcamento.data);
     let response = {};
     if (orcamento){
         if (orcamento.status == 200){
@@ -63,10 +56,14 @@ router.post('/', async (req, res) => {
             orcamento.data.criadoEm = new Date();
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
         }else{
-            response = { error: true, status: response.status, data: { tipo: produto }, redirect: false };
+            errorData = orcamento.data;
+            errorData.tipo = produto;
+            response = { error: true, status: orcamento.status, data: errorData, redirect: false };
         }
     }else{
-        response = { error: true, status: 504, data: { tipo: produto }, redirect: false };
+        errorData = orcamento.data;
+        errorData.tipo = produto;
+        response = { error: true, status: 504, data: errorData, redirect: false };
     }
     res.status(200).json(response);
     /*let promise_array = [];
@@ -164,7 +161,7 @@ async function portoOrcamentoApi(produto, formData, token){
             "segurado": {
                 "nome": data.segurado.nome,
                 "numeroTelefone": data.segurado.numeroTelefone.replace(/[^0-9]+/g, ''),
-                "tipoTelefone": 3,
+                "tipoTelefone": data.segurado.tipoTelefone,
                 "cpfCnpj": data.segurado.cpf.replace(/[^0-9]+/g, ''),
                 "dataNascimento": dataNascimento,
                 "endereco": {
@@ -179,16 +176,18 @@ async function portoOrcamentoApi(produto, formData, token){
             },
             "item": itemList
         }
+        //console.log(payload)
+
         //console.log(payload);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.data); resolve(error.response); });
+        let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
         let delay = 100
-        if (produto == 'habitual-premiu'){ delay = 200; }
+        if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
         setTimeout(() => { resolve( request ); }, delay);
     });
 }
-
+/*
 async function porto_orcamento_habitual(formData, token){
     return new Promise(async (resolve, reject)=>{
         let data = formData;
@@ -393,4 +392,5 @@ async function porto_orcamento_veraneio(formData, token){
         setTimeout(() => { resolve( request ); }, 200);
     });
 }
+*/
 module.exports = router;

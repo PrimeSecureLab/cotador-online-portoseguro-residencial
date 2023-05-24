@@ -59,18 +59,25 @@ $(document).ready(function () {
     if (localData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
     if (localData.orcamento.tipo == "habitual-premium"){ $("input#plano-escolhido").val("Exclusive"); }
 
+    let juros = true;
+    let valorSemJuros = 0;
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
-            if (parcela.quantidadeParcelas == 1){
-                let valor = parcela.valorPrimeiraParcela.toFixed(2);
-                valor = valor.split(".");
-                $("span#value-120").html(`R$${valor[0]},<span class="small-zero-120">${valor[1]}</span>`);
-            }
+            if (parcela.quantidadeParcelas == 1){ valorSemJuros = parcela.valorPrimeiraParcela; }
             if (orcamento.listaParcelamento[index + 1].codigo != 62){
-                let valor = parcela.valorPrimeiraParcela.toFixed(2);
-                valor = valor.split(".");
-                $("h2.price > span.value").html(`R$${valor[0]},<span class="small-zero">${valor[1]}</span>`);
-                $("span.installment").html(`${parcela.quantidadeParcelas}x&nbsp;`)
+                let numeroParcelas = parcela.quantidadeParcelas;
+                let primeiraParcela = parcela.valorPrimeiraParcela;
+                let demaisParcelas = parcela.valorDemaisParcelas;
+                let valorTotal = (numeroParcelas - 1) * demaisParcelas + primeiraParcela;
+
+                if (Math.abs(valorSemJuros - valorTotal) < 0.05){ juros = false; }
+
+                valorTotal = valorTotal.toFixed(2).split(".");
+                primeiraParcela = primeiraParcela.toFixed(2).split(".");
+
+                $("span#value-120").html(`R$${valorTotal[0]},<span class="small-zero-120">${valorTotal[1]}</span>`);
+                $("h2.price > span.value").html(`R$${primeiraParcela[0]},<span class="small-zero">${primeiraParcela[1]}</span>`);
+                $("span.installment").html(`${numeroParcelas}x&nbsp;`)
             }
         }
     });
