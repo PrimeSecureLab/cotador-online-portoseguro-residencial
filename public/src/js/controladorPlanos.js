@@ -194,8 +194,6 @@ $(document).ready(function() {
     setupRangeInput(valordanosmorais);
     setupRangeInput(valorrcempregador);
     
-    
-
     var relacaoItemId = [];
     var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
     'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
@@ -208,6 +206,8 @@ $(document).ready(function() {
     var encryptedData = null;
     var responseArray = [];
     var loading = false;
+    var tipoResidencia = null;
+    
 
     async function api_call(data) {
         if (loading == true){ return; }
@@ -263,11 +263,21 @@ $(document).ready(function() {
     }
 
     function validacaoInicial() {
-        encryptedData = localStorage.getItem("formData");
-        if (!encryptedData) { window.location.href = "/"; return; }
-        encryptedData = JSON.parse(encryptedData);
-        console.log(encryptedData);
-        api_call(encryptedData);
+        let storage = localStorage.getItem("formData");
+        if (!storage) { window.location.href = "/"; return; }
+        encryptedData = JSON.parse(storage);
+        tipoResidencia = encryptedData.tipoResidencia;
+        if (!tipoResidencia){ window.location.href = "/"; return; }
+        encryptedData = encryptedData.formData;
+
+        controleCoberturasHabitual();
+        controleCoberturasHabitualPremium();
+        controleCoberturasVeraneio();
+
+        console.log(valoresCobertura);
+
+        //controleCoberturasHabitual(2, false);
+        //api_call(encryptedData);
     }
 
     function atualizarCards(arrayPlanos){
@@ -352,7 +362,6 @@ $(document).ready(function() {
             let label_id = `#${inputList[i].id}-label`;
 
             $(label_id).text(formatCurrency($(input_id).val()));
-            $(label_id).text(formatCurrency($(input_id).val()));
             $(label_id).css("left", "calc(100% * (" + $(input_id).val() + " - " + $(input_id).attr("min") + ") / (" + $(input_id).attr("max") + " - " + $(input_id).attr("min") + "))");
         }
     }
@@ -378,91 +387,397 @@ $(document).ready(function() {
             error: function(xhr, status, error) { console.error('Error:', error); }
         });
         encryptedData.itemData = item;
-        api_call(encryptedData);
+        //api_call(encryptedData);
     }
 
     $(".modal-dialog").on("click", function(e) { e.stopPropagation(); });
-    $("div#modal-editar-plano1").on("click", function() { salvarItens(); })
+    $("div#modal-editar-plano1").on("click", function() { salvarItens(); });
     $("button#btn-save").on("click", function() { salvarItens(); });
     $("button.btn-close").on("click", function() { salvarItens(); });
     $("button#btn-cancel").on("click", function() { atualizarInputs(encryptedData.itemData); });
-    $("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
+    
+    $("#editar-plano-1").on("click", function() { indexJanela = 1; configurarJanelaDePlano(); });
+    $("#editar-plano-2").on("click", function() { indexJanela = 2; configurarJanelaDePlano(); });
+    $("#editar-plano-3").on("click", function() { indexJanela = 3; configurarJanelaDePlano(); });
+
+    //$("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
 
     $("#btn-plano-1").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual'); });
     $("#btn-plano-2").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual-premium'); });
     $("#btn-plano-3").on("click", function(e) { e.preventDefault(); salvarOrcamento('veraneio'); });
 
-    validacaoInicial();
+    var indexJanela = -1;
+    var valoresCobertura = ['habitual', 'habitual-premium', 'veraneio'];
+    valoresCobertura['habitual'] = {};
+    valoresCobertura['habitual-premium'] = {};
+    valoresCobertura['veraneio'] = {};
 
-    function controleCoberturas(cobertura){
-        let regraCoberturaBase = {
-            valorCoberturaIncendio: {min: 100000, max: ((residencia == 2 || residencia == 6) ? 700000 : 1000000)},
-            valorCoberturaDanosEletricos: {min: 2000, max: '50%'},
-            valorCoberturaSubstracaoBens: {min: 2000, max: '30%; 150000'},
-            valorCoberturaAlagamento: {min: 5000, max: 30000, req: (residencia == 1 || residencia == 2 || residencia == 4)},
-            valorNegocioCasa: {min: 2000, max: 50000},
-            valorCoberturaRCFamiliar: {min: 2000, max: '50%'},
-            valorDanosMorais: {min: 2000, max: '50% - RCFamiliar; 50000'},
-            valorCoberturaDesmoronamento: {min: 2000, max: '10%; 100000'},
-            valorImpactoVeiculos: {min: 2000, max: '100%'},
-            valorPequenasReformas: {min: 2000, max: 100000, req: (residencia != 5 || residencia != 6 || residencia != 7)},
-            valorCoberturaPagamentoCondominio: {min: 300, max: 5000},
-            valorCoberturaQuebraVidros: {min: 2000, max: '50%'},
-            valorSubtracaoBicicleta: {min: 2500, max: '30%; 50000', req: 'incendio > 250000 && somatoria < 500000'},
-            valorCoberturaTremorTerraTerremoto: {min: 2000, max: '15%; 500000'},
-            valorCoberturaVazamentosTanquesTubulacoes: {min: 2000, max: '30%; 100000'},
-            valorCoberturaVendaval: {min: 2000, max: '50%'},
-            valorCoberturaPagamentoAluguel: {min: 3000, max: '50%; 200000'}
-
+    function configurarJanelaDePlano(){
+        if (indexJanela == 1){  
+            $('input#valorcoberturaincendio')
+                .off('change', controleCoberturasHabitualPremium )
+                .off('change', controleCoberturasVeraneio )
+                .on('change', controleCoberturasHabitual );
+            $('input#valorcoberturarcfamiliar')
+                .off('change', controleCoberturasHabitualPremium )
+                .off('change', controleCoberturasVeraneio )
+                .on('change', controleCoberturasHabitual );
         }
-        if (cobertura == 'valorCoberturaIncendio')
-
+        if (indexJanela == 2){
+            $('input#valorcoberturaincendio')
+                .off('change', controleCoberturasHabitual )
+                .off('change', controleCoberturasVeraneio )
+                .on('change', controleCoberturasHabitualPremium );
+            $('input#valorcoberturarcfamiliar')
+                .off('change', controleCoberturasHabitualPremium )
+                .off('change', controleCoberturasVeraneio )
+                .on('change', controleCoberturasHabitual );
+        }
+        if (indexJanela == 3){
+            $('input#valorcoberturaincendio')
+                .off('change', controleCoberturasHabitualPremium )
+                .off('change', controleCoberturasHabitual )
+                .on('change', controleCoberturasVeraneio );
+            $('input#valorcoberturarcfamiliar')
+                .off('change', controleCoberturasHabitualPremium )
+                .off('change', controleCoberturasVeraneio )
+                .on('change', controleCoberturasHabitual );
+        }
     }
 
-    /*var coberturas = ['habitual', 'habitual-premium', 'veraneio'];
-    var coberturasDisponiveis = ['habitual', 'habitual-premium', 'veraneio']
-    coberturasDisponiveis['habitual'] = [ 
-        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorNegocioCasa', 
-        'valorCoberturaRCFamiliar', 'valorDanosMorais', 'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorPequenasReformas', 
-        'valorCoberturaPagamentoCondominio', 'valorCoberturaQuebraVidros', 'valorSubtracaoBicicleta', 'valorCoberturaTremorTerraTerremoto', 
-        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval', 'valorCoberturaPagamentoAluguel' ];
-    coberturasDisponiveis['habitual-premium'] = [ 
-        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorNegocioCasa', 
-        'valorCoberturaRCFamiliar', 'valorDanosMorais', 'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorPequenasReformas', 
-        'valorCoberturaPagamentoCondominio', 'valorCoberturaQuebraVidros', 'valorSubtracaoBicicleta', 'valorCoberturaTremorTerraTerremoto', 
-        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval', 'valorCoberturaPagamentoAluguel' ];
-    coberturasDisponiveis['veraneio'] = [
-        'valorCoberturaIncendio', 'valorCoberturaDanosEletricos', 'valorCoberturaSubstracaoBens', 'valorCoberturaAlagamento', 'valorCoberturaRCFamiliar', 
-        'valorCoberturaDesmoronamento', 'valorImpactoVeiculos', 'valorCoberturaQuebraVidros', 'valorCoberturaTremorTerraTerremoto', 
-        'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaVendaval'
-    ]
-    function regrasCoberturas(cobertura){
-        let 
+    function controleCoberturasHabitual(){
+        let inputs = {};
+        let residencia = tipoResidencia;
+        let todasInputRange = $('input[type="range"]');
+        todasInputRange.each((index)=>{ 
+            let input = todasInputRange[index];
+            inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
+        });
+        
+        inputs.valorcoberturaincendio.min = 100000;
+        inputs.valorcoberturaincendio.max = (residencia == 2) ? 700000 : 1000000;
+
+        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
+        }
+        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
+        }
+
+        let base = inputs.valorcoberturaincendio.value;
+
+        inputs.valorcoberturadanoseletricos.min = 2000;
+        inputs.valorcoberturadanoseletricos.max = base * 0.5;
+
+        inputs.valorcoberturasubstracaobens.min = 2000;
+        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 150000) ? 150000 : base * 0.3;
+
+        inputs.valorcoberturaalagamento.min = 5000;
+        inputs.valorcoberturaalagamento.max = 30000;
+        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
+
+        inputs.valornegociocasa.min = 2000;
+        inputs.valornegociocasa.max = 50000;
+        inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);
+
+        inputs.valorcoberturarcfamiliar.min = 2000;
+        inputs.valorcoberturarcfamiliar.max = base * 0.5;
+        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
+
+        inputs.valordanosmorais.min = 2000;
+        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 50000) ? 50000 : inputs.valorcoberturarcfamiliar.value * 0.5;
+        inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)
+
+        inputs.valorcoberturadesmoronamento.min = 2000;
+        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 100000) ? 100000 : base * 0.1;
+
+        inputs.valorimpactoveiculos.min = 2000;
+        inputs.valorimpactoveiculos.max = base * 1;
+        
+        inputs.valorpequenasreformas.min = 2000;
+        inputs.valorpequenasreformas.max = 100000;
+        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
+
+        inputs.valorcoberturapagamentocondominio.min = 300;
+        inputs.valorcoberturapagamentocondominio.max = 5000;
+
+        inputs.valorcoberturaquebravidros.min = 2000;
+        inputs.valorcoberturaquebravidros.max = base * 0.5;
+
+        inputs.valorcoberturatremorterraterremoto.min = 2000;
+        inputs.valorcoberturatremorterraterremoto.max = (base * 0.15 > 500000) ? 500000 : base * 0.15;
+
+        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
+        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 100000) ? 100000 : base * 0.30;
+
+        inputs.valorcoberturavendaval.min = 2000;
+        inputs.valorcoberturavendaval.max = base * 0.5;
+
+        inputs.valorcoberturapagamentoaluguel.min = 3000;
+        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
+
+        inputs.valorsubtracaobicicleta.min = 2500;
+        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
+        inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
+
+        valoresCobertura['habitual'] = {};
+
+        for(let i in inputs){
+            let input = inputs[i];
+
+            if (input.value < input.min){ input.value = input.min; }
+            if (input.value > input.max){ input.value = input.max; }
+            if (!input.disabled && input.min > input.max){ input.disabled = true; }
+
+            let inputElement = $(`#${input.id}`);
+            inputElement.min = input.min;
+            inputElement.max = input.max;
+            inputElement.val(input.value);
+
+            //if (alteracao){
+                let labelElement = $(`#${input.id}-label`); 
+                //inputElement.val(input.value);
+                labelElement.text(formatCurrency(input.value));
+                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
+                if (input.min > input.max){ labelElement.css('left', `0%`); }
+                //if (input.value < input.min){ labelElement.css('left', '0%'); }
+                //if (input.value > input.max){ labelElement.css('left', '100%'); }
+            //}
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                valoresCobertura['habitual'][nomeCobertura] = input.value;
+                if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; }
+                $(`#${input.id}`).prop("disabled", false);
+            }
+            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
+        }
+        //encryptedData.itemData = valoresCobertura['habitual'];
+        //api_call(encryptedData);
+        //console.log('inputRange:', valoresCobertura['habitual']);
     }
     
-    let tipoResidencia = 0; 
-    let coberturaBase = 0;
-    let coberturaRCFamiliar = 2000;
-    regrasCoberturas = {
-        valorCoberturaIncendio: { produtos: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaDanosEletricos: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaSubstracaoBens: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaAlagamento: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorNegocioCasa: { disponivel: ['habitual', 'habitual-premium'] },
-        valorCoberturaRCFamiliar: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorDanosMorais: { disponivel: ['habitual', 'habitual-premium'] },
-        valorCoberturaDesmoronamento: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorImpactoVeiculos: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorPequenasReformas: { disponivel: ['habitual', 'habitual-premium'] },
-        valorCoberturaPagamentoCondominio: { disponivel: ['habitual', 'habitual-premium'] },
-        valorCoberturaQuebraVidros: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorSubtracaoBicicleta: { disponivel: ['habitual', 'habitual-premium'] },
-        valorCoberturaTremorTerraTerremoto: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaVazamentosTanquesTubulacoes: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaVendaval: { disponivel: ['habitual', 'habitual-premium', 'veraneio'] },
-        valorCoberturaPagamentoAluguel: { disponivel: ['habitual', 'habitual-premium'] }
-    };
-    */
+    function controleCoberturasHabitualPremium(){
+        let inputs = {};
+        let residencia = tipoResidencia;
+        let todasInputRange = $('input[type="range"]');
+        todasInputRange.each((index)=>{ 
+            let input = todasInputRange[index];
+            inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
+        });
+        
+        inputs.valorcoberturaincendio.min = (residencia == 2) ? 700000 : 1000000;
+        inputs.valorcoberturaincendio.max = 20000000;
+
+        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
+        }
+        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
+        }
+
+        let base = inputs.valorcoberturaincendio.value;
+
+        inputs.valorcoberturadanoseletricos.min = 2000;
+        inputs.valorcoberturadanoseletricos.max = base * 0.5;
+
+        inputs.valorcoberturasubstracaobens.min = 2000;
+        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 1500000) ? 1500000 : base * 0.3;
+
+        inputs.valorcoberturaalagamento.min = 5000;
+        inputs.valorcoberturaalagamento.max = 500000; //50.000 da Básica
+        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
+
+        inputs.valornegociocasa.min = 2000;
+        inputs.valornegociocasa.max = 300000;
+        inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);
+
+        inputs.valorcoberturarcfamiliar.min = 2000;
+        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 1000000) ? 1000000 : base * 0.5;
+        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
+
+        inputs.valordanosmorais.min = 2000;
+        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 100000) ? 100000 : inputs.valorcoberturarcfamiliar.value * 0.5;
+        inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)
+
+        inputs.valorcoberturadesmoronamento.min = 2000;
+        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
+
+        inputs.valorimpactoveiculos.min = 2000;
+        inputs.valorimpactoveiculos.max = base * 1;
+        
+        inputs.valorpequenasreformas.min = 5000;
+        inputs.valorpequenasreformas.max = 200000; //R$200.00 da Básica
+        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
+
+        inputs.valorcoberturapagamentocondominio.min = 300;
+        inputs.valorcoberturapagamentocondominio.max = 5000;
+
+        inputs.valorcoberturaquebravidros.min = 2000;
+        inputs.valorcoberturaquebravidros.max = (base * 0.3 > 1000000) ? 1000000 : base * 0.3;
+
+        inputs.valorcoberturatremorterraterremoto.min = 5000;
+        inputs.valorcoberturatremorterraterremoto.max = (base * 0.05 > 1000000) ? 500000 : base * 0.05;
+
+        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
+        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 300000) ? 300000 : base * 0.30;
+
+        inputs.valorcoberturavendaval.min = 2000;
+        inputs.valorcoberturavendaval.max = base * 0.3;
+
+        inputs.valorcoberturapagamentoaluguel.min = 3000;
+        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 1000000) ? 1000000 : base * 0.50;
+
+        let somatoria = 0;
+        for(let i in inputs){
+            let input = inputs[i];
+            if (!input.disabled && input.id != 'valorsubtracaobicicleta' && input.id != 'valorcoberturaincendio'){ somatoria += input.value; }
+        }
+        inputs.valorsubtracaobicicleta.min = 2500;
+        inputs.valorsubtracaobicicleta.max = (base * 0.5 > 50000) ? 50000 : base * 0.5;
+        inputs.valorsubtracaobicicleta.disabled = (somatoria > 500000);
+
+        valoresCobertura['habitual-premium'] = {};
+
+        for(let i in inputs){
+            let input = inputs[i];
+            let alteracao = false;
+            if (input.value < input.min){ input.value = input.min; alteracao = true; }
+            if (input.value > input.max){ input.value = input.max; alteracao = true; }
+            if (!input.disabled && input.min > input.max){ input.disabled = true; }
+            if (alteracao){
+                let inputElement = $(`#${input.id}`)
+                let labelElement = $(`#${input.id}-label`); 
+                inputElement.val(input.value);
+                labelElement.text(formatCurrency(input.value));
+                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
+                if (input.value < input.min){ labelElement.css('left', '0%'); }
+                if (input.value > input.max){ labelElement.css('left', '100%'); }
+            }
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                valoresCobertura['habitual-premium'][nomeCobertura] = input.value;
+                if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['habitual-premium'].valorCoberturaMorteAcidental = 5000; }
+                $(`#${input.id}`).prop("disabled", false);
+            }
+            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
+        }
+        //encryptedData.itemData = valoresCobertura['habitual-premium'];
+        //api_call(encryptedData);
+        //console.log('inputRange:', valoresCobertura['habitual-premium']);
+    }
+
+    function controleCoberturasVeraneio(){
+        let inputs = {};
+        let residencia = tipoResidencia;
+        let todasInputRange = $('input[type="range"]');
+        todasInputRange.each((index)=>{ 
+            let input = todasInputRange[index];
+            inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
+        });
+        
+        inputs.valorcoberturaincendio.min = 100000;
+        inputs.valorcoberturaincendio.max = (residencia == 3 || residencia == 8) ? 700000 : 10000000;
+
+        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
+        }
+        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
+        }
+
+        let base = inputs.valorcoberturaincendio.value;
+
+        inputs.valorcoberturadanoseletricos.min = 2000;
+        inputs.valorcoberturadanoseletricos.max = base * 0.5;
+
+        inputs.valorcoberturasubstracaobens.min = 2000;
+        inputs.valorcoberturasubstracaobens.max = (base * 0.2 > 150000) ? 150000 : base * 0.2;
+
+        inputs.valorcoberturaalagamento.min = 5000;
+        inputs.valorcoberturaalagamento.max = (base * 0.2 > 30000) ? 30000 : base * 0.2;
+        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
+
+        /*inputs.valornegociocasa.min = 2000;
+        inputs.valornegociocasa.max = 50000;
+        inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);*/
+        inputs.valornegociocasa.disabled = true;
+
+        inputs.valorcoberturarcfamiliar.min = 2000;
+        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 1000000) ? 1000000 : base * 0.5;
+        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > inputs.valorcoberturarcfamiliar.max) ? inputs.valorcoberturarcfamiliar.max : inputs.valorcoberturarcfamiliar.value;
+
+        /*inputs.valordanosmorais.min = 2000;
+        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 50000) ? 50000 : inputs.valorcoberturarcfamiliar.value * 0.5;
+        inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)*/
+        inputs.valordanosmorais.disabled = true;
+
+        inputs.valorcoberturadesmoronamento.min = 2000;
+        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 100000) ? 100000 : base * 0.1;
+
+        inputs.valorimpactoveiculos.min = 2000;
+        inputs.valorimpactoveiculos.max = base * 1;
+        
+        /*inputs.valorpequenasreformas.min = 2000;
+        inputs.valorpequenasreformas.max = 100000;
+        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);*/
+        inputs.valorpequenasreformas.disabled = true;
+
+        /*inputs.valorcoberturapagamentocondominio.min = 300;
+        inputs.valorcoberturapagamentocondominio.max = 5000;*/
+        inputs.valorcoberturapagamentocondominio.disabled = true;
+
+        inputs.valorcoberturaquebravidros.min = 2000;
+        inputs.valorcoberturaquebravidros.max = base * 0.5;
+
+        inputs.valorcoberturatremorterraterremoto.min = 2000;
+        inputs.valorcoberturatremorterraterremoto.max = (base * 0.15 > 500000) ? 500000 : base * 0.15;
+
+        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
+        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 100000) ? 100000 : base * 0.30;
+
+        inputs.valorcoberturavendaval.min = 2000;
+        inputs.valorcoberturavendaval.max = base * 0.5;
+
+        /*inputs.valorcoberturapagamentoaluguel.min = 3000;
+        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;*/
+        inputs.valorcoberturapagamentoaluguel.disabled = true;
+
+        /*inputs.valorsubtracaobicicleta.min = 2500;
+        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
+        inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value > 250000);*/
+        inputs.valorsubtracaobicicleta.disabled = true;
+
+        valoresCobertura['veraneio'] = {};
+
+        for(let i in inputs){
+            let input = inputs[i];
+            let alteracao = false;
+            if (input.value < input.min){ input.value = input.min; alteracao = true; }
+            if (input.value > input.max){ input.value = input.max; alteracao = true; }
+            if (!input.disabled && input.min > input.max){ input.disabled = true; }
+            if (alteracao){
+                let inputElement = $(`#${input.id}`)
+                let labelElement = $(`#${input.id}-label`); 
+                inputElement.val(input.value);
+                labelElement.text(formatCurrency(input.value));
+                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
+                if (input.value < input.min){ labelElement.css('left', '0%'); }
+                if (input.value > input.max){ labelElement.css('left', '100%'); }
+            }
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                valoresCobertura['veraneio'][nomeCobertura] = input.value;
+                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['veraneio'].valorCoberturaMorteAcidental = 5000; }
+                $(`#${input.id}`).prop("disabled", false);
+            }
+            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
+        }
+        //encryptedData.itemData = valoresCobertura['veraneio'];
+        //api_call(encryptedData);
+        //console.log('inputRange:', valoresCobertura['veraneio']);
+    }
+    
+    validacaoInicial();
 
     
 });

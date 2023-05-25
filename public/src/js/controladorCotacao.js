@@ -134,7 +134,8 @@ document.getElementById("form").addEventListener("submit", async (event) => {
         });
         if (response.ok) {
             const formData = await response.json(); // Recebe os dados da resposta
-            localStorage.setItem("formData", JSON.stringify(formData)); // Adiciona o form encriptado ao localStorage
+            let storage = {formData: formData, tipoResidencia: data.tiporesidencia};
+            localStorage.setItem("formData", JSON.stringify(storage)); // Adiciona o form encriptado ao localStorage
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {
             const errorData = await response.json();
