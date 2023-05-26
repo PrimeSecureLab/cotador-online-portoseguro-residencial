@@ -16,6 +16,7 @@ router.get('/', (req, res) => { res.sendFile('planos.html', { root: 'public' });
 // Define a rota para receber os dados do formulário
 router.post('/', async (req, res) => {
     let data = req.body;
+    //console.log(data);
     let redirect = '/cadastro';
 
     if (!data){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário."}); }
