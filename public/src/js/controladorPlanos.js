@@ -2,13 +2,9 @@ $("#loading-screen").hide();
 $(document).ready(function() {
     // Função para converter o valor em texto por extenso
     function formatCurrency(value) {
-        if (value < 1000) {
-            return value + "";
-        } else if (value < 1000000) {
-            return (value / 1000) + " mil";
-        } else {
-            return (value / 1000000) + " milhão";
-        }
+        if (value < 1000) { return value + ""; }
+        if (value < 1000000) { return (value / 1000) + " mil"; } 
+        return (value / 1000000) + " milhão";
     }
 
     function setupRangeInput(config) {
@@ -414,6 +410,7 @@ $(document).ready(function() {
 
     function configurarJanelaDePlano(){
         if (indexJanela == 1){  
+            controleCoberturasHabitual();
             $('input#valorcoberturaincendio')
                 .off('change', controleCoberturasHabitualPremium )
                 .off('change', controleCoberturasVeraneio )
@@ -424,6 +421,7 @@ $(document).ready(function() {
                 .on('change', controleCoberturasHabitual );
         }
         if (indexJanela == 2){
+            controleCoberturasHabitualPremium();
             $('input#valorcoberturaincendio')
                 .off('change', controleCoberturasHabitual )
                 .off('change', controleCoberturasVeraneio )
@@ -434,6 +432,7 @@ $(document).ready(function() {
                 .on('change', controleCoberturasHabitual );
         }
         if (indexJanela == 3){
+            controleCoberturasVeraneio();
             $('input#valorcoberturaincendio')
                 .off('change', controleCoberturasHabitualPremium )
                 .off('change', controleCoberturasHabitual )
@@ -525,24 +524,22 @@ $(document).ready(function() {
         for(let i in inputs){
             let input = inputs[i];
 
-            if (input.value < input.min){ input.value = input.min; }
-            if (input.value > input.max){ input.value = input.max; }
-            if (!input.disabled && input.min > input.max){ input.disabled = true; }
+            if (!input.disabled && input.min > input.max){ 
+                input.disabled = true; 
+                input.min = input.max; 
+            }else{
+                if (input.value > input.max){ input.value = input.max; }
+                if (input.value < input.min){ input.value = input.min; }
+            }
 
             let inputElement = $(`#${input.id}`);
-            inputElement.min = input.min;
-            inputElement.max = input.max;
+            inputElement.prop('min', input.min);
+            inputElement.prop('max', input.max);
             inputElement.val(input.value);
 
-            //if (alteracao){
-                let labelElement = $(`#${input.id}-label`); 
-                //inputElement.val(input.value);
-                labelElement.text(formatCurrency(input.value));
-                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-                if (input.min > input.max){ labelElement.css('left', `0%`); }
-                //if (input.value < input.min){ labelElement.css('left', '0%'); }
-                //if (input.value > input.max){ labelElement.css('left', '100%'); }
-            //}
+            let labelElement = $(`#${input.id}-label`); 
+            labelElement.text(formatCurrency(input.value));
+            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
             if (!input.disabled){ 
                 let nomeCobertura = relacaoItemId[input.id];
                 valoresCobertura['habitual'][nomeCobertura] = input.value;
@@ -551,9 +548,6 @@ $(document).ready(function() {
             }
             if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
         }
-        //encryptedData.itemData = valoresCobertura['habitual'];
-        //api_call(encryptedData);
-        //console.log('inputRange:', valoresCobertura['habitual']);
     }
     
     function controleCoberturasHabitualPremium(){
@@ -640,19 +634,23 @@ $(document).ready(function() {
 
         for(let i in inputs){
             let input = inputs[i];
-            let alteracao = false;
-            if (input.value < input.min){ input.value = input.min; alteracao = true; }
-            if (input.value > input.max){ input.value = input.max; alteracao = true; }
-            if (!input.disabled && input.min > input.max){ input.disabled = true; }
-            if (alteracao){
-                let inputElement = $(`#${input.id}`)
-                let labelElement = $(`#${input.id}-label`); 
-                inputElement.val(input.value);
-                labelElement.text(formatCurrency(input.value));
-                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-                if (input.value < input.min){ labelElement.css('left', '0%'); }
-                if (input.value > input.max){ labelElement.css('left', '100%'); }
+
+            if (!input.disabled && input.min > input.max){ 
+                input.disabled = true; 
+                input.min = input.max; 
+            }else{
+                if (input.value > input.max){ input.value = input.max; }
+                if (input.value < input.min){ input.value = input.min; }
             }
+
+            let inputElement = $(`#${input.id}`);
+            inputElement.prop('min', input.min);
+            inputElement.prop('max', input.max);
+            inputElement.val(input.value);
+
+            let labelElement = $(`#${input.id}-label`); 
+            labelElement.text(formatCurrency(input.value));
+            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
             if (!input.disabled){ 
                 let nomeCobertura = relacaoItemId[input.id];
                 valoresCobertura['habitual-premium'][nomeCobertura] = input.value;
@@ -661,9 +659,6 @@ $(document).ready(function() {
             }
             if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
         }
-        //encryptedData.itemData = valoresCobertura['habitual-premium'];
-        //api_call(encryptedData);
-        //console.log('inputRange:', valoresCobertura['habitual-premium']);
     }
 
     function controleCoberturasVeraneio(){
@@ -751,30 +746,31 @@ $(document).ready(function() {
 
         for(let i in inputs){
             let input = inputs[i];
-            let alteracao = false;
-            if (input.value < input.min){ input.value = input.min; alteracao = true; }
-            if (input.value > input.max){ input.value = input.max; alteracao = true; }
-            if (!input.disabled && input.min > input.max){ input.disabled = true; }
-            if (alteracao){
-                let inputElement = $(`#${input.id}`)
-                let labelElement = $(`#${input.id}-label`); 
-                inputElement.val(input.value);
-                labelElement.text(formatCurrency(input.value));
-                labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-                if (input.value < input.min){ labelElement.css('left', '0%'); }
-                if (input.value > input.max){ labelElement.css('left', '100%'); }
+
+            if (!input.disabled && input.min > input.max){ 
+                input.disabled = true; 
+                input.min = input.max; 
+            }else{
+                if (input.value > input.max){ input.value = input.max; }
+                if (input.value < input.min){ input.value = input.min; }
             }
+
+            let inputElement = $(`#${input.id}`);
+            inputElement.prop('min', input.min);
+            inputElement.prop('max', input.max);
+            inputElement.val(input.value);
+
+            let labelElement = $(`#${input.id}-label`); 
+            labelElement.text(formatCurrency(input.value));
+            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
             if (!input.disabled){ 
                 let nomeCobertura = relacaoItemId[input.id];
                 valoresCobertura['veraneio'][nomeCobertura] = input.value;
-                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['veraneio'].valorCoberturaMorteAcidental = 5000; }
+                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; }
                 $(`#${input.id}`).prop("disabled", false);
             }
             if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
         }
-        //encryptedData.itemData = valoresCobertura['veraneio'];
-        //api_call(encryptedData);
-        //console.log('inputRange:', valoresCobertura['veraneio']);
     }
     
     validacaoInicial();
