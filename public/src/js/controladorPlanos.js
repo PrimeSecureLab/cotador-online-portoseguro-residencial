@@ -403,10 +403,16 @@ $(document).ready(function() {
     $("#btn-plano-3").on("click", function(e) { e.preventDefault(); salvarOrcamento('veraneio'); });
 
     var indexJanela = -1;
+
     var valoresCobertura = ['habitual', 'habitual-premium', 'veraneio'];
     valoresCobertura['habitual'] = {};
     valoresCobertura['habitual-premium'] = {};
     valoresCobertura['veraneio'] = {};
+
+    var cacheCobertura = ['habitual', 'habitual-premium', 'veraneio'];
+    cacheCobertura['habitual'] = false;
+    cacheCobertura['habitual-premium'] = false;
+    cacheCobertura['veraneio'] = false;
 
     function configurarJanelaDePlano(){
         if (indexJanela == 1){  
@@ -444,12 +450,15 @@ $(document).ready(function() {
         }
     }
 
+    itemCache = ['habitual', 'habitual-premium', 'veraneio'];
+
     function controleCoberturasHabitual(){
         let inputs = {};
         let residencia = tipoResidencia;
         let todasInputRange = $('input[type="range"]');
         todasInputRange.each((index)=>{ 
             let input = todasInputRange[index];
+
             inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
         });
         
