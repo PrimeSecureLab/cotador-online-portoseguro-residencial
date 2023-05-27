@@ -1,4 +1,10 @@
 var newLead = true;
+var relacaoItemId = [];
+var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 
+    'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaAlagamento','valorSubtracaoBicicleta', 'valorPequenasReformas' ];
+
+allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
+
 $(document).ready(function() {
     //Aplica Mascaras nos Inputs
     $("#cpf").mask("999.999.999-99");
@@ -12,9 +18,11 @@ $(document).ready(function() {
         pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/
     });
     
+    var tipoResidencia = null;
     let numeroTelefone = $(".numerotelefone");
     let maskFixo = 1;
     numeroTelefone.mask("(00) 0000-00000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
+
     numeroTelefone.on("input, keyup", (e)=>{
         if (numeroTelefone.val().length < 15 && maskFixo == 0){
             maskFixo = 1;
@@ -65,7 +73,7 @@ $(document).ready(function() {
             }
             if (data.etapa == 'step-2'){
                 if (data.cep.replace(/[^0-9]+/g, '').length != 8){ errorList.push({id: 'cep'}); }
-                if (!data.tiporesidencia){ errorList.push({id: 'tiporesidencia'}); }
+                if (!data.tiporesidencia){ errorList.push({id: 'tiporesidencia'}); }else{ tiporResidencia = data.tiporesidencia; }
                 if (!data.tiporua){ errorList.push({id: 'tiporua'}); }
                 if (!data.logradouro){ errorList.push({id: 'logradouro'}); }
                 if (!/^[0-9]{1,4}$/.test(data.numero)){ errorList.push({id: 'numero'}); }
@@ -101,6 +109,125 @@ $(document).ready(function() {
             currentStep.removeClass("active").fadeOut(250, function() { prevStep.addClass("active").fadeIn(250); });
         }
     });
+
+    var dadosCobertura = [];
+    dadosCobertura['generica'] = {};
+
+    var valoresCobertura = [];
+    valoresCobertura['generica'] = {};
+
+    var inputsRange = $('input[type="range"]');
+    inputsRange.on('change', controleCoberturasGenerico );
+
+    function formatCurrency(value) {
+        if (value < 1000) { return value + ""; }
+        if (value < 1000000) { return (value / 1000) + " mil"; } 
+        return (value / 1000000) + " milhão";
+    }
+
+    function controleCoberturasGenerico(){
+        let inputs = {};
+        let inputChange = this.id;
+        let residencia = tipoResidencia;
+        
+        if (!dadosCobertura['generica'].valorcoberturaincendio){
+            inputsRange.each((index)=>{ 
+                let input = inputsRange[index];
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
+            });
+        }else{
+            inputsRange.each((index)=>{
+                let input = inputsRange[index];
+                let cobertura = dadosCobertura['generica'][input.id];
+                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
+                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
+            });
+        }
+
+        inputs.valorcoberturaincendio.min = 100000;
+        inputs.valorcoberturaincendio.max = (residencia == 2) ? 700000 : 1000000;
+
+        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
+        }
+        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
+            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
+        }
+
+        let base = inputs.valorcoberturaincendio.value;
+
+        inputs.valorcoberturasubstracaobens.min = 2000;
+        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 200000) ? 200000 : base * 0.3;
+
+        inputs.valorcoberturapagamentoaluguel.min = 3000;
+        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
+
+        inputs.valorcoberturarcfamiliar.min = 2000;
+        inputs.valorcoberturarcfamiliar.max = base * 0.5;
+        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
+
+        inputs.valorcoberturavendaval.min = 2000;
+        inputs.valorcoberturavendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;
+
+        inputs.valorcoberturadesmoronamento.min = 2000;
+        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
+
+        inputs.valorcoberturaalagamento.min = 5000;
+        inputs.valorcoberturaalagamento.max = 50000;
+        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
+
+        inputs.valorsubtracaobicicleta.min = 2500;
+        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
+        inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
+
+        inputs.valorpequenasreformas.min = 2000;
+        inputs.valorpequenasreformas.max = 100000;
+        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
+
+        valoresCobertura['generica'] = {};
+
+        for(let i in inputs){
+            let input = inputs[i];
+
+            if (!input.disabled && input.min > input.max){ 
+                input.disabled = true; 
+                input.min = input.max; 
+            }else{
+                if (input.value > input.max){ input.value = input.max; }
+                if (input.value < input.min){ input.value = input.min; }
+            }
+
+            let inputElement = $(`#${input.id}`);
+            inputElement.prop('min', input.min);
+            inputElement.prop('max', input.max);
+            inputElement.val(input.value);
+
+            let labelElement = $(`#${input.id}-label`); 
+            labelElement.text(formatCurrency(input.value));
+            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
+
+            let rangeContainer = inputElement.parent();
+            let coberturaContainer = rangeContainer.parent();
+
+            dadosCobertura['generica'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
+            
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                inputElement.prop("disabled", false);
+                valoresCobertura['generica'][nomeCobertura] = input.value;
+                if (input.id == 'valorcoberturapagamentocondominio'){ 
+                    valoresCobertura['generica'].valorCoberturaMorteAcidental = 5000; 
+                    dadosCobertura['generica'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
+                }
+            }else{ 
+                inputElement.prop("disabled", true); 
+            }
+            //if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
+            //console.log(dadosCobertura)
+        }
+    }
+    controleCoberturasGenerico()
 });
 
 document.getElementById("form").addEventListener("submit", async (event) => {
@@ -113,15 +240,18 @@ document.getElementById("form").addEventListener("submit", async (event) => {
     // Insere as inputs e selects no objeto data
     inputArray.forEach((input)=>{ data[input.id] = input.value; });
     selectArray.forEach((select)=>{ data[select.id] = select.value; });
+    
+    data.inputRage = dadosCobertura;
 
-    let _data = data;
-    _data.etapa = 'step-3';
+    let dataLayer = {};
+    Object.assign(dataLayer, data);
+    dataLayer.etapa = 'step-3';
 
     $.ajax({
         url: '/datalayer',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(_data),
+        data: JSON.stringify(dataLayer),
         success: function(res) { console.log('Sucesso:', res); },
         error: function(xhr, status, error) { console.error('Error:', error); }
     });

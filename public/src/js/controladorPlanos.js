@@ -395,23 +395,24 @@ $(document).ready(function() {
 
     var loadingProduto = { habitual: false, habitualPremium: false, veraneio: false };
     var tentativaTimeOut = [0, 0, 0];
-    var produto = ['habitual', 'habitual-premium', 'veraneio']
+    var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
 
-    var valoresCobertura = [];
-    valoresCobertura['habitual'] = {};
-    valoresCobertura['habitual-premium'] = {};
-    valoresCobertura['veraneio'] = {};
+    var valoresCobertura = [1, 2, 3];
+    var dadosCobertura = [1, 2, 3];
+    var orcamentos = [1, 2, 3];
 
-    var dadosCobertura = [];
-    dadosCobertura['habitual'] = {};
-    dadosCobertura['habitual-premium'] = {};
-    dadosCobertura['veraneio'] = {};
-
-    var orcamentos = [];
-    orcamentos['habitual'] = {};
-    orcamentos['habitual-premium'] = {};
-    orcamentos['veraneio'] = {};
+    for(let i = 1; i < 4; i++){      
+        valoresCobertura[i] = [];
+        dadosCobertura[i] = [];
+        orcamentos[i] = [];
+        for(let k = 0; k < 3; k++){
+            let plano = produto[k];
+            valoresCobertura[i][plano] = {};
+            dadosCobertura[i][plano] = {};
+            orcamentos[i][plano] = {};
+        }
+    }
 
     function validacaoInicial() {
         let storage = localStorage.getItem('formData');
@@ -432,7 +433,7 @@ $(document).ready(function() {
     }
 
     function salvarOrcamento(produto){
-        let orcamento = orcamentos[produto];
+        let orcamento = orcamentos[1][produto];
         if (!orcamento){ return; }
         if (!orcamento.data){ return; }
         if (orcamento.error){ return; }
@@ -440,7 +441,7 @@ $(document).ready(function() {
         if (!orcamento.data.tipo){ return; }
         if (orcamento.data.tipo != produto){ return; }
         encryptedData.orcamento = orcamento;
-        encryptedData.itemData = valoresCobertura[produto];
+        encryptedData.itemData = valoresCobertura[1][produto];
         localStorage.setItem('finalData', JSON.stringify(encryptedData));
         window.location.href = './login';
         return;
@@ -456,20 +457,21 @@ $(document).ready(function() {
                 loadingProduto.habitual = true;
                 payload = {};
                 Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['habitual'];
+                payload.itemData = valoresCobertura[1]['habitual'];
                 payload.produto = 'habitual';
                 $.ajax({
                     url: '/planos',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(payload),
-                    success: function(res) { 
+                    success: function(res) {
+                        loadingProduto.habitual = false; 
                         if (res.error && res.status == 504 && tentativaTimeOut[0] < 3){ 
+                            console.log('habitual -', 'Sucesso:', res); 
                             tentativaTimeOut[0] += 1; 
                             apiCallOrcamento(produto); 
                         }else{
                             tentativaTimeOut[0] = 0;
-                            loadingProduto.habitual = false;
                             if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.hide(); }
                             atualizarCard('habitual', res.data, false);
                             console.log('habitual -', 'Sucesso:', res); 
@@ -489,7 +491,7 @@ $(document).ready(function() {
                 loadingProduto.habitualPremium = true;
                 payload = {};
                 Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['habitual-premium'];
+                payload.itemData = valoresCobertura[1]['habitual-premium'];
                 payload.produto = 'habitual-premium';
                 $.ajax({
                     url: '/planos',
@@ -497,12 +499,13 @@ $(document).ready(function() {
                     contentType: 'application/json',
                     data: JSON.stringify(payload),
                     success: function(res) { 
+                        loadingProduto.habitualPremium = false;
                         if (res.error && res.status == 504 && tentativaTimeOut[1] < 3){
                             tentativaTimeOut[1] += 1; 
-                            apiCallOrcamento(produto); 
+                            console.log('habitual-premium -', 'TimeOut:', res); 
+                            apiCallOrcamento('habitual-premium'); 
                         }else{
                             tentativaTimeOut[1] = 0;
-                            loadingProduto.habitualPremium = false;
                             if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.hide(); }
                             atualizarCard('habitual-premium', res.data, false);
                             console.log('habitual-premium -', 'Sucesso:', res); 
@@ -522,23 +525,24 @@ $(document).ready(function() {
                 loadingProduto.veraneio = true;
                 payload = {};
                 Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['veraneio'];
+                payload.itemData = valoresCobertura[1]['veraneio'];
                 payload.produto = 'veraneio';
                 $.ajax({
                     url: '/planos',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(payload),
-                    success: function(res) { 
+                    success: function(res) {
+                        loadingProduto.veraneio = false; 
                         if (res.error && res.status == 504 && tentativaTimeOut[2] < 3){
+                            console.log('veraneio -', 'TimeOut:', res);
                             tentativaTimeOut[2] += 1;
-                            apiCallOrcamento(produto);
+                            apiCallOrcamento('veraneio');
                         }else{
+                            console.log('veraneio -', 'Sucesso:', res); 
                             tentativaTimeOut[2] = 0;
-                            loadingProduto.veraneio = false;
                             if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.hide(); }
                             atualizarCard('veraneio', res.data, false);
-                            console.log('veraneio -', 'Sucesso:', res); 
 
                         }
                     },
@@ -610,8 +614,8 @@ $(document).ready(function() {
     }
     
     function salvarItens(){
-        encryptedData.listaProdutos = dadosCobertura;
-        let payload = valoresCobertura;
+        encryptedData.listaProdutos = dadosCobertura[1];
+        let payload = valoresCobertura[1];
         payload.etapa = 'step-4';
         $.ajax({
             url: '/datalayer',
@@ -655,17 +659,17 @@ $(document).ready(function() {
         let inputChange = this.id;
         let residencia = tipoResidencia;
         let todasInputRange = $('input[type="range"]');
-
-        if (!dadosCobertura['habitual'].valorcoberturaincendio){
+        console.log(dadosCobertura)
+        if (!dadosCobertura[1]['habitual'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
+                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['habitual'][input.id];
+                let cobertura = dadosCobertura[1]['habitual'][input.id];
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
             });
@@ -737,7 +741,7 @@ $(document).ready(function() {
         inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
         inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
 
-        valoresCobertura['habitual'] = {};
+        valoresCobertura[1]['habitual'] = {};
 
         for(let i in inputs){
             let input = inputs[i];
@@ -759,18 +763,19 @@ $(document).ready(function() {
             labelElement.text(formatCurrency(input.value));
             labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
 
-            dadosCobertura['habitual'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
+            dadosCobertura[1]['habitual'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
 
             if (!input.disabled){ 
                 let nomeCobertura = relacaoItemId[input.id];
-                valoresCobertura['habitual'][nomeCobertura] = input.value;
+                inputElement.prop("disabled", false);
+                valoresCobertura[1]['habitual'][nomeCobertura] = input.value;
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
-                    valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; 
-                    dadosCobertura['habitual'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
+                    valoresCobertura[1]['habitual'].valorCoberturaMorteAcidental = 5000; 
+                    dadosCobertura[1]['habitual'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
                 }
-                $(`#${input.id}`).prop("disabled", false);
+            }else{ 
+                inputElement.prop("disabled", true); 
             }
-            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
             if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
@@ -783,22 +788,22 @@ $(document).ready(function() {
         let residencia = tipoResidencia;
         let todasInputRange = $('input[type="range"]');
 
-        if (!dadosCobertura['habitual-premium'].valorcoberturaincendio){
+        if (!dadosCobertura[1]['habitual-premium'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0) };
+                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['habitual-premium'][input.id];
+                let cobertura = dadosCobertura[1]['habitual-premium'][input.id];
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
             });
         }
         
-        inputs.valorcoberturaincendio.min = (residencia == 2) ? 700000 : 1000000;
+        inputs.valorcoberturaincendio.min = (residencia == 2) ? 710000 : 110000;
         inputs.valorcoberturaincendio.max = 20000000;
 
         if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
@@ -869,7 +874,7 @@ $(document).ready(function() {
         inputs.valorsubtracaobicicleta.max = (base * 0.5 > 50000) ? 50000 : base * 0.5;
         inputs.valorsubtracaobicicleta.disabled = (somatoria > 500000);
 
-        valoresCobertura['habitual-premium'] = {};
+        valoresCobertura[1]['habitual-premium'] = {};
 
         for(let i in inputs){
             let input = inputs[i];
@@ -891,19 +896,21 @@ $(document).ready(function() {
             labelElement.text(formatCurrency(input.value));
             labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
 
-            dadosCobertura['habitual-premium'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
-            if (!input.disabled){ 
-                let nomeCobertura = relacaoItemId[input.id];
-                valoresCobertura['habitual-premium'][nomeCobertura] = input.value;
-                if (input.id == 'valorcoberturapagamentocondominio'){ 
-                    valoresCobertura['habitual-premium'].valorCoberturaMorteAcidental = 5000; 
-                    dadosCobertura['habitual-premium'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false };
-                }
-                $(`#${input.id}`).prop("disabled", false);
-            }
-            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
+
+            dadosCobertura[1]['habitual-premium'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                valoresCobertura[1]['habitual-premium'][nomeCobertura] = input.value;
+                inputElement.prop("disabled", false);
+                if (input.id == 'valorcoberturapagamentocondominio'){ 
+                    valoresCobertura[1]['habitual-premium'].valorCoberturaMorteAcidental = 5000; 
+                    dadosCobertura[1]['habitual-premium'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false };
+                }
+            }else{
+                inputElement.prop("disabled", true); 
+            }
             if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
         }
     }
@@ -914,7 +921,7 @@ $(document).ready(function() {
         let residencia = tipoResidencia;
         let todasInputRange = $('input[type="range"]');
 
-        if (!dadosCobertura['veraneio'].valorcoberturaincendio){
+        if (!dadosCobertura[1]['veraneio'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
@@ -923,7 +930,7 @@ $(document).ready(function() {
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['veraneio'][input.id];
+                let cobertura = dadosCobertura[1]['veraneio'][input.id];
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
             });
@@ -1007,7 +1014,7 @@ $(document).ready(function() {
         inputs.valorsubtracaobicicleta.disabled = true;
         inputs.valorsubtracaobicicleta.display = false;
 
-        valoresCobertura['veraneio'] = {};
+        valoresCobertura[1]['veraneio'] = {};
 
         for(let i in inputs){
             let input = inputs[i];
@@ -1029,16 +1036,19 @@ $(document).ready(function() {
             labelElement.text(formatCurrency(input.value));
             labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
 
-            dadosCobertura['veraneio'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
-            if (!input.disabled){ 
-                let nomeCobertura = relacaoItemId[input.id];
-                valoresCobertura['veraneio'][nomeCobertura] = input.value;
-                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; }
-                $(`#${input.id}`).prop("disabled", false);
-            }
-            if (input.disabled){ $(`#${input.id}`).prop("disabled", true); }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
+
+            dadosCobertura[1]['veraneio'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
+           
+            if (!input.disabled){ 
+                let nomeCobertura = relacaoItemId[input.id];
+                valoresCobertura[1]['veraneio'][nomeCobertura] = input.value;
+                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura[1]['habitual'].valorCoberturaMorteAcidental = 5000; }
+                inputElement.prop("disabled", false);
+            }else{ 
+                inputElement.prop("disabled", true); 
+            }
             if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
         }
     }
