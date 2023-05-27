@@ -534,6 +534,7 @@ $(document).ready(function() {
                             tentativaTimeOut[2] += 1;
                             apiCallOrcamento(produto);
                         }else{
+                            tentativaTimeOut[2] = 0;
                             loadingProduto.veraneio = false;
                             if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.hide(); }
                             atualizarCard('veraneio', res.data, false);
