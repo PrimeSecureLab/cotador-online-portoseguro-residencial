@@ -387,16 +387,19 @@ $(document).ready(function() {
     $("#editar-plano-3").on("click", function() { indexJanela = 3; configurarJanelaDePlano(); });
 
     //$("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
-
-    $("#btn-plano-1").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual'); });
-    $("#btn-plano-2").on("click", function(e) { e.preventDefault(); salvarOrcamento('habitual-premium'); });
-    $("#btn-plano-3").on("click", function(e) { e.preventDefault(); salvarOrcamento('veraneio'); });
+    var buttonHabitual = $("#btn-plano-1");
+    var buttonHabitualPremium = $("#btn-plano-2");
+    var buttonVeraneio = $("#btn-plano-3");
+    buttonHabitual.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitual){ salvarOrcamento('habitual'); } });
+    buttonHabitualPremium.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('habitual-premium'); } });
+    buttonVeraneio.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('veraneio'); } });
 
 
     var loadingProduto = { habitual: false, habitualPremium: false, veraneio: false };
     var tentativaTimeOut = [0, 0, 0];
     var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
+    var tempoVigancia = 1;
 
     var valoresCobertura = [1, 2, 3];
     var dadosCobertura = [1, 2, 3];
@@ -455,6 +458,7 @@ $(document).ready(function() {
                 if (loadingProduto.habitual){ return; }
                 if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.show(); }
                 loadingProduto.habitual = true;
+                //buttonHabitual.css('background-color', 'gray');
                 payload = {};
                 Object.assign(payload, encryptedData);
                 payload.itemData = valoresCobertura[1]['habitual'];
@@ -473,6 +477,7 @@ $(document).ready(function() {
                         }else{
                             tentativaTimeOut[0] = 0;
                             if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.hide(); }
+                            //buttonHabitual.css('background-color', '#4ed433');
                             atualizarCard('habitual', res.data, false);
                             console.log('habitual -', 'Sucesso:', res); 
                         }
@@ -489,6 +494,7 @@ $(document).ready(function() {
                 if (loadingProduto.habitualPremium){ return; }
                 if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.show(); }
                 loadingProduto.habitualPremium = true;
+                //buttonHabitualPremium.css('background-color', 'gray');//'#4ed433');
                 payload = {};
                 Object.assign(payload, encryptedData);
                 payload.itemData = valoresCobertura[1]['habitual-premium'];
@@ -507,6 +513,7 @@ $(document).ready(function() {
                         }else{
                             tentativaTimeOut[1] = 0;
                             if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.hide(); }
+                            //buttonHabitualPremium.css('background-color', '#4ed433');
                             atualizarCard('habitual-premium', res.data, false);
                             console.log('habitual-premium -', 'Sucesso:', res); 
                         }
@@ -523,6 +530,7 @@ $(document).ready(function() {
                 if (loadingProduto.veraneio){ return; }
                 if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.show(); }
                 loadingProduto.veraneio = true;
+                //buttonVeraneio.css('background-color', 'gray');//'#4ed433');
                 payload = {};
                 Object.assign(payload, encryptedData);
                 payload.itemData = valoresCobertura[1]['veraneio'];
@@ -542,8 +550,8 @@ $(document).ready(function() {
                             console.log('veraneio -', 'Sucesso:', res); 
                             tentativaTimeOut[2] = 0;
                             if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.hide(); }
+                            //buttonVeraneio.css('background-color', '#4ed433');
                             atualizarCard('veraneio', res.data, false);
-
                         }
                     },
                     error: function(xhr, status, error) {  
