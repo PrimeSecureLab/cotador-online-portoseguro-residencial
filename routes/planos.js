@@ -70,30 +70,6 @@ router.post('/', async (req, res) => {
         response = { error: true, status: 504, data: errorData, redirect: false };
     }
     res.status(200).json(response);
-    /*let promise_array = [];
-    let response_array = [];
-
-    promise_array[0] = await portoOrcamentoApi('habitual', data, token);
-    promise_array[1] = await portoOrcamentoApi('habitual-premium', data, token);
-    promise_array[2] = await portoOrcamentoApi('veraneio', data, token);
-
-    promise_array.map((response, index)=>{
-        let tipo = ["habitual", "premium", "veraneio"];
-        if (response){
-            //console.log(index);
-            if (response.status == 200){
-                response.data.tipo = tipo[index];
-                response.data.criadoEm = new Date();
-                response_array[index] = { error: false, status: response.status, data: response.data, redirect: redirect };
-            }else{
-                response_array[index] = { error: true, status: response.status, data: { tipo: tipo[index]}, redirect: false };
-            }
-        }else{
-            response_array[index] = { error: true, status: 504, data: { tipo: tipo[index]}, redirect: false };
-        }
-    });
-
-    res.status(200).json(response_array);*/
 });
 
 const PortoCoberturas = require('../configs/coberturas');
@@ -146,9 +122,9 @@ async function portoOrcamentoApi(produto, formData, token){
         itemList.valorCoberturaMorteAcisdental = 0;
 
         let servico = null;
-        if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(1, data.tipoResidencia); }
-        if (produto == 'habitual-premium'){ servico = codigoServicos.listaServicosHabitualPremium(1, data.tipoResidencia); }
-        if (produto == 'veraneio'){ servico = codigoServicos.listaServicosVeraneio(1, data.tipoResidencia); }
+        if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(data.vigencia, data.tipoResidencia); }
+        if (produto == 'habitual-premium'){ servico = codigoServicos.listaServicosHabitualPremium(data.vigencia, data.tipoResidencia); }
+        if (produto == 'veraneio'){ servico = codigoServicos.listaServicosVeraneio(data.vigencia, data.tipoResidencia); }
 
         servico = servico[1];
         if (!servico){ servico = []; }
