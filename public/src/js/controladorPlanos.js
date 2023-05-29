@@ -501,7 +501,7 @@ $(document).ready(function() {
 
     function salvarOrcamento(produto){
         if (tempoVigencia != 0 && tempoVigencia != 1 && tempoVigencia != 2){ return; }
-        let orcamento = orcamentos[produto][1];
+        let orcamento = orcamentos[produto][tempoVigencia];
         if (!orcamento){ return; }
         if (!orcamento.data){ return; }
         if (orcamento.error){ return; }
@@ -544,6 +544,7 @@ $(document).ready(function() {
                 loadingProduto[produtoUpperCase][vigencia] = false; 
                 if (res.error && res.status == 504 && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
                     tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
+                    orcamentos[produto][vigencia] = false;
                     apiCallOrcamento(produto, vigencia); 
                     console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
                     return;
@@ -552,7 +553,8 @@ $(document).ready(function() {
                     let stopLoading = true;
                     produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ stopLoading = false; } }); });                 
                     if (stopLoading){ loadingScreen.hide(); }
-                    tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
+                    tentativaTimeOut[produtoUpperCase][vigencia] = 0; 
+                    orcamentos[produto][vigencia] = false;   
                     atualizarCard(produto, vigencia, {}, true);
                     console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status} -`, res.data.messages);
                     return;
@@ -560,7 +562,8 @@ $(document).ready(function() {
                 let stopLoading = true;
                 produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ stopLoading = false; } }); });                 
                 if (stopLoading){ loadingScreen.hide(); }
-                tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
+                tentativaTimeOut[produtoUpperCase][vigencia] = 0;  
+                orcamentos[produto][vigencia] = res.data;  
                 atualizarCard(produto, vigencia, res.data, false);
                 console.log(`[${vigencia + 1} ANO] ${produto}: OK`);
             },
