@@ -38,6 +38,7 @@ router.post('/', async (req, res) => {
     data.item = coberturas;
 
     if (!data){ return res.status(400).json({redirect: '/'}); }
+    if (!data.tempoVigencia){ data.tempoVigencia = 1; }
     if (!data.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.endereco){ return res.status(400).json({redirect: '/'})}
@@ -112,7 +113,7 @@ async function portoOrcamentoApi(produto, formData, token){
         dataInicio = dataInicio.toISOString().split('T')[0];
 
         let dataFim = new Date();
-        dataFim.setDate(dataFim.getDate() + 366);
+        dataFim.setDate(dataFim.getDate() + (365.25 * data.tempoVigencia) );
         dataFim = dataFim.toISOString().split('T')[0];
 
         let dataNascimento = data.segurado.dataNascimento.toString();
