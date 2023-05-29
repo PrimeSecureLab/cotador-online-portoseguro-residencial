@@ -32,13 +32,15 @@ router.post('/', async (req, res) => {
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
     if (!bytes){ return res.status(400).json({redirect: '/'}); }
 
-    let coberturas = data.itemData
+    let coberturas = data.itemData;
+    let vigencia = data.vigencia || 1;
     
     data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     data.item = coberturas;
+    data.vigencia = vigencia;
 
     if (!data){ return res.status(400).json({redirect: '/'}); }
-    if (!data.tempoVigencia){ data.tempoVigencia = 1; }
+    //if (!data.vigencia){ data.vigencia = 1; }else{ data.vigencia += 1; }
     if (!data.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.endereco){ return res.status(400).json({redirect: '/'})}
@@ -112,9 +114,18 @@ async function portoOrcamentoApi(produto, formData, token){
         let dataInicio = new Date();
         dataInicio = dataInicio.toISOString().split('T')[0];
 
-        let dataFim = new Date();
-        dataFim.setDate(dataFim.getDate() + (365.25 * data.tempoVigencia) );
+        let dataSegmentada = dataInicio.split('-');
+        dataSegmentada[0] = parseInt(dataSegmentada[0]) + data.vigencia;
+
+        if (dataSegmentada[1] == 2 && dataSegmentada[2] == 29){ dataSegmentada[2] = 28; }
+        dataSegmentada[1] = parseInt(dataSegmentada[1]) - 1;
+
+        let dataFim = new Date(dataSegmentada[0], dataSegmentada[1], dataSegmentada[2]);
         dataFim = dataFim.toISOString().split('T')[0];
+        //let dataFim = new Date();
+        //dataFim.setDate(dataFim.getDate() + (365.25 * data.vigencia) );
+        //dataFim = dataFim.toISOString().split('T')[0];
+        //console.log(dataInicio, '||', dataFim);
 
         let dataNascimento = data.segurado.dataNascimento.toString();
         dataNascimento = dataNascimento.split("-");
@@ -156,7 +167,7 @@ async function portoOrcamentoApi(produto, formData, token){
             "codigoCanal": data.codigoCanal,
             "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
             "tipoResidencia": parseInt(data.tipoResidencia),
-            "tipoVigencia": 1,
+            "tipoVigencia": 2,
             "dataInicioVigencia": dataInicio,
             "dataFimVigencia": dataFim,
             "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
@@ -178,7 +189,6 @@ async function portoOrcamentoApi(produto, formData, token){
             },
             "item": itemList
         }
-        //console.log(payload)
 
         //console.log(payload);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
@@ -186,6 +196,7 @@ async function portoOrcamentoApi(produto, formData, token){
         let delay = 100
         if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
+        delay += (data.vigencia - 1) * 30;
         setTimeout(() => { resolve( request ); }, delay);
     });
 }

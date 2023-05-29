@@ -377,34 +377,97 @@ $(document).ready(function() {
 
     
     $(".modal-dialog").on("click", function(e) { e.stopPropagation(); });
-    $("div#modal-editar-plano1").on("click", function() { salvarItens(); if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1]); } });
-    $("button#btn-save").on("click", function() { salvarItens(); if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1]); } });
-    $("button.btn-close").on("click", function() { salvarItens(); if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1]); } });
-    $("button#btn-cancel").on("click", function() { salvarItens(); if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1]); } });
+    $("div#modal-editar-plano1").on("click", function() { 
+        salvarItens(); 
+        if (indexJanela > 0){ 
+            apiCallOrcamento(produto[indexJanela - 1], 0); 
+            apiCallOrcamento(produto[indexJanela - 1], 1); 
+        } 
+    });
+    $("button#btn-save").on("click", function() { 
+        salvarItens(); 
+        if (indexJanela > 0){ 
+            apiCallOrcamento(produto[indexJanela - 1], 0); 
+            apiCallOrcamento(produto[indexJanela - 1], 1); 
+        } 
+    });
+    $("button.btn-close").on("click", function() { 
+        salvarItens(); 
+        if (indexJanela > 0){ 
+            apiCallOrcamento(produto[indexJanela - 1], 0); 
+            apiCallOrcamento(produto[indexJanela - 1], 1); 
+        } 
+    });
+    $("button#btn-cancel").on("click", function() { 
+        salvarItens(); 
+        if (indexJanela > 0){ 
+            apiCallOrcamento(produto[indexJanela - 1], 0); 
+            apiCallOrcamento(produto[indexJanela - 1], 1); 
+        } 
+    });
     
     $("#editar-plano-1").on("click", function() { indexJanela = 1; configurarJanelaDePlano(); });
     $("#editar-plano-2").on("click", function() { indexJanela = 2; configurarJanelaDePlano(); });
     $("#editar-plano-3").on("click", function() { indexJanela = 3; configurarJanelaDePlano(); });
 
+    $('.slick-carousel').slick({
+        infinite: false,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [ { breakpoint: 768, settings: { slidesToShow: 1, slidesToScroll: 1 } } ]
+    });
+
     //$("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
+    var tempoVigencia = 0;
+
     var buttonHabitual = $("#btn-plano-1");
     var buttonHabitualPremium = $("#btn-plano-2");
     var buttonVeraneio = $("#btn-plano-3");
+
     buttonHabitual.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitual){ salvarOrcamento('habitual'); } });
     buttonHabitualPremium.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('habitual-premium'); } });
     buttonVeraneio.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('veraneio'); } });
 
+    var tabVigencia = $(".my-pills-link");
+    tabVigencia.on("click", function(e){ 
+        tabVigencia.removeClass("active"); 
+        let tab = $(`#${e.target.id}`);
+        tab.addClass('active');
 
-    var loadingProduto = { habitual: false, habitualPremium: false, veraneio: false };
-    var tentativaTimeOut = [0, 0, 0];
+        let index = tab.html().replace(/[^0-9]+/g, "");
+        index = parseInt(index) - 1;
+        if (index == tempoVigencia){ return; }
+
+        atualizarVigencia('habitual', index);
+        atualizarVigencia('habitual-premium', index);
+        atualizarVigencia('veraneio', index);
+
+        //console.log(tempoVigencia);
+    });
+    /*tabVigencia.each(function(index){
+        tabVigencia[index].on("click", function(e){ 
+            tabVigencia.removeClass("active"); 
+            console.log(e.html());
+        });
+    });*/
+
     var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
-    var tempoVigencia = 1;
+
+    var tentativaTimeOut = {
+        habitual: [0, 0, 0],
+        habitualPremium: [0, 0, 0],
+        veraneio: [0, 0, 0]
+    };
+    var loadingProduto = { 
+        habitual: [false, false, false], 
+        habitualPremium: [false, false, false], 
+        veraneio: [false, false, false] 
+    };
 
     var valoresCobertura = [];
     var dadosCobertura = [];
     var orcamentos = [];
-    var cardData = [];
 
     for(let i = 0; i < 3; i++){
         let plano = produto[i];
@@ -426,14 +489,18 @@ $(document).ready(function() {
         controleCoberturasHabitualPremium();
         controleCoberturasVeraneio();
 
-        apiCallOrcamento('habitual');
-        apiCallOrcamento('habitual-premium');
-        apiCallOrcamento('veraneio');
+        apiCallOrcamento('habitual', 0);
+        apiCallOrcamento('habitual-premium', 0);
+        apiCallOrcamento('veraneio', 0);
+
+        apiCallOrcamento('habitual', 1);
+        apiCallOrcamento('habitual-premium', 1);
+        apiCallOrcamento('veraneio', 1);
         //api_call(encryptedData);
     }
 
     function salvarOrcamento(produto){
-        if (tempoVigencia != 1 && tempoVigencia != 1){ return; }
+        if (tempoVigencia != 0 && tempoVigencia != 1 && tempoVigencia != 2){ return; }
         let orcamento = orcamentos[produto][1];
         if (!orcamento){ return; }
         if (!orcamento.data){ return; }
@@ -448,128 +515,95 @@ $(document).ready(function() {
         return;
     }
 
-    function apiCallOrcamento(produto) {
-        if (tempoVigencia != 1 && tempoVigencia != 2){ return; }
+    function apiCallOrcamento(produto, vigencia) {
+        let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        let produtosUpperCase = ['habitual', 'habitualPremium', 'veraneio'];
+        let indexProduto = produtos.indexOf(produto);
+        let produtoUpperCase = produtosUpperCase[indexProduto];
         let loadingScreen = $("#loading-screen");
         let payload = {};
-        switch(produto){
-            case 'habitual':
-                if (loadingProduto.habitual){ return; }
-                if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.show(); }
-                loadingProduto.habitual = true;
-                //buttonHabitual.css('background-color', 'gray');
-                payload = {};
-                Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['habitual'];
-                payload.produto = 'habitual';
-                payload.vigencia = tempoVigencia;
-                $.ajax({
-                    url: '/planos',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function(res) {
-                        loadingProduto.habitual = false; 
-                        if (res.error && res.status == 504 && tentativaTimeOut[0] < 3){ 
-                            console.log('habitual -', 'Sucesso:', res); 
-                            tentativaTimeOut[0] += 1; 
-                            apiCallOrcamento(produto); 
-                        }else{
-                            tentativaTimeOut[0] = 0;
-                            if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.hide(); }
-                            //buttonHabitual.css('background-color', '#4ed433');
-                            atualizarCard('habitual', tempoVigencia, res.data, false);
-                            console.log('habitual -', 'Sucesso:', res); 
-                        }
-                    },
-                    error: function(xhr, status, error) {  
-                        loadingProduto.habitual = false;
-                        if (!loadingProduto.habitualPremium && !loadingProduto.veraneio){ loadingScreen.hide(); }
-                        atualizarCard('habitual', tempoVigencia, {}, true);
-                        console.log('habitual -', 'Error:', error, 'Status:', status); 
-                    }
-                });
-                break;
-            case 'habitual-premium':
-                if (loadingProduto.habitualPremium){ return; }
-                if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.show(); }
-                loadingProduto.habitualPremium = true;
-                //buttonHabitualPremium.css('background-color', 'gray');//'#4ed433');
-                payload = {};
-                Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['habitual-premium'];
-                payload.produto = 'habitual-premium';
-                payload.vigencia = tempoVigencia;
-                $.ajax({
-                    url: '/planos',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function(res) { 
-                        loadingProduto.habitualPremium = false;
-                        if (res.error && res.status == 504 && tentativaTimeOut[1] < 3){
-                            tentativaTimeOut[1] += 1; 
-                            console.log('habitual-premium -', 'TimeOut:', res); 
-                            apiCallOrcamento('habitual-premium'); 
-                        }else{
-                            tentativaTimeOut[1] = 0;
-                            if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.hide(); }
-                            //buttonHabitualPremium.css('background-color', '#4ed433');
-                            atualizarCard('habitual-premium', tempoVigencia, res.data, false);
-                            console.log('habitual-premium -', 'Sucesso:', res); 
-                        }
-                    },
-                    error: function(xhr, status, error) {  
-                        loadingProduto.habitualPremium = false;
-                        if (!loadingProduto.habitual && !loadingProduto.veraneio){ loadingScreen.hide(); }
-                        atualizarCard('habitual-premium', tempoVigencia, {}, true);
-                        console.log('habitual-premium -', 'Error:', error, 'Status:', status); 
-                    }
-                });
-                break;
-            case 'veraneio':
-                if (loadingProduto.veraneio){ return; }
-                if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.show(); }
-                loadingProduto.veraneio = true;
-                //buttonVeraneio.css('background-color', 'gray');//'#4ed433');
-                payload = {};
-                Object.assign(payload, encryptedData);
-                payload.itemData = valoresCobertura['veraneio'];
-                payload.produto = 'veraneio';
-                payload.vigencia = tempoVigencia;
-                $.ajax({
-                    url: '/planos',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function(res) {
-                        loadingProduto.veraneio = false; 
-                        if (res.error && res.status == 504 && tentativaTimeOut[2] < 3){
-                            console.log('veraneio -', 'TimeOut:', res);
-                            tentativaTimeOut[2] += 1;
-                            apiCallOrcamento('veraneio');
-                        }else{
-                            console.log('veraneio -', 'Sucesso:', res); 
-                            tentativaTimeOut[2] = 0;
-                            if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.hide(); }
-                            //buttonVeraneio.css('background-color', '#4ed433');
-                            atualizarCard('veraneio', tempoVigencia, res.data, false);
-                        }
-                    },
-                    error: function(xhr, status, error) {  
-                        loadingProduto.veraneio = false;
-                        if (!loadingProduto.habitual && !loadingProduto.habitualPremium){ loadingScreen.hide(); }
-                        atualizarCard('veraneio', tempoVigencia, {}, true);
-                        console.log('veraneio -', 'Error:', error, 'Status:', status); 
-                    }
-                });
-                break;
-        }
+        let showLoading = true;
+
+        if (loadingProduto[produtoUpperCase][vigencia]){ return; }
+        produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ showLoading = false; } }); });
+        
+        if (showLoading){ loadingScreen.show(); }
+        loadingProduto[produtoUpperCase][vigencia] = true;
+        
+        Object.assign(payload, encryptedData);
+        payload.itemData = valoresCobertura[produto];
+        payload.produto = produto;
+        payload.vigencia = vigencia + 1;
+
+        $.ajax({
+            url: '/planos',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function(res) {
+                loadingProduto[produtoUpperCase][vigencia] = false; 
+                if (res.error && res.status == 504 && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
+                    tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
+                    apiCallOrcamento(produto, vigencia); 
+                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
+                    return;
+                }
+                if (res.error && res.status != 200){
+                    let stopLoading = true;
+                    produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ stopLoading = false; } }); });                 
+                    if (stopLoading){ loadingScreen.hide(); }
+                    tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
+                    atualizarCard(produto, vigencia, {}, true);
+                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status} -`, res.data.messages);
+                    return;
+                }
+                let stopLoading = true;
+                produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ stopLoading = false; } }); });                 
+                if (stopLoading){ loadingScreen.hide(); }
+                tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
+                atualizarCard(produto, vigencia, res.data, false);
+                console.log(`[${vigencia + 1} ANO] ${produto}: OK`);
+            },
+            error: function(xhr, status, error) {  
+                let stopLoading = true;
+                produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ stopLoading = false; } }); });         
+                if (stopLoading){ loadingScreen.hide(); }
+                tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
+                loadingProduto[produtoUpperCase][vigencia] = false;
+                atualizarCard(produto, vigencia, {}, true);
+                console.log(`[${vigencia + 1} ANO] ${produto}`, 'Error:', error, 'Status:', status); 
+            }
+        });
     } 
     
-    function atualizarVigencia(produto, vigecia){
-        if (dadosCobertura[produto].card){ return; }
+    function atualizarVigencia(produto, vigencia){
+        let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        let index = produtos.indexOf(produto);
+        index = index + 1;
 
+        tempoVigencia = vigencia;
+
+        let mainContainer = $(`.card-price#card-price-${index}`).parent();
+        let priceContainer = $(`.card-price#card-price-${index}`);
+        let totalContainer = mainContainer.children('p.text-center');
+        let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
+        let jurosFlag = $(`.card-price#card-price-${index} > .period`);
+
+        let card = dadosCobertura[produto].card[vigencia];
+        console.log(dadosCobertura[produto]);
+
+        let numeroParcelas = card.numeroParcelas; 
+        let primeiraParcela = card.primeiraParcela;
+        let demaisParcelas = card.demaisParcelas;
+        let valorTotal = card.valorTotal;
+
+        let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+        textParcela.each(function() { this.textContent = primeiraParcela; });
+        totalContainer.html(`Valor Total: R$${valorTotal}`);
+        parcelasContainer.html(`${numeroParcelas}x`);
+        //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
+        jurosFlag.css('display', 'none');
+        return;
     }
 
     function atualizarCard(produto, vigencia, data, error){
@@ -585,14 +619,15 @@ $(document).ready(function() {
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
 
         if (error){
-            let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
-            textParcela.each(function() { this.textContent = '--,--'; });
-            totalContainer.html(`Valor Total: R$--,--`);
-            parcelasContainer.html(`--x&nbs;`);
-            jurosFlag.css('display', 'none');
-
+            if (tempoVigencia == vigencia){
+                let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+                textParcela.each(function() { this.textContent = '--,--'; });
+                totalContainer.html(`Valor Total: R$--,--`);
+                parcelasContainer.html(`--x`);
+                jurosFlag.css('display', 'none');
+            }
             if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-            dadosCobertura[produto].card[vigencia] = { numeroParcelas: '--,--', valorParcelas: '--', valorTotal: '--,--', displayJuros: 'none' };
+            dadosCobertura[produto].card[vigencia] = { numeroParcelas: '--', primeiraParcela: '--,--', demaisParcelas: '--,--', valorTotal: '--,--', displayJuros: 'none' };
             return;
         }
         
@@ -613,22 +648,25 @@ $(document).ready(function() {
                 let demaisParcelas = parcelamento.valorDemaisParcelas;
                 let valorTotal = (numeroParcelas - 1) * demaisParcelas + primeiraParcela;
 
-                if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-                dadosCobertura[produto].card[vigencia] = { numeroParcelas: numeroParcelas, valorParcelas: primeiraParcela, valorTotal: valorTotal, displayJuros: 'none' };
-
                 if (Math.abs(valorSemJuros - valorTotal) < 0.05){ juros = false; }
 
                 primeiraParcela = primeiraParcela.toFixed(2).replace(".", ",");
                 valorTotal = valorTotal.toFixed(2).replace(".", ",");
+
+                if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
+                dadosCobertura[produto].card[vigencia] = { numeroParcelas: numeroParcelas, primeiraParcela: primeiraParcela, demaisParcelas: demaisParcelas, valorTotal: valorTotal, displayJuros: 'none' };
                 
-                let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
-                textParcela.each(function() { this.textContent = primeiraParcela; });
-                totalContainer.html(`Valor Total: R$${valorTotal}`);
-                parcelasContainer.html(`${numeroParcelas}x`);
-                //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
-                jurosFlag.css('display', 'none');
+                if (tempoVigencia == vigencia){
+                    let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+                    textParcela.each(function() { this.textContent = primeiraParcela; });
+                    totalContainer.html(`Valor Total: R$${valorTotal}`);
+                    parcelasContainer.html(`${numeroParcelas}x`);
+                    //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
+                    jurosFlag.css('display', 'none');
+                }
             }
         });
+        console.log(dadosCobertura);
         return;
     }
     
@@ -678,7 +716,7 @@ $(document).ready(function() {
         let inputChange = this.id;
         let residencia = tipoResidencia;
         let todasInputRange = $('input[type="range"]');
-        console.log(dadosCobertura)
+
         if (!dadosCobertura['habitual'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
@@ -1072,7 +1110,5 @@ $(document).ready(function() {
         }
     }
     
-    validacaoInicial();
-
-    
+    validacaoInicial();    
 });

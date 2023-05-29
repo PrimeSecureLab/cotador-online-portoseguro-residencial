@@ -5,6 +5,10 @@ var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valo
 
 allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
 
+var dadosCobertura = [];
+var valoresCobertura = [];
+
+
 $(document).ready(function() {
     //Aplica Mascaras nos Inputs
     $("#cpf").mask("999.999.999-99");
@@ -21,6 +25,7 @@ $(document).ready(function() {
     var tipoResidencia = null;
     let numeroTelefone = $(".numerotelefone");
     let maskFixo = 1;
+
     numeroTelefone.mask("(00) 0000-00000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
 
     numeroTelefone.on("input, keyup", (e)=>{
@@ -43,9 +48,9 @@ $(document).ready(function() {
         var currentStep = $(this).closest(".form-step");
         var nextStep = currentStep.next(".form-step");
         let errorList = [];
+        let data = {};
 
         if (currentStep.length > 0){
-            let data = {};
             let inputArray = currentStep[0].querySelectorAll('input');
             let selectArray = currentStep[0].querySelectorAll('select');
 
@@ -110,10 +115,8 @@ $(document).ready(function() {
         }
     });
 
-    var dadosCobertura = [];
-    dadosCobertura['generica'] = {};
 
-    var valoresCobertura = [];
+    dadosCobertura['generica'] = {};
     valoresCobertura['generica'] = {};
 
     var inputsRange = $('input[type="range"]');
@@ -128,7 +131,7 @@ $(document).ready(function() {
     function controleCoberturasGenerico(){
         let inputs = {};
         let inputChange = this.id;
-        let residencia = tipoResidencia;
+        let residencia = $('#tiporesidencia').val();
         
         if (!dadosCobertura['generica'].valorcoberturaincendio){
             inputsRange.each((index)=>{ 
@@ -144,7 +147,7 @@ $(document).ready(function() {
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
             });
         }
-
+        
         inputs.valorcoberturaincendio.min = 100000;
         inputs.valorcoberturaincendio.max = (residencia == 2) ? 700000 : 1000000;
 
@@ -227,6 +230,7 @@ $(document).ready(function() {
             //console.log(dadosCobertura)
         }
     }
+    
     controleCoberturasGenerico()
 });
 

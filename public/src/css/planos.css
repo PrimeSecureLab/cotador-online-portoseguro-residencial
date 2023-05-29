@@ -7,6 +7,49 @@
   color: #fff;
 }
 
+/*tabs anuidade*/
+.my-pills-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 1rem;
+  list-style: none;
+}
+
+.my-pills-item {
+  /* Estilos para cada item aqui */
+  margin: 0 5px; /* adiciona um pequeno espaço entre os itens */
+}
+
+.my-pills-link {
+  display: block;
+  padding: .5rem 1rem;
+  color: #007bff; /* a cor do texto por padrão será a mesma do botão ativo */
+  transition: all 0.3s ease; /* adiciona uma transição suave */
+  border:none;
+  border-radius: 5px;
+  color: #313131;
+}
+
+.my-pills-link:hover {
+  color: #fff;
+  background-color: #03a8db;
+}
+
+.my-pills-link.active {
+  color: #fff;
+  background-color: #03a8db;
+  /* Adicione mais estilos para o estado ativo conforme necessário */
+}
+
 section.pricing {
   background: #fff;
 }
@@ -41,6 +84,7 @@ section.pricing {
 
 .pricing ul li {
   margin-bottom: 1rem;
+  text-align: left;
 }
 
 .pricing .text-muted {

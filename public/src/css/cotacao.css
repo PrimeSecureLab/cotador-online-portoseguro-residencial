@@ -640,18 +640,6 @@ body {
     color: #5e5e5e;
 }
 
-/* Chrome, Safari, Edge, Opera */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
 @media (max-width: 768px) {
     .payment-logo-porto, .payment-logo-pagarme, .payment-logo-susep {
       width: 60%;
