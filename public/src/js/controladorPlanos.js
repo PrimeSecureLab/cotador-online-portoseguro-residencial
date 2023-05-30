@@ -723,6 +723,7 @@ $(document).ready(function() {
                     labelElement.css('display', 'block');
                     //inputElement.parent().css('max-height', '');
                     //inputElement.parent().css('overflow', '');
+                    //inputElement.parent().slideToggle(200);
                 }else{  
                     toggleElement.css('background-color', '#C7C7C7'); 
                     toggleElement.css('border-color', '#C7C7C7');
@@ -730,7 +731,7 @@ $(document).ready(function() {
                     labelElement.css('display', 'none');
                     //inputElement.parent().css('max-height', '0');
                     //inputElement.parent().css('overflow', 'hidden');
-                    
+                    //inputElement.parent().slideToggle(200);                    
                 }
                 
                 input.disabled = !input.disabled;
