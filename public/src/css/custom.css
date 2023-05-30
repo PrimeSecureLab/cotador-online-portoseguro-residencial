@@ -163,7 +163,7 @@ input[type=number] {
 }
 
 range {
-  color: #03a8db;
+  color: black;
 }
 
 .range-value0,
@@ -190,8 +190,9 @@ range {
 .range-value21,
 .range-value22,
 .range-value23 {
+  width: max-content;
   position: absolute;
-  top: -2rem;
+  top: -1.5rem;
   left: calc(3.0404%);
   transform: translateX(-50%);
   background-color: #1f88df;
@@ -371,4 +372,24 @@ input[type=range]:focus::-ms-fill-lower {
 
 input[type=range]:focus::-ms-fill-upper {
   background: #2497E3;
+}
+.container-toggle{
+  width: 45px; 
+  height: 25px; 
+  background-color: #C7C7C7; 
+  border-radius: 25px; 
+  position: absolute; 
+  border: 3px solid #C7C7C7; 
+  overflow: hidden; 
+  cursor: pointer;
+  right: 15px;
+}
+.toggle-switch{
+  width: 19px; 
+  height: 19px; 
+  background-color: #FFF; 
+  border-radius: 50%; 
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.17); 
+  transition: all 0.2s linear;
+  cursor: pointer;
 }

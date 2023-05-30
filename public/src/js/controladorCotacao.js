@@ -166,7 +166,7 @@ $(document).ready(function() {
         inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
 
         inputs.valorcoberturarcfamiliar.min = 2000;
-        inputs.valorcoberturarcfamiliar.max = base * 0.5;
+        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5//base * 0.5;
         inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
 
         inputs.valorcoberturavendaval.min = 2000;
@@ -176,11 +176,11 @@ $(document).ready(function() {
         inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
 
         inputs.valorcoberturaalagamento.min = 5000;
-        inputs.valorcoberturaalagamento.max = 50000;
+        inputs.valorcoberturaalagamento.max = 300000;//50000;
         inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
 
         inputs.valorsubtracaobicicleta.min = 2500;
-        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
+        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 15000) ? 15000 : base * 0.3;//(base * 0.3 > 50000) ? 50000 : base * 0.3;
         inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
 
         inputs.valorpequenasreformas.min = 2000;

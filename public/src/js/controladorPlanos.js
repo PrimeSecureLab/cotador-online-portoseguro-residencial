@@ -255,21 +255,18 @@ $(document).ready(function() {
     buttonHabitual.on("click", function(e) { 
         e.preventDefault(); 
         if (!loadingProduto.habitual[tempoVigencia]){ 
-            if (orcamentos)
             salvarOrcamento('habitual'); 
         } 
     });
     buttonHabitualPremium.on("click", function(e) { 
         e.preventDefault(); 
         if (!loadingProduto.habitualPremium[tempoVigencia]){ 
-
             salvarOrcamento('habitual-premium'); 
         } 
     });
     buttonVeraneio.on("click", function(e) { 
         e.preventDefault(); 
         if (!loadingProduto.habitualPremium[tempoVigencia]){ 
-
             salvarOrcamento('veraneio'); 
         } 
     });
@@ -329,6 +326,8 @@ $(document).ready(function() {
         if (!tipoResidencia){ window.location.href = '/'; return; }
         encryptedData = encryptedData.formData;
 
+        gerarToggleSwitch();
+
         controleCoberturasHabitual();
         controleCoberturasHabitualPremium();
         controleCoberturasVeraneio();
@@ -340,6 +339,17 @@ $(document).ready(function() {
         apiCallOrcamento('habitual', 1);
         apiCallOrcamento('habitual-premium', 1);
         apiCallOrcamento('veraneio', 1);
+
+    }
+
+    function gerarToggleSwitch(){
+        let inputList = $('input[type="range"]');
+        inputList.each((index)=>{ 
+            let input = inputList[index];
+            let label = $(`label[for="${input.id}"]`);
+            let toggle = `<div id="${input.id}-toggle" class="container-toggle"><div class="toggle-switch"></div></div>`;
+            label.before(toggle);
+        });
     }
 
     function salvarOrcamento(produto){
@@ -683,7 +693,6 @@ $(document).ready(function() {
 
         for(let i in inputs){
             let input = inputs[i];
-
             if (!input.disabled && input.min > input.max){ 
                 input.disabled = true; 
                 input.min = input.max; 
@@ -701,18 +710,62 @@ $(document).ready(function() {
             labelElement.text(formatCurrency(input.value));
             labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
 
+            let toggleElement = $(`#${input.id}-toggle`);
+            let switchElement = toggleElement.children('.toggle-switch');
+            
+            toggleElement.off("click").on("click", ()=>{
+                if (input.id == 'valorcoberturaincendio'){ return; }
+                if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ return; }
+                if (input.disabled){
+                    toggleElement.css('background-color', '#03A8DB');
+                    toggleElement.css('border-color', '#03A8DB');
+                    switchElement.css('margin-left', '20px');
+                    labelElement.css('display', 'block');
+                    //inputElement.parent().css('max-height', '');
+                    //inputElement.parent().css('overflow', '');
+                }else{  
+                    toggleElement.css('background-color', '#C7C7C7'); 
+                    toggleElement.css('border-color', '#C7C7C7');
+                    switchElement.css('margin-left', '0px');
+                    labelElement.css('display', 'none');
+                    //inputElement.parent().css('max-height', '0');
+                    //inputElement.parent().css('overflow', 'hidden');
+                    
+                }
+                
+                input.disabled = !input.disabled;
+                inputElement.prop("disabled", input.disabled);
+            });
+            
             dadosCobertura['habitual'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
 
             if (!input.disabled){ 
                 let nomeCobertura = relacaoItemId[input.id];
                 inputElement.prop("disabled", false);
                 valoresCobertura['habitual'][nomeCobertura] = input.value;
+
+                toggleElement.css('background-color', '#03A8DB');
+                toggleElement.css('border-color', '#03A8DB');
+                switchElement.css('margin-left', '20px');
+
+                /*toggleElement.hover(()=>{
+                    toggleElement.css('border-color', '#1F88DF');
+                    toggleElement.css('background-color', '#1F88DF');
+                }, ()=>{
+                    toggleElement.css('background-color', '#03A8DB');
+                    toggleElement.css('border-color', '#03A8DB');
+                });*/
+
+
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
                     valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; 
                     dadosCobertura['habitual'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
                 }
             }else{ 
                 inputElement.prop("disabled", true); 
+                toggleElement.css('background-color', '#C7C7C7'); 
+                toggleElement.css('border-color', '#C7C7C7');
+                switchElement.css('margin-left', '0px');
             }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
@@ -742,7 +795,7 @@ $(document).ready(function() {
             });
         }
         
-        inputs.valorcoberturaincendio.min = (residencia == 2) ? 710000 : 110000;
+        inputs.valorcoberturaincendio.min = (residencia == 2) ? 7100000 : 1100000;
         inputs.valorcoberturaincendio.max = 20000000;
 
         if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
