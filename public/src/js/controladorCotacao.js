@@ -115,7 +115,6 @@ $(document).ready(function() {
         }
     });
 
-
     dadosCobertura['generica'] = {};
     valoresCobertura['generica'] = {};
 
@@ -268,7 +267,7 @@ document.getElementById("form").addEventListener("submit", async (event) => {
         });
         if (response.ok) {
             const formData = await response.json(); // Recebe os dados da resposta
-            let storage = {formData: formData, tipoResidencia: data.tiporesidencia};
+            let storage = {formData: formData, tipoResidencia: data.tiporesidencia, _dadosCoberturas: dadosCobertura['generica'] };
             localStorage.setItem("formData", JSON.stringify(storage)); // Adiciona o form encriptado ao localStorage
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {

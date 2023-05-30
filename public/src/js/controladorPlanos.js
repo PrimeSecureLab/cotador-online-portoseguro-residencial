@@ -252,9 +252,27 @@ $(document).ready(function() {
     var buttonHabitualPremium = $("#btn-plano-2");
     var buttonVeraneio = $("#btn-plano-3");
 
-    buttonHabitual.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitual){ salvarOrcamento('habitual'); } });
-    buttonHabitualPremium.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('habitual-premium'); } });
-    buttonVeraneio.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium){ salvarOrcamento('veraneio'); } });
+    buttonHabitual.on("click", function(e) { 
+        e.preventDefault(); 
+        if (!loadingProduto.habitual[tempoVigencia]){ 
+            if (orcamentos)
+            salvarOrcamento('habitual'); 
+        } 
+    });
+    buttonHabitualPremium.on("click", function(e) { 
+        e.preventDefault(); 
+        if (!loadingProduto.habitualPremium[tempoVigencia]){ 
+
+            salvarOrcamento('habitual-premium'); 
+        } 
+    });
+    buttonVeraneio.on("click", function(e) { 
+        e.preventDefault(); 
+        if (!loadingProduto.habitualPremium[tempoVigencia]){ 
+
+            salvarOrcamento('veraneio'); 
+        } 
+    });
 
     var tabVigencia = $(".my-pills-link");
     tabVigencia.on("click", function(e){ 
@@ -269,15 +287,8 @@ $(document).ready(function() {
         atualizarVigencia('habitual', index);
         atualizarVigencia('habitual-premium', index);
         atualizarVigencia('veraneio', index);
-
-        //console.log(tempoVigencia);
     });
-    /*tabVigencia.each(function(index){
-        tabVigencia[index].on("click", function(e){ 
-            tabVigencia.removeClass("active"); 
-            console.log(e.html());
-        });
-    });*/
+
 
     var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
@@ -295,6 +306,7 @@ $(document).ready(function() {
 
     var valoresCobertura = [];
     var dadosCobertura = [];
+    var coberturaGenerica = {};
     var orcamentos = [];
 
     for(let i = 0; i < 3; i++){
@@ -302,13 +314,17 @@ $(document).ready(function() {
         valoresCobertura[plano] = {};
         dadosCobertura[plano] = {};
         orcamentos[plano] = [];
-        for(let k = 1; k < 4; k++){ orcamentos[plano][k] = {}; }
+        for(let k = 1; k < 4; k++){ orcamentos[plano][k] = false; }
     }
 
     function validacaoInicial() {
         let storage = localStorage.getItem('formData');
+        let coberturas = {};
         if (!storage) { window.location.href = '/'; return; }
         encryptedData = JSON.parse(storage);
+        if (encryptedData._dadosCoberturas){ coberturas = encryptedData._dadosCoberturas; }
+        if (coberturas.valorcoberturaincendio){ coberturaGenerica = coberturas; }
+        console.log(encryptedData);
         tipoResidencia = encryptedData.tipoResidencia;
         if (!tipoResidencia){ window.location.href = '/'; return; }
         encryptedData = encryptedData.formData;
@@ -324,21 +340,26 @@ $(document).ready(function() {
         apiCallOrcamento('habitual', 1);
         apiCallOrcamento('habitual-premium', 1);
         apiCallOrcamento('veraneio', 1);
-        //api_call(encryptedData);
     }
 
     function salvarOrcamento(produto){
-        if (tempoVigencia != 0 && tempoVigencia != 1 && tempoVigencia != 2){ return; }
         let orcamento = orcamentos[produto][tempoVigencia];
+        if (tempoVigencia != 0 && tempoVigencia != 1 && tempoVigencia != 2){ return; }
         if (!orcamento){ return; }
-        if (!orcamento.data){ return; }
-        if (orcamento.error){ return; }
-        if (orcamento.status != 200){ return; }
-        if (!orcamento.data.tipo){ return; }
-        if (orcamento.data.tipo != produto){ return; }
+        if (!orcamento.tipo){ return; }
+        if (!orcamento.criadoEm){ return; }
+
+        let criadoEm = orcamento.criadoEm.toString().split('T')[0];
+        let outdated = new Date() - new Date(criadoEm);
+        outdated = (outdated / (1000 * 60 * 60 * 24)) > 5 ;
+        if (outdated){ apiCallOrcamento(produto, tempoVigencia); return; }
+
+        orcamento.vigencia = tempoVigencia + 1;
         encryptedData.orcamento = orcamento;
         encryptedData.itemData = valoresCobertura[produto];
+        console.log(encryptedData);
         localStorage.setItem('finalData', JSON.stringify(encryptedData));
+
         window.location.href = './login';
         return;
     }
@@ -351,6 +372,7 @@ $(document).ready(function() {
         let loadingScreen = $("#loading-screen");
         let payload = {};
         let showLoading = true;
+        let button = $(`#btn-plano-${indexProduto + 1}`);
 
         if (loadingProduto[produtoUpperCase][vigencia]){ return; }
         produtosUpperCase.forEach((plano)=>{ loadingProduto[plano].forEach((loading)=>{ if (loading){ showLoading = false; } }); });
@@ -363,6 +385,8 @@ $(document).ready(function() {
         payload.produto = produto;
         payload.vigencia = vigencia + 1;
 
+        button.css('background-color', 'gray');
+
         $.ajax({
             url: '/planos',
             type: 'POST',
@@ -370,7 +394,14 @@ $(document).ready(function() {
             data: JSON.stringify(payload),
             success: function(res) {
                 loadingProduto[produtoUpperCase][vigencia] = false; 
-                if (res.error && res.status == 504 && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
+                if (res.error && (res.status == 504 || res.status == 401 || res.status == 429) && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
+                    tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
+                    orcamentos[produto][vigencia] = false;
+                    apiCallOrcamento(produto, vigencia); 
+                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
+                    return;
+                }
+                if (res.error && res.status > 499 && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
                     tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
                     orcamentos[produto][vigencia] = false;
                     apiCallOrcamento(produto, vigencia); 
@@ -392,6 +423,7 @@ $(document).ready(function() {
                 if (stopLoading){ loadingScreen.hide(); }
                 tentativaTimeOut[produtoUpperCase][vigencia] = 0;  
                 orcamentos[produto][vigencia] = res.data;  
+                button.css('background-color', '');
                 atualizarCard(produto, vigencia, res.data, false);
                 console.log(`[${vigencia + 1} ANO] ${produto}: OK`);
             },
@@ -419,13 +451,14 @@ $(document).ready(function() {
         let totalContainer = mainContainer.children('p.text-center');
         let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
+        let button = $(`#btn-plano-${index}`);
 
         let card = dadosCobertura[produto].card[vigencia];
         console.log(dadosCobertura[produto]);
 
         let numeroParcelas = card.numeroParcelas; 
         let primeiraParcela = card.primeiraParcela;
-        let demaisParcelas = card.demaisParcelas;
+        //let demaisParcelas = card.demaisParcelas;
         let valorTotal = card.valorTotal;
 
         let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
@@ -434,6 +467,7 @@ $(document).ready(function() {
         parcelasContainer.html(`${numeroParcelas}x`);
         //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
         jurosFlag.css('display', 'none');
+        if (card.error){ button.css('background-color', 'gray'); }else{ button.css('background-color', ''); }
         return;
     }
 
@@ -456,9 +490,17 @@ $(document).ready(function() {
                 totalContainer.html(`Valor Total: R$--,--`);
                 parcelasContainer.html(`--x`);
                 jurosFlag.css('display', 'none');
+
             }
             if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-            dadosCobertura[produto].card[vigencia] = { numeroParcelas: '--', primeiraParcela: '--,--', demaisParcelas: '--,--', valorTotal: '--,--', displayJuros: 'none' };
+            dadosCobertura[produto].card[vigencia] = { 
+                numeroParcelas: '--', 
+                primeiraParcela: '--,--', 
+                demaisParcelas: '--,--', 
+                valorTotal: '--,--', 
+                displayJuros: 'none',
+                error: true
+            };
             return;
         }
         
@@ -485,7 +527,14 @@ $(document).ready(function() {
                 valorTotal = valorTotal.toFixed(2).replace(".", ",");
 
                 if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-                dadosCobertura[produto].card[vigencia] = { numeroParcelas: numeroParcelas, primeiraParcela: primeiraParcela, demaisParcelas: demaisParcelas, valorTotal: valorTotal, displayJuros: 'none' };
+                dadosCobertura[produto].card[vigencia] = { 
+                    numeroParcelas: numeroParcelas, 
+                    primeiraParcela: primeiraParcela, 
+                    demaisParcelas: demaisParcelas, 
+                    valorTotal: valorTotal, 
+                    displayJuros: 'none',
+                    error: false 
+                };
                 
                 if (tempoVigencia == vigencia){
                     let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
@@ -558,6 +607,7 @@ $(document).ready(function() {
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 let cobertura = dadosCobertura['habitual'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
             });
@@ -686,6 +736,7 @@ $(document).ready(function() {
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 let cobertura = dadosCobertura['habitual-premium'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
             });
@@ -819,6 +870,7 @@ $(document).ready(function() {
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 let cobertura = dadosCobertura['veraneio'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
             });
@@ -941,5 +993,6 @@ $(document).ready(function() {
         }
     }
     
-    validacaoInicial();    
+    validacaoInicial();        
+    console.log(encryptedData);
 });

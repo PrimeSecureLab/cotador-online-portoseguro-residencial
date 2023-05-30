@@ -168,12 +168,14 @@ async function portoOrcamentoApi(produto, formData, token){
 
         //console.log(payload);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
         let delay = 100
         if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
         delay += (data.vigencia - 1) * 30;
-        setTimeout(() => { resolve( request ); }, delay);
+        setTimeout(async () => { 
+            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
+            resolve( request ); 
+        }, delay);
     });
 }
 /*

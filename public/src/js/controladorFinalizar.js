@@ -7,6 +7,7 @@ var loading = false;
 if (localData){ localData = JSON.parse(localData); }
 if (!localData.itemData){ window.location.href = './planos'; loading = true; }
 if (!localData.orcamento && !loading){ window.location.href = './planos'; loading = true; }
+console.log(localData)
 
 var orcamento = localData.orcamento;
 if (!orcamento.numeroOrcamento && !loading){ window.location.href = './planos'; loading = true; }
@@ -26,7 +27,11 @@ if (!loading){
     let hoje = new Date();
     let outdated = Math.abs(hoje - dataOrcamento);
     outdated = Math.ceil(outdated / (1000 * 60 * 60 * 24));
-    if (outdated > 10){ localStorage.removeItem("finalData"); window.location.href = './planos'; loading = true; }
+    if (outdated > 10){ 
+        localStorage.removeItem("finalData"); 
+        window.location.href = './planos'; 
+        loading = true; 
+    }
 }
 
 //console.log(localData);
@@ -55,9 +60,18 @@ $(document).ready(function () {
     
     $("input#protocolo").val(orcamento.numeroOrcamento);
 
-    if (localData.orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
-    if (localData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
-    if (localData.orcamento.tipo == "habitual-premium"){ $("input#plano-escolhido").val("Exclusive"); }
+    if (localData.orcamento.tipo == "habitual"){ 
+        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
+        $("input#plano-escolhido").val(`Essencial - ${vigencia}`); 
+    }
+    if (localData.orcamento.tipo == "veraneio"){ 
+        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
+        $("input#plano-escolhido").val(`Conforto - ${vigencia}`); 
+    }
+    if (localData.orcamento.tipo == "habitual-premium"){ 
+        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
+        $("input#plano-escolhido").val(`Exclusive - ${vigencia}`); 
+    }
 
     let juros = true;
     let valorSemJuros = 0;
