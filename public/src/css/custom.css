@@ -384,6 +384,7 @@ input[type=range]:focus::-ms-fill-upper {
   cursor: pointer;
   right: 15px;
 }
+
 .toggle-switch{
   width: 19px; 
   height: 19px; 

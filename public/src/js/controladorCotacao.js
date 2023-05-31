@@ -167,7 +167,7 @@ $(document).ready(function() {
 
         inputs.valorcoberturarcfamiliar.min = 2000;
         inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5//base * 0.5;
-        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
+        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > inputs.valorcoberturarcfamiliar.max) ? inputs.valorcoberturarcfamiliar.max : inputs.valorcoberturarcfamiliar.value;
 
         inputs.valorcoberturavendaval.min = 2000;
         inputs.valorcoberturavendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;
