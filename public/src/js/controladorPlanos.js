@@ -608,18 +608,20 @@ $(document).ready(function() {
         let todasInputRange = $('input[type="range"]');
 
         if (!dadosCobertura['habitual'].valorcoberturaincendio){
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
-            });
-        }else{
+            //console.log('a');
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 let cobertura = dadosCobertura['habitual'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; } 
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
+                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: !(input.value > 0), display: true };
+            });
+        }else{
+            todasInputRange.each((index)=>{ 
+                //console.log('b');
+                let input = todasInputRange[index];
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: true };
             });
         }
 
@@ -716,24 +718,22 @@ $(document).ready(function() {
             toggleElement.off("click").on("click", ()=>{
                 if (input.id == 'valorcoberturaincendio'){ return; }
                 if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ return; }
+                if (input.id == 'valorpequenasreformas' && (residencia == 5 || residencia == 6 || residencia == 7)){ return; }
+                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ return; }
+                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ return; }
+                if (input.id == 'valorcoberturaalagamento' && (!(residencia == 1 || residencia == 2 || residencia == 4))){ return; }
+
                 if (input.disabled){
                     toggleElement.css('background-color', '#03A8DB');
                     toggleElement.css('border-color', '#03A8DB');
                     switchElement.css('margin-left', '20px');
                     labelElement.css('display', 'block');
-                    //inputElement.parent().css('max-height', '');
-                    //inputElement.parent().css('overflow', '');
-                    //inputElement.parent().slideToggle(200);
                 }else{  
                     toggleElement.css('background-color', '#C7C7C7'); 
                     toggleElement.css('border-color', '#C7C7C7');
                     switchElement.css('margin-left', '0px');
                     labelElement.css('display', 'none');
-                    //inputElement.parent().css('max-height', '0');
-                    //inputElement.parent().css('overflow', 'hidden');
-                    //inputElement.parent().slideToggle(200);                    
                 }
-                
                 input.disabled = !input.disabled;
                 inputElement.prop("disabled", input.disabled);
             });
@@ -748,6 +748,7 @@ $(document).ready(function() {
                 toggleElement.css('background-color', '#03A8DB');
                 toggleElement.css('border-color', '#03A8DB');
                 switchElement.css('margin-left', '20px');
+                labelElement.css('display', 'block');
 
                 /*toggleElement.hover(()=>{
                     toggleElement.css('border-color', '#1F88DF');
@@ -767,6 +768,7 @@ $(document).ready(function() {
                 toggleElement.css('background-color', '#C7C7C7'); 
                 toggleElement.css('border-color', '#C7C7C7');
                 switchElement.css('margin-left', '0px');
+                labelElement.css('display', 'none');
             }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
@@ -783,16 +785,16 @@ $(document).ready(function() {
         if (!dadosCobertura['habitual-premium'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
+                let cobertura = dadosCobertura['habitual-premium'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
+                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
+                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: !(input.value > 0), display: true };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['habitual-premium'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: true };
             });
         }
         
@@ -917,16 +919,16 @@ $(document).ready(function() {
         if (!dadosCobertura['veraneio'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
+                let cobertura = dadosCobertura['veraneio'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
+                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['veraneio'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
             });
         }
             
