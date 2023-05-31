@@ -608,19 +608,17 @@ $(document).ready(function() {
         let todasInputRange = $('input[type="range"]');
 
         if (!dadosCobertura['habitual'].valorcoberturaincendio){
-            console.log('a');
+            //console.log('a');
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
                 let cobertura = dadosCobertura['habitual'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ 
-                    if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } 
-                }else{ cobertura = input; } 
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; } 
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
                 inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: !(input.value > 0), display: true };
             });
         }else{
             todasInputRange.each((index)=>{ 
-                console.log('b');
+                //console.log('b');
                 let input = todasInputRange[index];
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
                 inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: true };
@@ -735,7 +733,6 @@ $(document).ready(function() {
                     toggleElement.css('border-color', '#C7C7C7');
                     switchElement.css('margin-left', '0px');
                     labelElement.css('display', 'none');
-                    
                 }
                 input.disabled = !input.disabled;
                 inputElement.prop("disabled", input.disabled);
@@ -788,16 +785,16 @@ $(document).ready(function() {
         if (!dadosCobertura['habitual-premium'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
+                let cobertura = dadosCobertura['habitual-premium'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
+                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
+                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: !(input.value > 0), display: true };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['habitual-premium'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: true };
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: true };
             });
         }
         
@@ -922,16 +919,16 @@ $(document).ready(function() {
         if (!dadosCobertura['veraneio'].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
+                let cobertura = dadosCobertura['veraneio'][input.id];
+                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(input.value), min: input.min, max: input.max, disabled: !(input.value > 0), display: true };
+                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
             });
         }else{
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
-                let cobertura = dadosCobertura['veraneio'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; } }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
+                if (inputChange && inputChange == input.id){ input.value = this.value; }
+                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
             });
         }
             
