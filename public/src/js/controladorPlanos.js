@@ -747,6 +747,7 @@ $(document).ready(function() {
                 toggleElement.css('background-color', '#03A8DB');
                 toggleElement.css('border-color', '#03A8DB');
                 switchElement.css('margin-left', '20px');
+                labelElement.css('display', 'block');
 
                 /*toggleElement.hover(()=>{
                     toggleElement.css('border-color', '#1F88DF');
@@ -766,6 +767,7 @@ $(document).ready(function() {
                 toggleElement.css('background-color', '#C7C7C7'); 
                 toggleElement.css('border-color', '#C7C7C7');
                 switchElement.css('margin-left', '0px');
+                labelElement.css('display', 'none');
             }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
