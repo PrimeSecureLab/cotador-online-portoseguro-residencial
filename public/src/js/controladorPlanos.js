@@ -959,6 +959,7 @@ $(document).ready(function() {
                 console.log(input.id, !(dadosCobertura[produto][input.id].disabled));
 
                 controleCoberturaMain(produto);
+                console.log(valoresCobertura);
                 //controleCoberturasHabitual();
                 return;
             });
@@ -1315,7 +1316,6 @@ $(document).ready(function() {
             if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
         }
     }
-
     function controleCoberturasVeraneio(){
         let inputs = {};
         let inputChange = this.id;
