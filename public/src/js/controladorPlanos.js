@@ -750,13 +750,13 @@ $(document).ready(function() {
                 switchElement.css('margin-left', '20px');
                 labelElement.css('display', 'block');
 
-                /*toggleElement.hover(()=>{
+                toggleElement.hover(()=>{
                     toggleElement.css('border-color', '#1F88DF');
                     toggleElement.css('background-color', '#1F88DF');
                 }, ()=>{
                     toggleElement.css('background-color', '#03A8DB');
                     toggleElement.css('border-color', '#03A8DB');
-                });*/
+                });
 
 
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
@@ -769,6 +769,7 @@ $(document).ready(function() {
                 toggleElement.css('border-color', '#C7C7C7');
                 switchElement.css('margin-left', '0px');
                 labelElement.css('display', 'none');
+                toggleElement.off('hover')
             }
             let rangeContainer = inputElement.parent();
             let coberturaContainer = rangeContainer.parent();
