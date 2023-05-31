@@ -843,29 +843,53 @@ $(document).ready(function() {
             let toggleElement = $(`#${input.id}-toggle`);
             let switchElement = toggleElement.children('.toggle-switch');
             let inativoElement = $(`#${input.id}-inativo`);
-            
+
             dadosCobertura[produto][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
             
             if (!input.disabled){ //Input Ativada
                 let enable = true;     
                 let nomeCobertura = relacaoItemId[input.id];            
-
+                
                 if (input.id == 'valorsubtracaobicicleta' ){ 
-                    if (produto == 'habitual-premium' && subtracaoSomatoria > 500000){ enable = false; }
-                    if (produto == 'habitual' && inputs.valorcoberturaincendio.value < 250000){ enable = false; }
+                    if (produto == 'habitual-premium' && subtracaoSomatoria > 500000){ 
+                        inativoElement.html('*Somatórias das coberturas relacionadas não deve ultrapassar R$ 500.000,00');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }
+                    if (produto == 'habitual' && inputs.valorcoberturaincendio.value < 250000){ 
+                        inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }
                 }
-                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ enable = false; }
-                if (input.id == 'valorpequenasreformas' && (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7)){ enable = false; }
-                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ enable = false; }
-                if (input.id == 'valorcoberturaalagamento' && (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4))){ enable = false; }
+                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ 
+                    inativoElement.html('*Liberada quando contratado Danos Elétricos e Subtração de Bens');
+                    inativoElement.css('font-size', '13px');
+                    enable = false; 
+                }
+                if (input.id == 'valorpequenasreformas' && (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7)){ 
+                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                    inativoElement.css('font-size', '13px');
+                    enable = false; 
+                }
+                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ 
+                    inativoElement.html('*Liberada quando contratado Responsabilidade Civil Familiar');
+                    inativoElement.css('font-size', '13px');
+                    enable = false; 
+                }
+                if (input.id == 'valorcoberturaalagamento' && (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4))){ 
+                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                    inativoElement.css('font-size', '13px');
+                    enable = false; 
+                }
 
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
                     valoresCobertura[produto].valorCoberturaMorteAcidental = 5000; 
                     dadosCobertura[produto].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
                 }
                 if (enable){
-                    inputElement.prop("disabled", false);
                     valoresCobertura[produto][nomeCobertura] = input.value;
+                    inputElement.prop("disabled", false);
 
                     toggleElement.css('background-color', '#03A8DB');
                     toggleElement.css('border-color', '#03A8DB');
@@ -898,26 +922,36 @@ $(document).ready(function() {
                 if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ 
                     dadosCobertura[produto][input.id].disabled = true;
                     inputElement.prop("disabled", true);
+                    inativoElement.html('(Inativo)');
+                    inativoElement.css('font-size', '16px');
                     return; 
                 }
                 if (input.id == 'valorpequenasreformas' && (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7)){ 
                     dadosCobertura[produto][input.id].disabled = true;
                     inputElement.prop("disabled", true);
+                    inativoElement.html('(Inativo)');
+                    inativoElement.css('font-size', '16px');
                     return;
                 }
                 if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ 
                     dadosCobertura[produto][input.id].disabled = true;
                     inputElement.prop("disabled", true);
+                    inativoElement.html('(Inativo)');
+                    inativoElement.css('font-size', '16px');
                     return; 
                 }
                 if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ 
                     dadosCobertura[produto][input.id].disabled = true;
                     inputElement.prop("disabled", true);
+                    inativoElement.html('(Inativo)');
+                    inativoElement.css('font-size', '16px');
                     return; 
                 }
                 if (input.id == 'valorcoberturaalagamento' && (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4))){ 
                     dadosCobertura[produto][input.id].disabled = true;
                     inputElement.prop("disabled", true);
+                    inativoElement.html('(Inativo)');
+                    inativoElement.css('font-size', '16px');
                     return; 
                 }
                 dadosCobertura[produto][input.id].disabled = !(dadosCobertura[produto][input.id].disabled);
