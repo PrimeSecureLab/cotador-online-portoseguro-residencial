@@ -851,38 +851,67 @@ $(document).ready(function() {
                 let nomeCobertura = relacaoItemId[input.id];            
                 
                 if (input.id == 'valorsubtracaobicicleta' ){ 
-                    if (produto == 'habitual-premium' && subtracaoSomatoria > 500000){ 
-                        inativoElement.html('*Somatórias das coberturas relacionadas não deve ultrapassar R$ 500.000,00');
+                    if (produto == 'habitual-premium'){ 
+                        if (subtracaoSomatoria > 500000){
+                            inativoElement.html('*Somatórias das coberturas relacionadas não deve ultrapassar R$ 500.000,00');
+                            inativoElement.css('font-size', '13px');
+                            enable = false; 
+                        }else{
+                            inativoElement.html('(Inativo)');
+                            inativoElement.css('font-size', '16px');
+                        }
+                    }
+                    if (produto == 'habitual'){ 
+                        if (inputs.valorcoberturaincendio.value < 250000){
+                            inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                            inativoElement.css('font-size', '13px');
+                            enable = false; 
+                        }else{
+                            inativoElement.html('(Inativo)');
+                            inativoElement.css('font-size', '16px');
+                        }
+                    }
+                }
+                if (input.id == 'valornegociocasa'){ 
+                    if (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled){
+                        inativoElement.html('*Liberada quando contratado Danos Elétricos e Subtração de Bens');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
                     }
-                    if (produto == 'habitual' && inputs.valorcoberturaincendio.value < 250000){ 
-                        inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                }
+                if (input.id == 'valorpequenasreformas'){ 
+                    if (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7){
+                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        inativoElement.css('font-size', '13px');
+                        enable = false;
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
+                }
+                if (input.id == 'valordanosmorais'){ 
+                    if (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled){
+                        inativoElement.html('*Liberada quando contratado Responsabilidade Civil Familiar');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
                     }
                 }
-                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ 
-                    inativoElement.html('*Liberada quando contratado Danos Elétricos e Subtração de Bens');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valorcoberturaalagamento'){ 
+                    if (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4)){
+                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
-                if (input.id == 'valorpequenasreformas' && (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7)){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
-                }
-                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ 
-                    inativoElement.html('*Liberada quando contratado Responsabilidade Civil Familiar');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
-                }
-                if (input.id == 'valorcoberturaalagamento' && (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4))){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
-                }
-
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
                     valoresCobertura[produto].valorCoberturaMorteAcidental = 5000; 
                     dadosCobertura[produto].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
