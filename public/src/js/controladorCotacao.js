@@ -234,20 +234,35 @@ $(document).ready(function() {
                 let nomeCobertura = relacaoItemId[input.id];
                 inputElement.prop("disabled", false);
 
-                if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ 
-                    inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valorsubtracaobicicleta'()){ 
+                    if (inputs.valorcoberturaincendio.value < 250000){
+                        inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
-                if (input.id == 'valorcoberturaalagamento' && (!(residencia == 1 || residencia == 2 || residencia == 4))){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valorcoberturaalagamento'){ 
+                    if (!(residencia == 1 || residencia == 2 || residencia == 4)){
+                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
-                if (input.id == 'valorpequenasreformas' && (residencia == 5 || residencia == 6 || residencia == 7)){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valorpequenasreformas'){ 
+                    if (residencia == 5 || residencia == 6 || residencia == 7){
+                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
                     valoresCobertura['generica'].valorCoberturaMorteAcidental = 5000; 
