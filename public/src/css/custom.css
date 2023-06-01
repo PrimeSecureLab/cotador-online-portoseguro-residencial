@@ -442,3 +442,11 @@ input[type=range]:disabled::-ms-thumb {
 input[type=range]:disabled:focus::-ms-fill-lower {
   background: #C7C7C7
 }
+
+#telefoneError {
+  position: absolute; 
+  width: fit-content; 
+  top: 75px; 
+  font-size: 15px; 
+  display: none;
+}

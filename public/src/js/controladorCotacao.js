@@ -8,8 +8,45 @@ allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
 var dadosCobertura = [];
 var valoresCobertura = [];
 
-
 $(document).ready(function() {
+    dadosCobertura['generica'] = {};
+    valoresCobertura['generica'] = {};
+
+    var inputsRange = $('input[type="range"]');
+    inputsRange.on('change', controleCoberturasGenerico );
+
+    gerarToggleSwitch();
+    controleCoberturasGenerico();
+
+    $.ajax({
+        url: '/formulario',
+        type: 'GET',
+        contentType: 'application/json',
+        data: JSON.stringify({}),
+        success: function(form) { 
+            //console.log('Sucesso:', form); 
+            for(let key in form){
+                if (key == 'criadoEm'){ continue; }
+                if (key == 'itens'){ continue; }
+                let input = $(`#${key}`);
+                if (input.length){ input.val(form[key]); }
+            }
+            if (!form.itens){ form.itens = {}; }
+            if (!form.itens.generico){ form.itens.generico = {}; }
+            
+            for(let key in form.itens.generico){
+                if (!dadosCobertura['generica'][key]){ continue; }
+                dadosCobertura['generica'][key].value = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
+                dadosCobertura['generica'][key].disabled = (form.itens.generico[key].disable);
+                valoresCobertura['generica'][key] = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
+            }
+            controleCoberturasGenerico();
+            console.log(form);
+            console.log(dadosCobertura['generica']);            
+        },
+        error: function(xhr, status, error) { console.error('Error:', error); }
+    });
+
     //Aplica Mascaras nos Inputs
     $("#cpf").mask("999.999.999-99");
     $("#cep").mask("00000-000",{
@@ -22,12 +59,11 @@ $(document).ready(function() {
         pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/
     });
     
-    var tipoResidencia = null;
     let numeroTelefone = $(".numerotelefone");
-    let maskFixo = 1;
 
     numeroTelefone.mask("(00) 0000-00000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
 
+    let maskFixo = 1;
     numeroTelefone.on("input, keyup", (e)=>{
         if (numeroTelefone.val().length < 15 && maskFixo == 0){
             maskFixo = 1;
@@ -75,6 +111,12 @@ $(document).ready(function() {
                 if (!data.tipotelefone){ errorList.push({id: 'tipotelefone'}); }
                 if (data.numerotelefone.replace(/[^0-9]+/g, '').length < 10){ errorList.push({id: 'numerotelefone'}); }
                 if (data.datanascimento.replace(/[^0-9]+/g, '').length < 8){ errorList.push({id: 'datanascimento'}); }
+                if (data.tipotelefone == 3 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 11){ 
+                    if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
+                }
+                if (data.tipotelefone == 1 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 10){ 
+                    if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
+                }
             }
             if (data.etapa == 'step-2'){
                 if (data.cep.replace(/[^0-9]+/g, '').length != 8){ errorList.push({id: 'cep'}); }
@@ -85,7 +127,9 @@ $(document).ready(function() {
                 if (!data.bairro){ errorList.push({id: 'bairro'}); }
                 if (!data.cidade){ errorList.push({id: 'cidade'}); }
                 if (!data.uf){ errorList.push({id: 'uf'}); }
+                controleCoberturasGenerico();
             }
+            console.log(data.etapa)
         }
         if (errorList.length > 0){
             errorList.map((error, index)=>{
@@ -93,7 +137,27 @@ $(document).ready(function() {
                 let label = $(`label[for="${error.id}"]`); //Label do campo com erro
                 input.addClass('error');
                 label.addClass('error');
+                if (error.id == 'tipotelefone'){
+                    let errorLabel = $('label#telefoneError');
+                    if (data.tipotelefone == 3 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 11){
+                        errorLabel.css('display', 'block');
+                        errorLabel.html('Celular deve ter 11 dígitos');
+                    }
+                    if (data.tipotelefone == 1 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 10){
+                        errorLabel.css('display', 'block');
+                        errorLabel.html('Telefone fixo deve ter 10 dígitos');
+                    }
+                    let telefoneInput = $('#numerotelefone');
+                    telefoneInput.on('change keydown paste input', {label: label, input: input} ,(e)=>{ 
+                        $('#telefoneError').css('display', 'none');
+                        errorLabel.html('');
+                        e.data.label.removeClass('error'); 
+                        e.data.input.removeClass('error'); 
+                    });
+                }
                 input.on('change keydown paste input', {label: label, input: input} ,(e)=>{ 
+                    errorLabel.html('');
+                    $('#telefoneError').css('display', 'none');
                     e.data.label.removeClass('error'); 
                     e.data.input.removeClass('error'); 
                 });
@@ -113,14 +177,7 @@ $(document).ready(function() {
         if (prevStep.length > 0) {
             currentStep.removeClass("active").fadeOut(250, function() { prevStep.addClass("active").fadeIn(250); });
         }
-    });
-
-    dadosCobertura['generica'] = {};
-    valoresCobertura['generica'] = {};
-
-    var inputsRange = $('input[type="range"]');
-    inputsRange.on('change', controleCoberturasGenerico );
-    gerarToggleSwitch();
+    });    
 
     function formatCurrency(value) {
         if (value < 1000) { return value + ""; }
@@ -234,7 +291,7 @@ $(document).ready(function() {
                 let nomeCobertura = relacaoItemId[input.id];
                 inputElement.prop("disabled", false);
 
-                if (input.id == 'valorsubtracaobicicleta'()){ 
+                if (input.id == 'valorsubtracaobicicleta'){ 
                     if (inputs.valorcoberturaincendio.value < 250000){
                         inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
                         inativoElement.css('font-size', '13px');
@@ -246,7 +303,7 @@ $(document).ready(function() {
                 }
                 if (input.id == 'valorcoberturaalagamento'){ 
                     if (!(residencia == 1 || residencia == 2 || residencia == 4)){
-                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        inativoElement.html('*Cobertura não permitida para imóveis desocupados');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
                     }else{
@@ -256,7 +313,8 @@ $(document).ready(function() {
                 }
                 if (input.id == 'valorpequenasreformas'){ 
                     if (residencia == 5 || residencia == 6 || residencia == 7){
-                        inativoElement.html('*Cobertura não permitida para imóveis desobupados');
+                        console.log(residencia)
+                        inativoElement.html('*Cobertura não permitida para imóveis desocupados');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
                     }else{
@@ -324,8 +382,7 @@ document.getElementById("form").addEventListener("submit", async (event) => {
     inputArray.forEach((input)=>{ data[input.id] = input.value; });
     selectArray.forEach((select)=>{ data[select.id] = select.value; });
     
-    data.inputRage = dadosCobertura;
-
+    data.inputRange = dadosCobertura['generica'];
     let dataLayer = {};
     Object.assign(dataLayer, data);
     dataLayer.etapa = 'step-3';
