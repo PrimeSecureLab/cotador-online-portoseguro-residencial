@@ -10,8 +10,19 @@ const authToken = require('../configs/authToken');
 dotenv.config();
 
 // Define a rota para a página HTML
-router.get("/", async (req, res) => { 
-    res.sendFile("cotacao.html", { root: "public" }); 
+router.get("/", async (req, res) => { res.sendFile("cotacao.html", { root: "public" }); });
+
+router.get("/formulario", async (req, res)=>{
+    let session = req.session;
+    if (!session){ return res.status(400).json({}); }
+    if (!session.cotacao){ return res.status(400).json({}); }
+    if (!session.cotacao.criadoEm){ session.cotacao = {}; return res.status(400).json({}); }
+    
+    let dataInicio = new Date(session.cotacao.criadoEm);
+    let intervalo = (new Date() - dataInicio) / (1000 * 60 * 60 * 24);
+    
+    if (intervalo > 5){ session.cotacao = {}; return res.status(400).json({}); }
+    return res.status(200).json(session.cotacao);
 });
 
 router.post("/enviar-dados", async (req, res) => {

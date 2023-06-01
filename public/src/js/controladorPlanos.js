@@ -633,6 +633,7 @@ $(document).ready(function() {
 
         controleValidacaoCoberturas(produto, {inputs: inputs});
     }
+
     function controleValidacaoCoberturas(produto, data){
         let inputs = data.inputs;
 
@@ -851,36 +852,66 @@ $(document).ready(function() {
                 let nomeCobertura = relacaoItemId[input.id];            
                 
                 if (input.id == 'valorsubtracaobicicleta' ){ 
-                    if (produto == 'habitual-premium' && subtracaoSomatoria > 500000){ 
-                        inativoElement.html('*Somatórias das coberturas relacionadas não deve ultrapassar R$ 500.000,00');
+                    if (produto == 'habitual-premium'){ 
+                        if (subtracaoSomatoria > 500000){
+                            inativoElement.html('*Somatórias das coberturas relacionadas não deve ultrapassar R$ 500.000,00');
+                            inativoElement.css('font-size', '13px');
+                            enable = false; 
+                        }else{
+                            inativoElement.html('(Inativo)');
+                            inativoElement.css('font-size', '16px');
+                        }
+                    }
+                    if (produto == 'habitual'){ 
+                        if (inputs.valorcoberturaincendio.value < 250000){    
+                            inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                            inativoElement.css('font-size', '13px');
+                            enable = false; 
+                        }else{
+                            inativoElement.html('(Inativo)');
+                            inativoElement.css('font-size', '16px');
+                        }
+                    }
+                }
+                if (input.id == 'valornegociocasa'){ 
+                    if (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled){
+                        inativoElement.html('*Liberada quando contratado Danos Elétricos e Subtração de Bens');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
                     }
-                    if (produto == 'habitual' && inputs.valorcoberturaincendio.value < 250000){ 
-                        inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
+                }
+                if (input.id == 'valorpequenasreformas'){ 
+                    if (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7){
+                        inativoElement.html('*Cobertura não permitida para imóveis desocupados');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
                     }
                 }
-                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ 
-                    inativoElement.html('*Liberada quando contratado Danos Elétricos e Subtração de Bens');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valordanosmorais'){ 
+                    if (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled){
+                        inativoElement.html('*Liberada quando contratado Responsabilidade Civil Familiar');
+                        inativoElement.css('font-size', '13px');
+                        enable = false;
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
-                if (input.id == 'valorpequenasreformas' && (tipoResidencia == 5 || tipoResidencia == 6 || tipoResidencia == 7)){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
-                }
-                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ 
-                    inativoElement.html('*Liberada quando contratado Responsabilidade Civil Familiar');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
-                }
-                if (input.id == 'valorcoberturaalagamento' && (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4))){ 
-                    inativoElement.html('*Cobertura não permitida para imóveis desobupados');
-                    inativoElement.css('font-size', '13px');
-                    enable = false; 
+                if (input.id == 'valorcoberturaalagamento'){ 
+                    if (!(tipoResidencia == 1 || tipoResidencia == 2 || tipoResidencia == 4)){
+                        inativoElement.html('*Cobertura não permitida para imóveis desocupados');
+                        inativoElement.css('font-size', '13px');
+                        enable = false; 
+                    }else{
+                        inativoElement.html('(Inativo)');
+                        inativoElement.css('font-size', '16px');
+                    }
                 }
 
                 if (input.id == 'valorcoberturapagamentocondominio'){ 
@@ -966,495 +997,6 @@ $(document).ready(function() {
         }
     }
 
-
-
-    function controleCoberturasHabitual(){
-        let inputs = {};
-        let inputChange = this.id;
-        let residencia = tipoResidencia;
-        let todasInputRange = $('input[type="range"]');
-
-        console.log(dadosCobertura['habitual']);
-        if (!dadosCobertura['habitual'].valorcoberturaincendio){
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                let cobertura = coberturaGenerica[input.id];
-
-                if (!cobertura){ cobertura = input; }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-
-                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled), display: true };
-            });
-        }else{
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                let cobertura = dadosCobertura['habitual'][input.id];
-
-                if (!cobertura){ cobertura = input;}
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-
-                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled), display: true };
-            });
-        }
-
-        inputs.valorcoberturaincendio.min = 100000;
-        inputs.valorcoberturaincendio.max = (residencia == 2) ? 700000 : 1000000;
-
-        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
-        }
-        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
-        }
-
-        let base = inputs.valorcoberturaincendio.value;
-
-        inputs.valorcoberturadanoseletricos.min = 2000;
-        inputs.valorcoberturadanoseletricos.max = base * 0.5;
-
-        inputs.valorcoberturasubstracaobens.min = 2000;
-        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 150000) ? 150000 : base * 0.3;
-
-        inputs.valorcoberturaalagamento.min = 5000;
-        inputs.valorcoberturaalagamento.max = 30000;
-        //inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
-
-        inputs.valornegociocasa.min = 2000;
-        inputs.valornegociocasa.max = 50000;
-        //inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);
-
-        inputs.valorcoberturarcfamiliar.min = 2000;
-        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5; //base * 0.5;
-        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > inputs.valorcoberturarcfamiliar.max) ? inputs.valorcoberturarcfamiliar.max : inputs.valorcoberturarcfamiliar.value;
-
-        inputs.valordanosmorais.min = 2000;
-        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 50000) ? 50000 : inputs.valorcoberturarcfamiliar.value * 0.5;
-        //inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)
-
-        inputs.valorcoberturadesmoronamento.min = 2000;
-        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 100000) ? 100000 : base * 0.1;
-
-        inputs.valorimpactoveiculos.min = 2000;
-        inputs.valorimpactoveiculos.max = base * 1;
-        
-        inputs.valorpequenasreformas.min = 2000;
-        inputs.valorpequenasreformas.max = 100000;
-        //inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
-
-        inputs.valorcoberturapagamentocondominio.min = 300;
-        inputs.valorcoberturapagamentocondominio.max = 5000;
-
-        inputs.valorcoberturaquebravidros.min = 2000;
-        inputs.valorcoberturaquebravidros.max = base * 0.5;
-
-        inputs.valorcoberturatremorterraterremoto.min = 2000;
-        inputs.valorcoberturatremorterraterremoto.max = (base * 0.15 > 500000) ? 500000 : base * 0.15;
-
-        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
-        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 100000) ? 100000 : base * 0.30;
-
-        inputs.valorcoberturavendaval.min = 2000;
-        inputs.valorcoberturavendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;//base * 0.5;
-
-        inputs.valorcoberturapagamentoaluguel.min = 3000;
-        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
-
-        inputs.valorsubtracaobicicleta.min = 2500;
-        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
-        //inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
-
-        valoresCobertura['habitual'] = {};
-
-        for(let i in inputs){
-            let input = inputs[i];
-            if (!input.disabled && input.min > input.max){ 
-                input.disabled = true; 
-                input.min = input.max; 
-            }else{
-                if (input.value > input.max){ input.value = input.max; }
-                if (input.value < input.min){ input.value = input.min; }
-            }
-
-            let inputElement = $(`#${input.id}`);
-            inputElement.prop('min', input.min);
-            inputElement.prop('max', input.max);
-            inputElement.val(input.value);
-
-            let labelElement = $(`#${input.id}-label`); 
-            labelElement.text(formatCurrency(input.value));
-            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-
-            let toggleElement = $(`#${input.id}-toggle`);
-            let switchElement = toggleElement.children('.toggle-switch');
-            let inativoElement = $(`#${input.id}-inativo`);
-            
-            dadosCobertura['habitual'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
-
-            if (!input.disabled){ //Input Ativada
-                let enable = true;     
-                let nomeCobertura = relacaoItemId[input.id];            
-
-                if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ enable = false; }
-                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ enable = false; }
-                if (input.id == 'valorpequenasreformas' && (residencia == 5 || residencia == 6 || residencia == 7)){ enable = false; }
-                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ enable = false; }
-                if (input.id == 'valorcoberturaalagamento' && (!(residencia == 1 || residencia == 2 || residencia == 4))){ enable = false; }
-
-                if (input.id == 'valorcoberturapagamentocondominio'){ 
-                    valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; 
-                    dadosCobertura['habitual'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
-                }
-                if (enable){
-                    inputElement.prop("disabled", false);
-                    valoresCobertura['habitual'][nomeCobertura] = input.value;
-
-                    toggleElement.css('background-color', '#03A8DB');
-                    toggleElement.css('border-color', '#03A8DB');
-                    switchElement.css('margin-left', '20px');
-                    labelElement.css('display', 'block');
-                    inativoElement.css('display', 'none');   
-                }else{
-                    inputElement.prop("disabled", true); 
-                    toggleElement.css('background-color', '#C7C7C7'); 
-                    toggleElement.css('border-color', '#C7C7C7');
-                    switchElement.css('margin-left', '0px');
-                    labelElement.css('display', 'none');
-                    inativoElement.css('display', 'block');
-                }
-            }else{ //Input Desativada
-                inputElement.prop("disabled", true); 
-                toggleElement.css('background-color', '#C7C7C7'); 
-                toggleElement.css('border-color', '#C7C7C7');
-                switchElement.css('margin-left', '0px');
-                labelElement.css('display', 'none');
-                inativoElement.css('display', 'block');
-            }
-
-            let rangeContainer = inputElement.parent();
-            let coberturaContainer = rangeContainer.parent();
-            if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
-
-            toggleElement.off("click").on("click", ()=>{
-                if (input.id == 'valorcoberturaincendio'){ return; }
-                if (input.id == 'valorsubtracaobicicleta' && inputs.valorcoberturaincendio.value < 250000){ 
-                    dadosCobertura['habitual'][input.id].disabled = true;
-                    inputElement.prop("disabled", true);
-                    return; 
-                }
-                if (input.id == 'valorpequenasreformas' && (residencia == 5 || residencia == 6 || residencia == 7)){ 
-                    dadosCobertura['habitual'][input.id].disabled = true;
-                    inputElement.prop("disabled", true);
-                    return;
-                }
-                if (input.id == 'valornegociocasa' && (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled)){ 
-                    dadosCobertura['habitual'][input.id].disabled = true;
-                    inputElement.prop("disabled", true);
-                    return; 
-                }
-                if (input.id == 'valordanosmorais' && (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)){ 
-                    dadosCobertura['habitual'][input.id].disabled = true;
-                    inputElement.prop("disabled", true);
-                    return; 
-                }
-                if (input.id == 'valorcoberturaalagamento' && (!(residencia == 1 || residencia == 2 || residencia == 4))){ 
-                    dadosCobertura['habitual'][input.id].disabled = true;
-                    inputElement.prop("disabled", true);
-                    return; 
-                }
-                dadosCobertura['habitual'][input.id].disabled = !(dadosCobertura['habitual'][input.id].disabled);
-                inputElement.prop("disabled", dadosCobertura['habitual'][input.id].disabled);
-                console.log(input.id, !(dadosCobertura['habitual'][input.id].disabled))
-                controleCoberturasHabitual();
-                return;
-            });
-            
-        }
-    }
-    
-    function controleCoberturasHabitualPremium(){
-        let inputs = {};
-        let inputChange = this.id;
-        let residencia = tipoResidencia;
-        let todasInputRange = $('input[type="range"]');
-
-        if (!dadosCobertura['habitual-premium'].valorcoberturaincendio){
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                let cobertura = {};
-                Object.assign(cobertura, coberturaGenerica[input.id]); //dadosCobertura['habitual-premium'][input.id];
-                if (cobertura.valorcoberturaincendio){ if (!cobertura){ cobertura = input; } }
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled), display: true };
-
-
-                //if (cobertura.valorcoberturaincendio){ if (!cobertura){ cobertura = input; } }
-                //if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                //if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
-                //if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                //inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: !(input.value > 0), display: true };
-            });
-            console.log(inputs)
-        }else{
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                let cobertura = {};
-                Object.assign(cobertura, dadosCobertura['habitual-premium'][input.id]);
-                if (!cobertura){ cobertura = input;}
-                if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: (input.disabled), display: true };
-            });
-        }
-        
-        inputs.valorcoberturaincendio.min = (residencia == 2) ? 7100000 : 1100000;
-        inputs.valorcoberturaincendio.max = 20000000;
-
-        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
-        }
-        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
-        }
-
-        let base = inputs.valorcoberturaincendio.value;
-
-        inputs.valorcoberturadanoseletricos.min = 2000;
-        inputs.valorcoberturadanoseletricos.max = base * 0.5;
-
-        inputs.valorcoberturasubstracaobens.min = 2000;
-        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 1500000) ? 1500000 : base * 0.3;
-
-        inputs.valorcoberturaalagamento.min = 5000;
-        inputs.valorcoberturaalagamento.max = 500000; //50.000 da Básica
-        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
-
-        inputs.valornegociocasa.min = 2000;
-        inputs.valornegociocasa.max = 300000;
-        //inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);
-
-        inputs.valorcoberturarcfamiliar.min = 2000;
-        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 1000000) ? 1000000 : base * 0.5;
-        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > base * 0.5) ? base * 0.5 : inputs.valorcoberturarcfamiliar.value;
-
-        inputs.valordanosmorais.min = 2000;
-        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 100000) ? 100000 : inputs.valorcoberturarcfamiliar.value * 0.5;
-        inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)
-
-        inputs.valorcoberturadesmoronamento.min = 2000;
-        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
-
-        inputs.valorimpactoveiculos.min = 2000;
-        inputs.valorimpactoveiculos.max = base * 1;
-        
-        inputs.valorpequenasreformas.min = 5000;
-        inputs.valorpequenasreformas.max = 200000; //R$200.00 da Básica
-        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
-
-        inputs.valorcoberturapagamentocondominio.min = 300;
-        inputs.valorcoberturapagamentocondominio.max = 5000;
-
-        inputs.valorcoberturaquebravidros.min = 2000;
-        inputs.valorcoberturaquebravidros.max = (base * 0.3 > 1000000) ? 1000000 : base * 0.3;
-
-        inputs.valorcoberturatremorterraterremoto.min = 5000;
-        inputs.valorcoberturatremorterraterremoto.max = (base * 0.05 > 1000000) ? 500000 : base * 0.05;
-
-        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
-        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 300000) ? 300000 : base * 0.30;
-
-        inputs.valorcoberturavendaval.min = 2000;
-        inputs.valorcoberturavendaval.max = base * 0.3;
-
-        inputs.valorcoberturapagamentoaluguel.min = 3000;
-        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 1000000) ? 1000000 : base * 0.50;
-
-        let somatoria = 0;
-        for(let i in inputs){
-            let input = inputs[i];
-            if (!input.disabled && input.id != 'valorsubtracaobicicleta' && input.id != 'valorcoberturaincendio'){ somatoria += input.value; }
-        }
-        inputs.valorsubtracaobicicleta.min = 2500;
-        inputs.valorsubtracaobicicleta.max = (base * 0.5 > 50000) ? 50000 : base * 0.5;
-        inputs.valorsubtracaobicicleta.disabled = (somatoria > 500000);
-
-        valoresCobertura['habitual-premium'] = {};
-
-        for(let i in inputs){
-            let input = inputs[i];
-
-            if (!input.disabled && input.min > input.max){ 
-                input.disabled = true; 
-                input.min = input.max; 
-            }else{
-                if (input.value > input.max){ input.value = input.max; }
-                if (input.value < input.min){ input.value = input.min; }
-            }
-
-            let inputElement = $(`#${input.id}`);
-            inputElement.prop('min', input.min);
-            inputElement.prop('max', input.max);
-            inputElement.val(input.value);
-
-            let labelElement = $(`#${input.id}-label`); 
-            labelElement.text(formatCurrency(input.value));
-            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-
-            let rangeContainer = inputElement.parent();
-            let coberturaContainer = rangeContainer.parent();
-
-            dadosCobertura['habitual-premium'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
-            if (!input.disabled){ 
-                let nomeCobertura = relacaoItemId[input.id];
-                valoresCobertura['habitual-premium'][nomeCobertura] = input.value;
-                inputElement.prop("disabled", false);
-                if (input.id == 'valorcoberturapagamentocondominio'){ 
-                    valoresCobertura['habitual-premium'].valorCoberturaMorteAcidental = 5000; 
-                    dadosCobertura['habitual-premium'].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false };
-                }
-            }else{
-                inputElement.prop("disabled", true); 
-            }
-            if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
-        }
-    }
-    function controleCoberturasVeraneio(){
-        let inputs = {};
-        let inputChange = this.id;
-        let residencia = tipoResidencia;
-        let todasInputRange = $('input[type="range"]');
-
-        if (!dadosCobertura['veraneio'].valorcoberturaincendio){
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                let cobertura = dadosCobertura['veraneio'][input.id];
-                if (coberturaGenerica.valorcoberturaincendio){ if (coberturaGenerica[input.id]){ cobertura = coberturaGenerica[input.id]; }else{ cobertura = input; } }else{ cobertura = input; }
-                if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: parseInt(cobertura.value), min: cobertura.min, max: cobertura.max, disabled: cobertura.disabled, display: cobertura.display };
-            });
-        }else{
-            todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                if (inputChange && inputChange == input.id){ input.value = this.value; }
-                inputs[input.id] = { id: input.id, value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
-            });
-        }
-            
-        inputs.valorcoberturaincendio.min = 100000;
-        inputs.valorcoberturaincendio.max = (residencia == 3 || residencia == 8) ? 700000 : 10000000;
-
-        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
-        }
-        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
-        }
-
-        let base = inputs.valorcoberturaincendio.value;
-
-        inputs.valorcoberturadanoseletricos.min = 2000;
-        inputs.valorcoberturadanoseletricos.max = base * 0.5;
-
-        inputs.valorcoberturasubstracaobens.min = 2000;
-        inputs.valorcoberturasubstracaobens.max = (base * 0.2 > 150000) ? 150000 : base * 0.2;
-
-        inputs.valorcoberturaalagamento.min = 5000;
-        inputs.valorcoberturaalagamento.max = (base * 0.2 > 30000) ? 30000 : base * 0.2;
-        inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
-
-        /*inputs.valornegociocasa.min = 2000;
-        inputs.valornegociocasa.max = 50000;
-        inputs.valornegociocasa.disabled = (inputs.valorcoberturadanoseletricos.disabled && inputs.valorcoberturasubstracaobens.disabled);*/
-        inputs.valornegociocasa.disabled = true;
-        inputs.valornegociocasa.display = false;
-
-        inputs.valorcoberturarcfamiliar.min = 2000;
-        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5; //(base * 0.5 > 1000000) ? 1000000 : base * 0.5;
-        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > inputs.valorcoberturarcfamiliar.max) ? inputs.valorcoberturarcfamiliar.max : inputs.valorcoberturarcfamiliar.value;
-
-        /*inputs.valordanosmorais.min = 2000;
-        inputs.valordanosmorais.max = (inputs.valorcoberturarcfamiliar.value * 0.5 > 50000) ? 50000 : inputs.valorcoberturarcfamiliar.value * 0.5;
-        inputs.valordanosmorais.disabled = (inputs.valorcoberturarcfamiliar.value == 0 || inputs.valorcoberturarcfamiliar.disabled)*/
-        inputs.valordanosmorais.disabled = true;
-        inputs.valordanosmorais.display = false;
-
-        inputs.valorcoberturadesmoronamento.min = 2000;
-        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 100000) ? 100000 : base * 0.1;
-
-        inputs.valorimpactoveiculos.min = 2000;
-        inputs.valorimpactoveiculos.max = base * 1;
-        
-        /*inputs.valorpequenasreformas.min = 2000;
-        inputs.valorpequenasreformas.max = 100000;
-        inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);*/
-        inputs.valorpequenasreformas.disabled = true;
-        inputs.valorpequenasreformas.display = false;
-
-        /*inputs.valorcoberturapagamentocondominio.min = 300;
-        inputs.valorcoberturapagamentocondominio.max = 5000;*/
-        inputs.valorcoberturapagamentocondominio.disabled = true;
-        inputs.valorcoberturapagamentocondominio.display = false;
-
-        inputs.valorcoberturaquebravidros.min = 2000;
-        inputs.valorcoberturaquebravidros.max = base * 0.5;
-
-        inputs.valorcoberturatremorterraterremoto.min = 2000;
-        inputs.valorcoberturatremorterraterremoto.max = (base * 0.15 > 500000) ? 500000 : base * 0.15;
-
-        inputs.valorcoberturavazamentostanquestubulacoes.min = 2000;
-        inputs.valorcoberturavazamentostanquestubulacoes.max = (base * 0.30 > 100000) ? 100000 : base * 0.30;
-
-        inputs.valorcoberturavendaval.min = 2000;
-        inputs.valorcoberturavendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;//base * 0.5;
-
-        /*inputs.valorcoberturapagamentoaluguel.min = 3000;
-        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;*/
-        inputs.valorcoberturapagamentoaluguel.disabled = true;
-        inputs.valorcoberturapagamentoaluguel.display = false;
-
-        /*inputs.valorsubtracaobicicleta.min = 2500;
-        inputs.valorsubtracaobicicleta.max = (base * 0.3 > 50000) ? 50000 : base * 0.3;
-        inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value > 250000);*/
-        inputs.valorsubtracaobicicleta.disabled = true;
-        inputs.valorsubtracaobicicleta.display = false;
-
-        valoresCobertura['veraneio'] = {};
-
-        for(let i in inputs){
-            let input = inputs[i];
-
-            if (!input.disabled && input.min > input.max){ 
-                input.disabled = true; 
-                input.min = input.max; 
-            }else{
-                if (input.value > input.max){ input.value = input.max; }
-                if (input.value < input.min){ input.value = input.min; }
-            }
-
-            let inputElement = $(`#${input.id}`);
-            inputElement.prop('min', input.min);
-            inputElement.prop('max', input.max);
-            inputElement.val(input.value);
-
-            let labelElement = $(`#${input.id}-label`); 
-            labelElement.text(formatCurrency(input.value));
-            labelElement.css('left', `calc(100% * ( ${input.value} - ${input.min} ) / ( ${input.max} - ${input.min} ))`);
-
-            let rangeContainer = inputElement.parent();
-            let coberturaContainer = rangeContainer.parent();
-
-            dadosCobertura['veraneio'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
-           
-            if (!input.disabled){ 
-                let nomeCobertura = relacaoItemId[input.id];
-                valoresCobertura['veraneio'][nomeCobertura] = input.value;
-                //if (input.id == 'valorcoberturapagamentocondominio'){ valoresCobertura['habitual'].valorCoberturaMorteAcidental = 5000; }
-                inputElement.prop("disabled", false);
-            }else{ 
-                inputElement.prop("disabled", true); 
-            }
-            if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
-        }
-    }
-    
     validacaoInicial();        
     console.log(encryptedData);
 });

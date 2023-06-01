@@ -33,6 +33,31 @@ router.post("/", async (req, res)=>{
         }
     }
 
+    if (etapa == 'etapa_1' || etapa == 'etapa_2'){
+        let formList = ['cpf', 'nome', 'numerotelefone', 'datanascimento', 'tipotelefone', 'cep', 
+            'logradouro', 'numero', 'bairro', 'cidade', 'uf', 'tiporesidencia', 'tiporua'];
+
+        if (!session.cotacao){ session.cotacao = { criadoEm: new Date() } }
+        for(let key in data){ 
+            if (!formList.includes(key)){ continue; }            
+            if (!session.cotacao[key]){ session.cotacao[key] = data[key]; continue; }
+            if (session.cotacao[key] != data[key]){ session.cotacao[key] = data[key]; }            
+        }              
+    }
+    if (etapa == 'etapa_3'){
+        if (!session.cotacao){ session.cotacao = {}; }
+        if (!session.cotacao.itens){ session.cotacao.itens = {}; }
+        if (!session.cotacao.itens.generico){ session.cotacao.itens.generico = {}; }
+        if (!data.inputRange){ data.inputRange = {}; }
+        
+        let coberturas = data.inputRange;
+        for(let key in coberturas){
+            if (!coberturas[key]){ continue; }
+            session.cotacao.itens.generico[key] = { value: coberturas[key].value, disabled: (coberturas[key].disabled) };
+        }
+        console.log(session.cotacao.itens.generico);
+    }
+
     if (session.user_id){
         user = await Usuarios.findOne({_id: session.user_id});
         if (!user){ user = false; }
@@ -68,7 +93,7 @@ router.post("/", async (req, res)=>{
                 let item = relacaoCoberturas[key];
                 if (item){ dados[etapa][item] = [value]; }
             }
-        }
+        } 
 
         let entry = new DataLayer({    
             session_id: session.accessToken,
