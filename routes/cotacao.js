@@ -14,6 +14,7 @@ router.get("/", async (req, res) => { res.sendFile("cotacao.html", { root: "publ
 
 router.get("/formulario", async (req, res)=>{
     let session = req.session;
+    console.log(session)
     if (!session){ return res.status(400).json({}); }
     if (!session.cotacao){ return res.status(400).json({}); }
     if (!session.cotacao.criadoEm){ session.cotacao = {}; return res.status(400).json({}); }
