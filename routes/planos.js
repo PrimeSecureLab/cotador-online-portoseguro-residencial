@@ -19,6 +19,7 @@ router.post('/', async (req, res) => {
     //console.log(data);
     let redirect = '/cadastro';
     let session = (req.session) ? req.session : {};
+
     if (!session.cotacao){ session.cotacao = {}; }
     if (!session.cotacao.itens){ session.cotacao.itens = {}; }
 
@@ -26,19 +27,27 @@ router.post('/', async (req, res) => {
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.itemData){ return res.status(400).json({redirect: '/'}); }
     if (!data.produto){ return res.status(400).json({error: "Produto não identificado.", redirect: false}); }
+
+    if (!data.dadosCobertura){ data.dadosCobertura = {}; }  
+    //let dadosCobertura = data.dadosCobertura;
     
     let produto = data.produto;
+    //let produtoUpperCase = (produto == 'habitual-premium') ? 'habitualPremium' : produto;
+    //console.log(produtoUpperCase);
+    
+    //session.cotacao.itens[produtoUpperCase] = dadosCobertura;
+    
     if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
-        return res.status(400).json({error: "Produto não identificado.", redirect: false});
+        let error = { error: "Produto não identificado.", redirect: false };
+        return res.status(400).json(error);
     }
-
-    let produtoUpperCase = (produto == 'habitual-premium') ? 'habitualPremium' : produto;
 
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
     if (!bytes){ return res.status(400).json({redirect: '/'}); }
 
     let coberturas = data.itemData;
     let vigencia = data.vigencia || 1;
+
     
     data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     data.item = coberturas;
@@ -122,7 +131,6 @@ async function portoOrcamentoApi(produto, formData, token){
             if (!item){ continue; }
             if (itens[item]){ itemList[item] = itens[item]; } 
         }
-        console.log(itemList);
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
