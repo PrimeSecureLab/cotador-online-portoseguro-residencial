@@ -18,6 +18,9 @@ router.post('/', async (req, res) => {
     let data = req.body;
     //console.log(data);
     let redirect = '/cadastro';
+    let session = (req.session) ? req.session : {};
+    if (!session.cotacao){ session.cotacao = {}; }
+    if (!session.cotacao.itens){ session.cotacao.itens = {}; }
 
     if (!data){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário."}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
@@ -28,6 +31,8 @@ router.post('/', async (req, res) => {
     if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
         return res.status(400).json({error: "Produto não identificado.", redirect: false});
     }
+
+    let produtoUpperCase = (produto == 'habitual-premium') ? 'habitualPremium' : produto;
 
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
     if (!bytes){ return res.status(400).json({redirect: '/'}); }
@@ -40,7 +45,6 @@ router.post('/', async (req, res) => {
     data.vigencia = vigencia;
 
     if (!data){ return res.status(400).json({redirect: '/'}); }
-    //if (!data.vigencia){ data.vigencia = 1; }else{ data.vigencia += 1; }
     if (!data.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.endereco){ return res.status(400).json({redirect: '/'})}
@@ -51,14 +55,16 @@ router.post('/', async (req, res) => {
     }
     
     let token = await authToken();
-    let orcamento = await portoOrcamentoApi(produto, data, token);
+    let orcamento = await portoOrcamentoApi(produto, data, token);    
 
     let response = {};
     if (orcamento){
         if (orcamento.status == 200){
             orcamento.data.tipo = produto;
             orcamento.data.criadoEm = new Date();
+
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
+            
         }else{
             errorData = orcamento.data;
             errorData.tipo = produto;
@@ -116,6 +122,7 @@ async function portoOrcamentoApi(produto, formData, token){
             if (!item){ continue; }
             if (itens[item]){ itemList[item] = itens[item]; } 
         }
+        console.log(itemList);
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
