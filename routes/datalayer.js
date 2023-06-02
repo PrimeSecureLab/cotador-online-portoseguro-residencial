@@ -37,7 +37,9 @@ router.post("/", async (req, res)=>{
         let formList = ['cpf', 'nome', 'numerotelefone', 'datanascimento', 'tipotelefone', 'cep', 
             'logradouro', 'numero', 'bairro', 'cidade', 'uf', 'tiporesidencia', 'tiporua'];
 
-        if (!session.cotacao){ session.cotacao = { criadoEm: new Date() } }
+        if (!session.cotacao){ session.cotacao = {} }
+        session.cotacao.criadoEm = new Date().toISOString();
+
         for(let key in data){ 
             if (!formList.includes(key)){ continue; }            
             if (!session.cotacao[key]){ session.cotacao[key] = data[key]; continue; }
@@ -55,7 +57,7 @@ router.post("/", async (req, res)=>{
             if (!coberturas[key]){ continue; }
             session.cotacao.itens.generico[key] = { value: coberturas[key].value, disabled: (coberturas[key].disabled) };
         }
-        console.log(session.cotacao.itens.generico);
+        //console.log(session.cotacao.itens.generico);
     }
 
     if (session.user_id){
