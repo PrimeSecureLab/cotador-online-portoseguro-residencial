@@ -398,6 +398,8 @@ $(document).ready(function() {
         payload.produto = produto;
         payload.vigencia = vigencia + 1;
 
+        console.log(dadosCobertura[produto]);
+
         button.css('background-color', 'gray');
 
         $.ajax({
