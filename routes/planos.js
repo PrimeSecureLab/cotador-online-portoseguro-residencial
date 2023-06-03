@@ -18,15 +18,28 @@ router.post('/', async (req, res) => {
     let data = req.body;
     //console.log(data);
     let redirect = '/cadastro';
+    let session = (req.session) ? req.session : {};
+
+    if (!session.cotacao){ session.cotacao = {}; }
+    if (!session.cotacao.itens){ session.cotacao.itens = {}; }
 
     if (!data){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário."}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
     if (!data.itemData){ return res.status(400).json({redirect: '/'}); }
     if (!data.produto){ return res.status(400).json({error: "Produto não identificado.", redirect: false}); }
+
+    if (!data.dadosCobertura){ data.dadosCobertura = {}; }  
+    //let dadosCobertura = data.dadosCobertura;
     
     let produto = data.produto;
+    //let produtoUpperCase = (produto == 'habitual-premium') ? 'habitualPremium' : produto;
+    //console.log(produtoUpperCase);
+    
+    //session.cotacao.itens[produtoUpperCase] = dadosCobertura;
+    
     if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
-        return res.status(400).json({error: "Produto não identificado.", redirect: false});
+        let error = { error: "Produto não identificado.", redirect: false };
+        return res.status(400).json(error);
     }
 
     let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
@@ -34,13 +47,13 @@ router.post('/', async (req, res) => {
 
     let coberturas = data.itemData;
     let vigencia = data.vigencia || 1;
+
     
     data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     data.item = coberturas;
     data.vigencia = vigencia;
 
     if (!data){ return res.status(400).json({redirect: '/'}); }
-    //if (!data.vigencia){ data.vigencia = 1; }else{ data.vigencia += 1; }
     if (!data.segurado){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.cpf){ return res.status(400).json({redirect: '/'}); }
     if (!data.segurado.endereco){ return res.status(400).json({redirect: '/'})}
@@ -51,14 +64,16 @@ router.post('/', async (req, res) => {
     }
     
     let token = await authToken();
-    let orcamento = await portoOrcamentoApi(produto, data, token);
+    let orcamento = await portoOrcamentoApi(produto, data, token);    
 
     let response = {};
     if (orcamento){
         if (orcamento.status == 200){
             orcamento.data.tipo = produto;
             orcamento.data.criadoEm = new Date();
+
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
+            
         }else{
             errorData = orcamento.data;
             errorData.tipo = produto;
