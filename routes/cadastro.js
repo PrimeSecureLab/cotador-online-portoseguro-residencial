@@ -75,7 +75,7 @@ router.post("/", async (req, res)=>{
 
     if (dataNascimento.length < 3){
         errorList.push({message: '', id: ''});
-        dataNascimento = [00, 00, 0000]
+        dataNascimento = ['00', '00', '0000']
     }
     if (dataNascimento[0] < 1 || dataNascimento[0] > 31){
         errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento'});
@@ -143,7 +143,7 @@ router.post("/", async (req, res)=>{
 
     if (dataExpedicao.length < 3){ 
         errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 
-        dataExpedicao = [00, 00, 0000];
+        dataExpedicao = ['00', '00', '0000'];
     }
     if (dataExpedicao[0] > 31 || dataExpedicao[0] < 1){ 
         errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 

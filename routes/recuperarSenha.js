@@ -7,6 +7,10 @@ const CryptoJS = require("crypto-js");
 const Usuarios = require('../collections/usuarios');
 const NodeMailer = require('../configs/nodeMailer');
 
+dotenv.config()
+
+router.get('/', async (req, res) => { res.sendFile('recuperar-senha.html', { root: 'public' }); });
+
 router.post('/esqueceu-a-senha', async (req, res) => {
     let data = req.body;
     if (!data){ return res.status(400).json({message: ''}); }
