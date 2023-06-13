@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    let session = (req.session) ? req.session : {};
+    /*let session = (req.session) ? req.session : {};
     if (!session.user_id){ return res.status(400).json({fatal: 1}); }
     
     let user = await Usuarios.findOne({_id: session.user_id});
@@ -30,6 +30,8 @@ router.post("/", async (req, res) => {
 
     let data = req.body;
     let errorList = [];
+
+    console.log(data);
 
     if (!data){ return res.status(400).json({fatal: 3}); }
     if (!data.formData){ return res.status(400).json({redirect: '/'}); }
@@ -115,22 +117,22 @@ router.post("/", async (req, res) => {
         "codigoPessoaPoliticamenteExposta": user.pessoaFisica.pessoaPoliticamenteExposta, // 1 - Sim, 2 - Não
         "segurado": {
             "enderecoCobranca": {
-                "cep": formData.segurado.endereco.cep,
+                "cep": formData.segurado.endereco.cep.replace(/\D/g, ''),
                 "tipoLogradouro": formData.segurado.endereco.tipo,
                 "logradouro": formData.segurado.endereco.logradouro,
                 "numero": formData.segurado.endereco.numero,
                 "bairro": formData.segurado.endereco.bairro,
-                "complemento": formData.segurado.endereco.complemento,
+                //"complemento": formData.segurado.endereco.complemento,
                 "cidade": formData.segurado.endereco.cidade,
                 "uf": formData.segurado.endereco.uf
             },
             "enderecoCorrespondencia": {
-                "cep": formData.segurado.endereco.cep,
+                "cep": formData.segurado.endereco.cep.replace(/\D/g, ''),
                 "tipoLogradouro": formData.segurado.endereco.tipo,
                 "logradouro": formData.segurado.endereco.logradouro,
                 "numero": formData.segurado.endereco.numero,
                 "bairro": formData.segurado.endereco.bairro,
-                "complemento": formData.segurado.endereco.complemento,
+                //"complemento": formData.segurado.endereco.complemento,
                 "cidade": formData.segurado.endereco.cidade,
                 "uf": formData.segurado.endereco.uf
             },
@@ -147,19 +149,24 @@ router.post("/", async (req, res) => {
                     "tipoDocumento": documento.tipo,
                     "numeroDocumento": documento.numero,
                     "orgaoExpedidor": documento.orgaoExpedidor,
-                    "dataExpedicao": documento.dataExpedicao
-                }
-            }
-        },
+                    "dataExpedicao": '2022-05-25'//documento.dataExpedicao
+                },
+                //"pessoaPoliticamenteExposta": {
+                //     "cpf": "64010333049",
+                //     "nome": "Gilbor Baohon Koxyorim",
+                //     "codigoGrauRelacionamento": 1
+                //}
+            },
+        },        
         "pagamento": {
-          "formaPagamento": "CARTAO_DE_CREDITO_62", //
-          "quantidadeParcelas": data.pagamento.parcelas, //
-          "cartao": {
-            "numeroCartao": '',
-            "codigoBandeira": data.pagamento.codigoBandeira, //1 - VISA, 2 - MASTER, 3 - DINERS, 5 - ELO
-            "mesValidade": data.pagamento.mesValidade,// MM
-            "anoValidade": data.pagamento.anoValidade //AAAA
-          }
+            "formaPagamento": "CARTAO_DE_CREDITO_62",
+            "quantidadeParcelas": data.pagamento.parcelas,
+            "cartao": {
+                "numeroCartao": "",
+                "codigoBandeira": data.pagamento.codigoBandeira,
+                "mesValidade": data.pagamento.mesValidade,
+                "anoValidade": data.pagamento.anoValidade
+            }
         },
         "contatoInspecao": {
           "numeroTelefone": formData.segurado.numeroTelefone.replace(/[^0-9]+/g, ""),
@@ -176,9 +183,9 @@ router.post("/", async (req, res) => {
         "nome": pessoaFisica.politicamenteExposta.nome,
         "codigoGrauRelacionamento": pessoaFisica.politicamenteExposta.grauRelacionamento
     };
-
-    if (pessoaFisica.pessoaPoliticamenteExposta == 3){ proposta.pessoaFisica.pessoaPoliticamenteExposta = politicamenteExposta; }
-    //console.log(proposta);
+    console.log('A:', proposta);
+    if (pessoaFisica.pessoaPoliticamenteExposta == 3){ proposta.segurado.pessoaFisica.pessoaPoliticamenteExposta = politicamenteExposta; }
+    console.log('B:', proposta);
 
     let token = await authToken();
     let subUrl = '-sandbox';
@@ -189,11 +196,15 @@ router.post("/", async (req, res) => {
 
     let card_url = `https://portoapi${subUrl}.portoseguro.com.br/re/cartoes/v1/cartoes?numeroCartao=${data.pagamento.numeroCartao}`;
     let payload = {"numeroCartao": data.pagamento.numeroCartao};
+
     let cardResult = await axios.post(card_url, payload, header).catch((error)=>{ 
         console.log(error.response.data); 
         return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao"}]});
     });
-    if (!cardResult){ return res.status(400).json({fatal: true, errors: [{message: "Ocorreu um erro inesperado", id: ""}]}); }
+
+    if (!cardResult){ 
+        return res.status(400).json({fatal: true, errors: [{message: "Ocorreu um erro inesperado", id: ""}]}); 
+    }    
     if (!cardResult.data){ 
         console.log(cardResult);
         return res.status(400).json({fatal: true, errors: [{message: "Ocorreu um erro inesperado", id: ""}]}); 
@@ -207,11 +218,76 @@ router.post("/", async (req, res) => {
         return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao"}]});
     }
     
-    proposta.pagamento.cartao.numeroCartao = cardResult.data.ticket;
+    proposta.pagamento.cartao.numeroCartao = "5162921368678181"//cardResult.data.ticket;
+    console.log('C:', proposta);
 
-    let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
-    let result = await axios.post(request_url, proposta, header).catch((error)=>{ console.log(error.response.data); });
+    console.log('pessoaFisica:', proposta.segurado.pessoaFisica);
+    */
+    let _proposta = {        
+        "numeroOrcamento": 1686676073829,
+        "codigoPessoaPoliticamenteExposta": 1,
+        "segurado": {
+            "enderecoCobranca": {
+                "cep": "09571020",
+                "tipoLogradouro": "R",
+                "logradouro": "Rua Coronel Camisão",
+                "numero": 91,
+                "bairro": "Oswaldo Cruz",
+                "cidade": "São Caetano do Sul",
+                "uf": "SP"
+            },
+            "enderecoCorrespondencia": {
+                "cep": "09571020",
+                "tipoLogradouro": "R",
+                "logradouro": "Rua Coronel Camisão",
+                "numero": 91,
+                "bairro": "Oswaldo Cruz",
+                "cidade": "São Caetano do Sul",
+                "uf": "SP"
+            },
+            "contato": {
+                "email": "matheus.marques.aquino@gmail.com"
+            },
+            "pessoaPoliticamenteExposta": {
+                "cpf": "64010333049",
+                "nome": "Gilbor Baohon Koxyorim",
+                "codigoGrauRelacionamento": 1
+            },
+            "pessoaFisica": {
+                "dataNascimento": "1997-08-29",
+                "codigoSexo": 1,
+                "codigoEstadoCivil": 1,
+                "codigoPaisResidencia": 237,
+                "codigoFaixaRenda": 6,
+                "documentoIdentificacao": {
+                    "tipoDocumento": 1,
+                    "numeroDocumento": "441498486",
+                    "orgaoExpedidor": "SSP",
+                    "dataExpedicao": "2022-05-25"
+                }
+            }
+        },
+        "pagamento": {
+            "formaPagamento": "CARTAO_DE_CREDITO_62",
+            "quantidadeParcelas": 1,
+            "cartao": {
+                "numeroCartao": "5408094831763990",
+                "codigoBandeira": 2,
+                "mesValidade": 12,
+                "anoValidade": 2026
+            }
+        }
+    };
 
+    let token = await authToken();
+    let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+    let url = 'https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual/propostas';
+    let result = await axios.post(url, _proposta, header).catch((error)=>{ console.log(error.response.data); });
+    console.log(result);
+    console.log(result.data);
+    /*let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
+    let result = await axios.post(request_url, _proposta, header).catch((error)=>{ console.log(error.response.data); });
+    
     let novaProposta = {  
         criadoEm: new Date(),      
         proposta: {
@@ -234,8 +310,8 @@ router.post("/", async (req, res) => {
 
     proposta = new Propostas(novaProposta);
     proposta = await proposta.save();
-    //console.log(result.data);
-    return res.status(200).json({mesage: "", proposta: result.data});
+    //console.log(result.data);*/
+    return res.status(400).json({mesage: "", proposta: result.data});
 });
 
 module.exports = router;

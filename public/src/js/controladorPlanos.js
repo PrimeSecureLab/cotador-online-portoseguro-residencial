@@ -7,7 +7,6 @@ $(document).ready(function() {
         if (value >= 2000000){ return (value / 1000000) + " milhões"; }
         return (value / 1000000) + " milhão";
     }
-
     function setupRangeInput(config) {
         // Atualiza o valor formatado ao carregar a página
         $("." + config.rangeValueClass).text(formatCurrency($("#" + config.inputId).val()));
@@ -18,7 +17,6 @@ $(document).ready(function() {
             $("." + config.rangeValueClass).css("left", "calc(100% * (" + $(this).val() + " - " + $(this).attr("min") + ") / (" + $(this).attr("max") + " - " + $(this).attr("min") + "))");
         });
     }
-
     // Configuração dos Sliders
     const incendioConfig = {
         inputId: "valorcoberturaincendio",
@@ -164,7 +162,6 @@ $(document).ready(function() {
         min: 10000,
         max: 1000000
     }
-
     // Inicializa os controles deslizantes com suas respectivas configurações
     setupRangeInput(incendioConfig);
     setupRangeInput(substracaoBensConfig);
@@ -273,7 +270,7 @@ $(document).ready(function() {
     });
 
     var tabVigencia = $(".my-pills-link");
-    tabVigencia.on("click", function(e){ 
+    tabVigencia.on("click", (e)=>{ 
         tabVigencia.removeClass("active"); 
         let tab = $(`#${e.target.id}`);
         tab.addClass('active');
@@ -320,15 +317,18 @@ $(document).ready(function() {
         let storageCobertura = localStorage.getItem('dadosCobertura');
 
         let coberturas = { generica: {}, habitual: {}, habitualPremium: {}, veraneio: {} };
-        //let dadosCoberturas = {};
         
         if (!storage) { window.location.href = '/'; return; }else{ encryptedData = JSON.parse(storage); }
         if (!storageCobertura){ storageCobertura = {}; }else{ storageCobertura = JSON.parse(storageCobertura); }
+        
+        // Coleta o tipo de Residencia
         if (!encryptedData.tipoResidencia){ window.location.href = '/'; return; }else{ tipoResidencia = encryptedData.tipoResidencia; }       
 
+        // Configura sliders genéricos da cotação
         if (encryptedData.dadosCoberturaGenerica){ coberturas.generica = encryptedData.dadosCoberturaGenerica; }
         if (coberturas.generica.valorcoberturaincendio){ coberturaGenerica = coberturas.generica; }        
 
+        // Verifica se há dados salvos em alterações de sliders
         if (storageCobertura.habitual){ coberturas.habitual = storageCobertura.habitual; }
         if (coberturas.habitual.valorcoberturaincendio){ dadosCobertura['habitual'] = storageCobertura.habitual; }
 
@@ -431,7 +431,6 @@ $(document).ready(function() {
         setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 450);
         setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 600);
         setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 750);
-
     }
 
     function gerarToggleSwitch(){
@@ -455,7 +454,7 @@ $(document).ready(function() {
 
         let criadoEm = orcamento.criadoEm.toString().split('T')[0];
         let outdated = new Date() - new Date(criadoEm);
-        outdated = (outdated / (1000 * 60 * 60 * 24)) > 5 ;
+        outdated = (outdated / (1000 * 60 * 60 * 24)) > 5;
         if (outdated){ apiCallOrcamento(produto, tempoVigencia); return; }
 
         orcamento.vigencia = tempoVigencia + 1;
@@ -679,20 +678,26 @@ $(document).ready(function() {
 
     function configurarJanelaDePlano(){
         let inputsRange = $('input[type="range"]');
+        let modalTitle = $('h5#modal-editar-plano1');
+        let defaultTitle = 'Personalize Mais Ainda o Seu Plano';        
+        modalTitle.html(defaultTitle);
         switch(indexJanela){
             case 1:
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Essencial')
                 controleCoberturaMain('habitual');
                 inputsRange
                     .off('change', controleCoberturaMain )
                     .on('change', {param1: 'habitual'}, controleCoberturaMain );
                 break;
             case 2:
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Conforto')
                 controleCoberturaMain('habitual-premium');
                 inputsRange
                     .off('change', controleCoberturaMain )
                     .on('change', {param1: 'habitual-premium'}, controleCoberturaMain );
                 break;
             case 3:
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Exclusive')
                 controleCoberturaMain('veraneio');
                 inputsRange
                     .off('change', controleCoberturaMain )

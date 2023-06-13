@@ -7,6 +7,9 @@ const Usuarios = require('../collections/usuarios');
 const validation = require('../configs/validation');
 const orgaoEmissor = require('../configs/orgaoEmissor');
 
+const ValidarCotacao = require('../configs/validarCotacao');
+var validacaoCotacao = new ValidarCotacao;
+
 dotenv.config();
 
 router.get("/", async (req, res) => {
@@ -20,12 +23,15 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res)=>{
-    let data = req.body;
-    let form = data.form || {};
-    let firstForm = data.data || {};
+    let body = req.body;
+    let form = body.form || {};
+    let firstForm = body.data || {};
     let session = req.session;
     let fatalError = false;
     let errorList = [];
+    let formData = {};
+
+    console.log(body);
     
     if (session.user_id){ 
         let user = await Usuarios.findOne({_id: session.user_id});
@@ -36,37 +42,70 @@ router.post("/", async (req, res)=>{
         errorList.push({message: 'Email inválido', id: 'email'});
     }else{
         let user = await Usuarios.findOne({ email: form.email.trim().toLowerCase() });
-        if (user){ errorList.push({message: 'O email já esta em uso', id: 'email'}); }
+        if (user){ errorList.push({message: 'O email já esta em uso', id: 'email', value: form.email}); }
     }
     if (form.senha.length < 8){
         if (!form.senha){
-            errorList.push({message: 'Senha Inválida', id: 'senha'});
+            errorList.push({message: 'Senha Inválida', id: 'senha', value: form.senha});
         }
-        errorList.push({message: 'Sua senha deve ter no mínimo 8 caracteres', id: 'senha'});
+        errorList.push({message: 'Sua senha deve ter no mínimo 8 caracteres', id: 'senha', value: form.senha});
     }
     //if (errorList.length > 0){ return res.status(400).json({ errors: errorList }); }
+
+    formData = validacaoCotacao.decriptarDados(body);
+    if (formData){ fatalError = true; }
+
+    /*
+    let bytes = CryptoJS.AES.decrypt(firstForm.formData, process.env.CRYPTO_TOKEN);
+    if (!bytes){ fatalError = true; }    
+
+    if (!fatalError){ formData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)); }
+    if (!formData){ formData = {}; }  
+    */
+
+    console.log(formData);
     
-    let segurado = firstForm.segurado;
+    let segurado = formData.segurado;
+    segurado.cpf = segurado.cpf || ''; 
+    segurado.cpf = segurado.cpf.replace(/[^0-9]+/g, '');   
+    
+    segurado.cep = segurado.cep || '';
+    segurado.cep = segurado.cep.replace(/[^0-9]+/g, '');
+
+    segurado.numeroTelefone = segurado.numeroTelefone || '';
+    segurado.numeroTelefone = segurado.numeroTelefone.replace(/[^0-9]+/g, '');
+
+    form.numero_documento = form.numero_documento || '';
+    form.numero_documento = form.numero_documento.replace(/[^0-9]+/g, '');
+
+    form.cpf_pessoa_exposta = form.cpf_pessoa_exposta || '';
+    form.cpf_pessoa_exposta = form.cpf_pessoa_exposta.replace(/[^0-9]+/g, '');
+
+    segurado.dataNascimento = segurado.dataNascimento || '';
+    segurado.dataNascimento = validacaoCotacao.formatarDataAmericana(segurado.dataNascimento) || "0000-00-00";
+
+    form.data_expedicao = form.data_expedicao || '';
+    form.data_expedicao = validacaoCotacao.formatarDataAmericana(form.data_expedicao) || "0000-00-00";
 
     if (!segurado){
         errorList.push({message: '', id: 'primeira-etapa'});
         segurado = {};
     }
     if (!/^.{1,160}$/.test(segurado.nome) || !segurado.nome){
-        errorList.push({message: 'Nome inválido', id: '-nome'});
+        errorList.push({message: 'Nome inválido', id: '-nome', value: segurado.nome});
     }
-    if (!/^[0-9]{11}$/.test(segurado.cpf) || !segurado.cpf){
-        errorList.push({message: 'CPF inválido', id: '-cpf'});
+    if (!/^[0-9]{11}$/.test(segurado.cpf.replace(/[^0-9]+/g, '')) || !segurado.cpf){
+        errorList.push({message: 'CPF inválido', id: '-cpf', value: segurado.cpf});
     }
     if (!/^[0-9]{1}$/.test(segurado.tipoTelefone)){
-        errorList.push({message: 'Campo Obrigatório', id: '-tipo_telefone'});
+        errorList.push({message: 'Campo Obrigatório', id: '-tipo_telefone', value: tipoTelefone});
     }
 
     let numeroTelefone = segurado.numeroTelefone || '';
     numeroTelefone = numeroTelefone.replace(/[^0-9]+/g, '');
 
     if (!/^[0-9]{10,11}$/.test(numeroTelefone) || !numeroTelefone){
-        errorList.push({message: 'Número inválido', id: '-numero_telefone'});
+        errorList.push({message: 'Número inválido', id: '-numero_telefone', value: numeroTelefone});
     }
 
     let dataNascimento = segurado.dataNascimento || '00-00-0000';
@@ -74,67 +113,67 @@ router.post("/", async (req, res)=>{
     dataNascimento = dataNascimento.split('-');
 
     if (dataNascimento.length < 3){
-        errorList.push({message: '', id: ''});
+        errorList.push({message: '', id: '', value: dataNascimento});
         dataNascimento = ['00', '00', '0000']
     }
     if (dataNascimento[0] < 1 || dataNascimento[0] > 31){
-        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento'});
+        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento', value: dataNascimento[0]});
     }
     if (dataNascimento[1] < 1 || dataNascimento[1] > 12){
-        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento'});
+        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento', value: dataNascimento[1]});
     }
     if (dataNascimento[2] < 1800 || dataNascimento[2] > 2023){
-        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento'});
+        errorList.push({message: 'Data de nascimento inválida', id: '-data_nascimento', value: dataNascimento[2]});
     }
 
     let endereco = segurado.endereco || {};
 
-    if (!/^[0-9]{8}$/.test(endereco.cep) || !endereco.cep){
-        errorList.push({message: 'CEP inválido', id: '-cep'});
+    if (!/^[0-9]{8}$/.test(endereco.cep.replace(/[^0-9]+/g, '')) || !endereco.cep){
+        errorList.push({message: 'CEP inválido', id: '-cep', value: endereco.cep});
     }
     if (!/^.{1,10}$/.test(endereco.tipo) || !endereco.tipo){
-        errorList.push({message: 'Campo Obrigatório', id: '-tipo_logradouro'});
+        errorList.push({message: 'Campo Obrigatório', id: '-tipo_logradouro', value: endereco.tipo});
     }
     if (!/^.{1,200}$/.test(endereco.logradouro) || !endereco.logradouro){
-        errorList.push({message: 'Logradouro inválido', id: '-logradouro'});
+        errorList.push({message: 'Logradouro inválido', id: '-logradouro', value: endereco.logradouro});
     }
     if(!/^[0-9]{1,4}$/.test(endereco.numero)){
-        errorList.push({message: 'Número inválido', id: '-numero'});
+        errorList.push({message: 'Número inválido', id: '-numero', value: endereco.numero});
     }
     if (!/^.{1,40}$/.test(endereco.bairro) || !endereco.bairro){
-        errorList.push({message: 'Bairro inválido', id: '-bairro'});
+        errorList.push({message: 'Bairro inválido', id: '-bairro', value: endereco.bairro});
     }
     if (!/^.{1,40}$/.test(endereco.cidade) || !endereco.cidade){
-        errorList.push({message: 'Cidade inválida', id: '-cidade'});
+        errorList.push({message: 'Cidade inválida', id: '-cidade', value: endereco.cidade});
     }
 
     endereco.uf = (endereco.uf) ? endereco.uf.toUpperCase() : '';
 
     if (!/^[A-Z]{2}$/.test(endereco.uf) || !endereco.uf){
-        errorList.push({message: 'UF inválido', id: '-uf'});
+        errorList.push({message: 'UF inválido', id: '-uf', value: endereco.uf});
     }
     //if (errorList.length > 0){ return res.status(400).json({ errors: errorList }); }
     
     if (!/^[1-2]{1}$/.test(form.sexo) || !form.sexo){
-        errorList.push({message: 'Campo Obrigatório', id: 'sexo'});
+        errorList.push({message: 'Campo Obrigatório', id: 'sexo', value: form.sexo});
     }
     if (!/^[1-5]{1}$/.test(form.estado_civil) || !form.estado_civil){
-        errorList.push({message: 'Campo Obrigatório', id: 'estado_civil'});
+        errorList.push({message: 'Campo Obrigatório', id: 'estado_civil', value: form.estado_civil});
     }
     if (!/^[1-6]{1}$/.test(form.faixa_renda) || !form.faixa_renda){
-        errorList.push({message: 'Campo Obrigatório', id: 'faixa_renda'});
+        errorList.push({message: 'Campo Obrigatório', id: 'faixa_renda', value: form.faixa_renda});
     }
     if (!/^[1-2]{1}$/.test(form.tipo_documento) || !form.tipo_documento){
-        errorList.push({message: 'Campo Obrigatório', id: 'tipo_documento'});
+        errorList.push({message: 'Campo Obrigatório', id: 'tipo_documento', value: form.tipo_documento});
     }
-    if (!/^[0-9]{5,20}$/.test(form.numero_documento) || !form.numero_documento){
-        errorList.push({message: 'Número inválido', id: 'numero_documento'});
+    if (!/^[0-9]{5,20}$/.test(form.numero_documento.replace(/[^0-9]+/g, '')) || !form.numero_documento){
+        errorList.push({message: 'Número inválido', id: 'numero_documento', value: form.numero_documento});
     }
 
     form.orgao_expedidor = (form.orgao_expedidor) ? form.orgao_expedidor.toUpperCase() : '';
 
     if (!(form.orgao_expedidor in orgaoEmissor)){
-        errorList.push({message: 'Orgão de expedição inválido', id: 'orgao_expedidor'});
+        errorList.push({message: 'Orgão de expedição inválido', id: 'orgao_expedidor', value: form.orgao_expedidor});
     }
 
     let dataExpedicao = form.data_expedicao || '00/00/0000';
@@ -142,39 +181,39 @@ router.post("/", async (req, res)=>{
     dataExpedicao = dataExpedicao.split('-');
 
     if (dataExpedicao.length < 3){ 
-        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 
+        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao', value: dataExpedicao}); 
         dataExpedicao = ['00', '00', '0000'];
     }
     if (dataExpedicao[0] > 31 || dataExpedicao[0] < 1){ 
-        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 
+        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao', value: dataExpedicao[0]}); 
     }
     if (dataExpedicao[1] > 12 || dataExpedicao[1] < 1){ 
-        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 
+        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao', value: dataExpedicao[1]}); 
     }
     if (dataExpedicao[2] > 2023 || dataExpedicao[2] < 1800){ 
-        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao'}); 
+        errorList.push({message: 'Data de expedicão inválida', id: 'data_expedicao', value: dataExpedicao[2]}); 
     }
 
     form.dataExpedicao = dataExpedicao[0] + '-' + dataExpedicao[1] + '-' + dataExpedicao[2];
 
     if (/^[1-3]{1}$/.test(form.politicamente_exposta)){
         if (form.politicamente_exposta == 3){
-            if (!/^[0-9]{11}$/.test(form.cpf_pessoa_exposta) || !form.cpf_pessoa_exposta){
-                errorList.push({message: 'CPF inválido', id: 'cpf_pessoa_exposta'});
+            if (!/^[0-9]{11}$/.test(form.cpf_pessoa_exposta.replace(/[^0-9]+/g, '')) || !form.cpf_pessoa_exposta){
+                errorList.push({message: 'CPF inválido', id: 'cpf_pessoa_exposta', value: form.cpf_pessoa_exposta});
             }
             if (!/^.{5,100}$/.test(form.nome_pessoa_exposta) || !form.nome_pessoa_exposta){
-                errorList.push({message: 'Nome inválido', id: 'nome_pessoa_exposta'})
+                errorList.push({message: 'Nome inválido', id: 'nome_pessoa_exposta', value: form.nome_pessoa_exposta})
             }
             if (/^[0-9]{1,2}$/.test(form.grau_parentesco_pessoa_exposta)){
                 if (form.grau_parentesco_pessoa_exposta < 1 || form.grau_parentesco_pessoa_exposta > 5){
-                    if (form.grau_parentesco_pessoa_exposta != 11){ errorList.push({message: 'Campo Obrigatório', id: 'grau_parentesco_pessoa_exposta'}); }
+                    if (form.grau_parentesco_pessoa_exposta != 11){ errorList.push({message: 'Campo Obrigatório', id: 'grau_parentesco_pessoa_exposta', value: form.grau_parentesco_pessoa_exposta}); }
                 }
             }else{
-                errorList.push({message: 'Campo Obrigatório', id: 'grau_parentesco_pessoa_exposta'});
+                errorList.push({message: 'Campo Obrigatório', id: 'grau_parentesco_pessoa_exposta', value: form.grau_parentesco_pessoa_exposta});
             }
         }
     }else{
-        errorList.push({message: 'Campo Obrigatório', id: 'politicamente_exposta'});
+        errorList.push({message: 'Campo Obrigatório', id: 'politicamente_exposta', value: form.politicamente_exposta});
     }
     if (errorList.length > 0){ return res.status(400).json({ errors: errorList }); }
 
@@ -184,7 +223,7 @@ router.post("/", async (req, res)=>{
         senha: CryptoJS.MD5(form.senha).toString(),
         pessoaFisica: {
             nome: segurado.nome,
-            cpf: segurado.cpf,
+            cpf: segurado.cpf.replace(/[^0-9]+/g, ''),
             telefone: {
                 tipo: segurado.tipoTelefone,
                 numero: segurado.numeroTelefone.replace(/[^0-9]+/g, '')
@@ -196,19 +235,19 @@ router.post("/", async (req, res)=>{
             faixaRenda: form.faixa_renda,
             documento: {
                 tipo: form.tipo_documento,
-                numero: form.numero_documento,
+                numero: form.numero_documento.replace(/[^0-9]+/g, ''),
                 orgaoExpedidor: form.orgao_expedidor.toUpperCase(),
                 dataExpedicao: form.dataExpedicao
             },
             pessoaPoliticamenteExposta: form.politicamente_exposta,
             politicamenteExposta: {
-                cpf: form.cpf_pessoa_exposta,
+                cpf: form.cpf_pessoa_exposta.replace(/[^0-9]+/g, ''),
                 nome: form.nome_pessoa_exposta,
                 grauRelacionamento: form.grau_parentesco_pessoa_exposta
             }
         },
         endereco: {
-            cep: endereco.cep,
+            cep: endereco.cep.replace(/[^0-9]+/g, ''),
             tipoRua: endereco.tipo,
             logradouro: endereco.logradouro,
             bairro: endereco.bairro,

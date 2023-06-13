@@ -7,6 +7,13 @@ const Leads = require("../collections/leads");
 const validation = require("../configs/validation");
 const authToken = require('../configs/authToken');
 
+const PortoCoberturas = require('../configs/coberturas');
+var portoCoberturas = new PortoCoberturas;
+var todasCoberturas = portoCoberturas.listaCoberturas('all', false);
+
+const ValidarCotacao = require('../configs/validarCotacao');
+var validacaoCotacao = new ValidarCotacao;
+
 dotenv.config();
 
 // Define a rota para a página HTML
@@ -27,104 +34,98 @@ router.get("/formulario", async (req, res)=>{
 });
 
 router.post("/enviar-dados", async (req, res) => {
-    var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
-        'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
-        'valorCoberturaPagamentoCondominio', 'valorCoberturaMorteAcidental', 'valorCoberturaTremorTerraTerremoto', 'valorCoberturaAlagamento', 'flagContratarValorDeNovo', 'flagLMIDiscriminado',
-        'valorCoberturaEdificio', 'valorCoberturaConteudo', 'valorImpactoVeiculos', 'valorSubtracaoBicicleta', 'valorNegocioCasa', 'valorPequenasReformas', 'valorFuneralFamiliar', 
-        'valorDanosMorais', 'valorRCEmpregador', 'valorCoberturaHoleinOne', 'valorCoberturaDanosJardim', 'valorCoberturaObrasObjetosArte', 'valorCoberturaJoiasRelogios' ];
-    var _allItems = [];
-    allItems.map((item, index)=>{ _allItems[item.toLocaleLowerCase()] = item; });
+    let body = req.body;
+
+    var relacaoCoberturas = [];
+    todasCoberturas.map((item, index)=>{ relacaoCoberturas[item.toLocaleLowerCase()] = item; });
     
     let items = {};
-    for(let [key, value] of Object.entries(req.body)){ if (key in _allItems){ items[_allItems[key]] = value; } }
+    for(let [key, value] of Object.entries(body)){ if (key in relacaoCoberturas){ items[relacaoCoberturas[key]] = value; } }
 
-    //console.log(items);
-    const susep = '5600PJ'//req.body.susep;
-    const codigooperacao = req.body.codigooperacao;
-    //const flagimprimircodigooperacaoorcamento = req.body.flagimprimircodigooperacaoorcamento;
-    const codigocanal = req.body.codigocanal;
-    //const melhordatapagamento = req.body.melhordatapagamento;
-    //const tiporesidencia = req.body.tiporesidencia;
-    //const tipovigencia = req.body.tipovigencia;
-    //const datainiciovigencia = req.body.datainiciovigencia;
-    //const datafimvigencia = req.body.datafimvigencia;
-    //const flagsinistrosultimos12meses = req.body.flagsinistrosultimos12meses;
+    //const susep = '5600PJ'
+    //const codigooperacao = 40; //req.body.codigooperacao;
+    //const codigocanal = 60;//req.body.codigocanal;
 
     //dados do usuário (Primeiro Step)
-    const cpf = req.body.cpf || "";
-    const nome = req.body.nome;
-    const numerotelefone = req.body.numerotelefone || "";
-    const tipotelefone = req.body.tipotelefone;
-    const datanascimento = (req.body.datanascimento) ? req.body.datanascimento.replace(/\//g, "-") : req.body.datanascimento;
+    body.cpf = body.cpf || "";
+    body.cpf = body.cpf.replace(/[^0-9]+/g, "");
 
-    //dados do endereço (Segundo Step)
-    const tiporesidencia = req.body.tiporesidencia;
-    const cep = req.body.cep || "";
-    const logradouro = req.body.logradouro;
-    const tiporua = req.body.tiporua || "";
-    const numero = req.body.numero;
-    const bairro = req.body.bairro;
-    const cidade = req.body.cidade;
-    const uf = req.body.uf || "";
+    body.nome = body.nome || "";
+
+    body.numerotelefone = body.numerotelefone || "";
+    body.numerotelefone = body.numerotelefone.replace(/[^0-9]+/g, "");
+
+    body.tipotelefone = body.tipotelefone || "";
+
+    body.datanascimento = body.datanascimento || "";
+    body.datanascimento = validacaoCotacao.formatarDataAmericana(body.datanascimento) || ""
+
+    body.tiporesidencia = body.tiporesidencia || "";
+
+    body.cep = body.cep || "";
+    body.cep = body.cep.replace(/[^0-9]+/g, "");
+
+    body.logradouro = body.logradouro;
+    body.tiporua = body.tiporua || "";
+    body.numero = body.numero || "";
+    body.bairro = body.bairro || "";
+    body.cidade = body.cidade || "";
+    body.uf = body.uf || "";
 
     // Criar o objeto com os dados para enviar para a Porto Seguro
     var data = {
         criadoEm: new Date(),
-        susep: susep,
-        codigo: codigooperacao,
-        flagImprimirCodigoOperacaoOrcamento: false,
-        codigoCanal: codigocanal,
-        melhorDataPagamento: null,
-        tipoResidencia: tiporesidencia,
-        tipoVigencia: null,
-        dataInicioVigencia: null,
-        dataFimVigencia: null,
+        susep: '5600PJ',//susep,
+        codigo: 40,//codigooperacao,
+        codigoCanal: 60,//codigocanal,
+        flagImprimirCodigoOperacaoOrcamento: true,
+        tipoResidencia: body.tiporesidencia,
         flagSinistrosUltimos12meses: false,
         segurado: {
-            nome: nome,
-            numeroTelefone: numerotelefone,
-            tipoTelefone: tipotelefone,
-            cpf: cpf,
-            dataNascimento: datanascimento,
+            nome: body.nome,
+            numeroTelefone: body.numerotelefone,
+            tipoTelefone: body.tipotelefone,
+            cpf: body.cpf,
+            dataNascimento: body.datanascimento,
             endereco: {
-                cep: cep,
-                logradouro: logradouro,
-                tipo: tiporua,
-                numero: numero,
-                bairro: bairro,
-                cidade: cidade,
-                uf: uf,
-                complemento: null,
+                cep: body.cep,
+                logradouro: body.logradouro,
+                tipo: body.tiporua,
+                numero: body.numero,
+                bairro: body.bairro,
+                cidade: body.cidade,
+                uf: body.uf
             },
         }
     };
+    console.log(data);
 
     var arrayErros = [];
 
     try {
         arrayErros = [];
         //Etapa 1:
-        if (!validation.cpfPattern.test(cpf.replace(/[^0-9]+/g, ""))){ 
+        if (!validation.cpfPattern.test(body.cpf)){ 
             arrayErros.push({error: "CPF inválido.", field: "cpf", step: "1"}); 
         }
-        if (!validation._nomePattern.test(nome)) { 
+        if (!validation._nomePattern.test(body.nome)) { 
             arrayErros.push({error: "Nome inválido.", field: "nome", step: "1"}); 
         }
-        if (tipotelefone != 1 && tipotelefone != 2 && tipotelefone != 3) { 
+        if (body.tipotelefone != 1 && body.tipotelefone != 2 && body.tipotelefone != 3) { 
             arrayErros.push({error: "Tipo de telefone inválido.", field: "tipotelefone", step: "1"}); //0: Celular, 1: Fixo
         }
-        if (!validation.numeroTelefonePattern.test(numerotelefone.replace(/[^0-9]+/g, ""))) { 
+        if (body.numerotelefone.length != 10 && body.numerotelefone.length != 11) { 
             arrayErros.push({error: "Número de telefone inválido.", field: "numerotelefone", step: "1"}); 
         }else{
-            if ((tipotelefone == 1 || tipotelefone == 2) && numerotelefone.replace(/[^0-9]+/g, "").length != 10){
+            if ((body.tipotelefone == 1 || body.tipotelefone == 2) && body.numerotelefone.length != 10){
                 arrayErros.push({error: "Telefone fixo deve ter 10 digitos.", field: "numerotelefone", step: "1"});
             }
-            if (tipotelefone == 3 && numerotelefone.replace(/[^0-9]+/g, "").length != 11){
+            if (body.tipotelefone == 3 && body.numerotelefone.length != 11){
                 arrayErros.push({error: "Telefone celular deve ter 11 digitos.", field: "numerotelefone", step: "1"});
             }
         }
-        if (datanascimento){
-            if (!validation._dataNascimentoPattern.test(datanascimento)) { 
+        if (body.datanascimento){
+            if (!/^(\d{4})\-(\d{2})\-(\d{2})$/.test(body.datanascimento)) { 
                 arrayErros.push({error: "Data de nascimento inválida.", field: "datanascimento", step: "1"}); 
             }
         }else{
@@ -132,31 +133,31 @@ router.post("/enviar-dados", async (req, res) => {
         }
         
         //Etapa 2:
-        if (!validation._cepPattern.test(cep.replace(/[^0-9]+/g, ""))) { 
+        if (body.cep.length != 8) { 
             arrayErros.push({error: "CEP inválido.", field: "cep", step: "2"}); 
         }
-        if (!validation.tipoResidenciaPattern.test(tiporesidencia)){
+        if (!validation.tipoResidenciaPattern.test(body.tiporesidencia)){
             arrayErros.push({error: "Tipo de residencia inválido.", field: "tiporesidencia", step: "2"});
         }
-        if (!validation._enderecoPattern.test(logradouro)) { 
+        if (!validation._enderecoPattern.test(body.logradouro)) { 
             arrayErros.push({error: "Endereço inválido.", field: "logradouro", step: "2"}); 
         }
-        if (!validation.listaTipoRua.includes(tiporua)) { 
+        if (!validation.listaTipoRua.includes(body.tiporua)) { 
             arrayErros.push({error: "Tipo de rua inválido.", field: "tiporua", step: "2"}); //0: Rua, 1: Avenida
         }
-        if (!validation.numeroPattern.test(numero)) { 
+        if (!validation.numeroPattern.test(body.numero)) { 
             arrayErros.push({error: "Número inválido.", field: "numero", step: "2"}); 
         }
-        if (!validation._bairroPattern.test(bairro)) { 
+        if (!validation._bairroPattern.test(body.bairro)) { 
             arrayErros.push({error: "Bairro inválido.", field: "bairro", step: "2"}); 
         }
-        if (!validation._cidadePattern.test(cidade)) { 
+        if (!validation._cidadePattern.test(body.cidade)) { 
             arrayErros.push({error: "Cidade inválida.", field: "cidade", step: "2"}); 
         }
-        if (!validation.ufPattern.test(uf.toUpperCase())) { 
+        if (!validation.ufPattern.test(body.uf.toUpperCase())) { 
             arrayErros.push({error: "UF inválido.", field: "uf", step: "2"}); 
         }else{
-            if (!validation.listaUF.includes(uf.toUpperCase())){ 
+            if (!validation.listaUF.includes(body.uf.toUpperCase())){ 
                 arrayErros.push({error: "UF inválido.", field: "uf", step: "2"}); 
             }
         }

@@ -1,5 +1,13 @@
 $("#loading-screen").hide();
-$(document).ready(function () { });
+$(document).ready(function () { 
+    $('input#cpf_pessoa_exposta').mask('000.000.000-00');
+    
+    let inputDocumento = $('input#numero_documento');
+    let tipoDocumento = $('select#tipo_documento');
+
+    if (tipoDocumento.val() == 2){ inputDocumento.mask('000.000.000-00'); }
+    tipoDocumento.on('change', ()=>{ if (e.target.value == 2){ inputDocumento.mask('000.000.000-00'); }else{ inputDocumento.unmask() } });
+});
 
 var loading = false;
 var finalData = localStorage.getItem("finalData");
@@ -50,7 +58,7 @@ if (orcamento.listaParcelamento){
 
 //console.log(finalData);
 $("input#email").on("input", ()=>{ 
-    if ($('label#_email-error').length){  $('label#_email-error').html(""); } 
+    if ($('label#_email-error').length){ $('label#_email-error').html(""); } 
 });
 $("input#senha").on("input", ()=>{ 
     if ($('label#_senha-error').length){ $('label#_senha-error').html(""); } });
@@ -220,6 +228,47 @@ function visualizarSenha() {
         confirmSenha.type = "password";
     }
 }
+$(function () {
+    $("#form-register").validate({
+      rules: {
+        senha: { required: true },
+        confirm_senha: { equalTo: "#senha" },
+        email: { required: true },
+        confirm_email: { equalTo: "#email" }
+      },
+      messages: {
+        nome: { required: "Preencha o Campo Nome" },
+        email: { 
+          required: "Campo Obrigatório",
+          email: "Email inválido"
+        },
+        confirm_email: {
+          required: "Campo Obrigatório",
+          equalTo: "Os campos de email precisam ser iguais.",
+          email: "Email inválido"
+        },
+        senha: { required: "Campo Obrigatório" },
+        confirm_senha: {
+          required: "Campo Obrigatório",
+          equalTo: "Os campos de senha devem ser iguais",
+        },
+        cpf: { required: "Campo Obrigatório" },
+        nome_impresso: { required: "Campo Obrigatório" },
+        data_expedicao: { required: "Campo Obrigatório" },
+        numero_documento: { required: "Campo Obrigatório" },
+        orgao_expedidor: { required: "Campo Obrigatório" }
+      },
+      errorPlacement: function (error, element) {
+        error.insertAfter(element);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass("error");
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass("error");
+      },
+    });
+});
 
 /*$(document).ready(function () {
     if (loading){ loading = false; }

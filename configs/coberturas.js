@@ -1,4 +1,3 @@
-
 class PortoCoberturas {
     constructor(){
         this.coberturas  = ['habitual', 'premium', 'veraneio'];
