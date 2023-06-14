@@ -15,6 +15,7 @@ router.get('/', (req, res) => { res.sendFile('planos.html', { root: 'public' });
 
 router.post('/salvar-orcarmento', async (req, res) => {
     let body = req.body;
+    console.log(body);
     if (!body){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
     if (!body.numeroOrcamento){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
     
@@ -26,10 +27,11 @@ router.post('/salvar-orcarmento', async (req, res) => {
         produto: body.tipo || '',
         vigencia: body.vigencia || '',
         listaParcelamento: [],
+        propostaCriada: false,
         numeroOrcamento: body.numeroOrcamento,
         numeroVersaoOrcamento: body.numeroVersaoOrcamento,
-        propostaCriada: false
-    }
+        valoresCoberturas: body.coberturas || {}
+    };
 
     if (Array.isArray(body.listaParcelamento)){
         for(let i in body.listaParcelamento){
