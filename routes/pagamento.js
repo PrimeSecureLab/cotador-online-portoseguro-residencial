@@ -22,6 +22,24 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+    // Verifica se sessão possui user_id;
+    let session = (req.session) ? req.session : {};
+    if (!session.user_id){ return res.status(400).json({fatal: 1}); }
+
+    // Verifica se user_id é válido
+    let user = await Usuarios.findOne({_id: session.user_id});
+    if (!user){ req.session.destroy((e) => { return res.status(400).json({redirect: '/login'}); }); }
+
+    let errorList = [];
+    let body = req.body;
+
+    console.log(body);
+
+    if (!body){ return res.status(400).json({fatal: 3}); }
+    if (!body.formData){ return res.status(400).json({redirect: '/'}); } //Verifica se dados da Cotação ainda são válidos
+    if (!body.pagamento){ return res.status(400).json({fatal: 4}); }
+    if (!body.produto){ return res.status(400).json({fatal: 5}); }
+
     /*let session = (req.session) ? req.session : {};
     if (!session.user_id){ return res.status(400).json({fatal: 1}); }
     
