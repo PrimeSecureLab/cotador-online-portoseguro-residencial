@@ -1,3 +1,9 @@
+const dotenv = require('dotenv');
+const CryptoJS = require("crypto-js");
+const validation = require('../configs/validation');
+
+dotenv.config();
+
 class ValidarCotacao extends Object{
     constructor(){ 
         super();
@@ -8,6 +14,7 @@ class ValidarCotacao extends Object{
         }
     }
     decriptarDados(body){
+        //console.log('A:', body);
         let bytes = CryptoJS.AES.decrypt(body, process.env.CRYPTO_TOKEN);
         if (!bytes){ return false; }   
         let data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)); 
@@ -25,7 +32,7 @@ class ValidarCotacao extends Object{
         if (this.patterns.data_3.test(date)){ return date; }
         return false;
     }
-    stringToDate(date){
+    validarStringData(date){
         let [data, dia, mes, ano] = [0, 0, 0, 0];
 
         if (this.patterns.data_1.test(date)){ [data, dia, mes, ano] = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date); }
@@ -33,7 +40,12 @@ class ValidarCotacao extends Object{
         if (this.patterns.data_3.test(date)){ [data, dia, mes, ano] = /^(\d{4})\-(\d{2})\-(\d{2})$/.exec(date); }
 
         const checkDate = new Date(ano, mes - 1, dia);
-        let isValid = ( checkDate.getFullYear() === parseInt(ano, 10) && checkDate.getMonth() === parseInt(mes, 10) - 1 && checkDate.getDate() === parseInt(dia, 10) && !isNaN(checkDate.getTime()) );
+        let isValid = ( 
+            checkDate.getFullYear() === parseInt(ano, 10) && 
+            checkDate.getMonth() === parseInt(mes, 10) - 1 && 
+            checkDate.getDate() === parseInt(dia, 10) && 
+            !isNaN(checkDate.getTime()) 
+        );
         
         if (!isValid){ return false; }
         return checkDate;

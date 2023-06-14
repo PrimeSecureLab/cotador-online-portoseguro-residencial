@@ -6,7 +6,7 @@ $(document).ready(function () {
     let tipoDocumento = $('select#tipo_documento');
 
     if (tipoDocumento.val() == 2){ inputDocumento.mask('000.000.000-00'); }
-    tipoDocumento.on('change', ()=>{ if (e.target.value == 2){ inputDocumento.mask('000.000.000-00'); }else{ inputDocumento.unmask() } });
+    tipoDocumento.on('change', (e)=>{ if (e.target.value == 2){ inputDocumento.mask('000.000.000-00'); }else{ inputDocumento.unmask() } });
 });
 
 var loading = false;

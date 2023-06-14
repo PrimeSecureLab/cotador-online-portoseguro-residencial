@@ -6,6 +6,7 @@ const propostaSchema = new mongoose.Schema({
         numeroProposta: { type: String },
         numeroVersaoProposta: { type: String }
     },
+    numeroOrcamento: { type: String },
     usuario:{
         id: { type: String },
         nome: { type: String },
@@ -15,9 +16,9 @@ const propostaSchema = new mongoose.Schema({
     pagamento: {
         formaPagamento: { type: String },
         quantidadeParcelas: { type: String },
-        codigoBandeira: { type: String }
-    },
-    orcamento: { type: mongoose.Schema.Types.Mixed, required: false }
+        codigoBandeira: { type: String },
+        ticket: {type: String },
+    }
 });
 
 const Propostas = mongoose.model('Propostas', propostaSchema);

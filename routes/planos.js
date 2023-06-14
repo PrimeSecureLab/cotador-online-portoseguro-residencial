@@ -13,10 +13,40 @@ dotenv.config();
 // Define a rota para a página HTML
 router.get('/', (req, res) => { res.sendFile('planos.html', { root: 'public' }); });
 
+router.post('/salvar-orcarmento', async (req, res) => {
+    let body = req.body;
+    if (!body){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
+    if (!body.numeroOrcamento){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
+    
+    let orcamento = await Orcamentos.findOne({numeroOrcamento: body.numeroOrcamento});
+    if (orcamento){ return res.status(200).json({redirect: "/login"}); }
+
+    orcamento = {
+        criadoEm: body.criadoEm || new Date(),
+        produto: body.tipo || '',
+        vigencia: body.vigencia || '',
+        listaParcelamento: [],
+        numeroOrcamento: body.numeroOrcamento,
+        numeroVersaoOrcamento: body.numeroVersaoOrcamento,
+        propostaCriada: false
+    }
+
+    if (Array.isArray(body.listaParcelamento)){
+        for(let i in body.listaParcelamento){
+            let parcelamento = body.listaParcelamento[i];
+            if (parcelamento.codigo != 62){ continue; }
+            orcamento.listaParcelamento.push(parcelamento);
+        }
+    }    
+
+    let entry = new Orcamentos(orcamento);
+    entry = await entry.save();
+    return res.status(200).json({redirect: "/login"});
+});
+
 // Define a rota para receber os dados do formulário
 router.post('/', async (req, res) => {
     let data = req.body;
-    //console.log(data);
     let redirect = '/cadastro';
     let session = (req.session) ? req.session : {};
 
@@ -28,15 +58,9 @@ router.post('/', async (req, res) => {
     if (!data.itemData){ return res.status(400).json({redirect: '/'}); }
     if (!data.produto){ return res.status(400).json({error: "Produto não identificado.", redirect: false}); }
 
-    if (!data.dadosCobertura){ data.dadosCobertura = {}; }  
-    //let dadosCobertura = data.dadosCobertura;
-    
+    if (!data.dadosCobertura){ data.dadosCobertura = {}; }      
     let produto = data.produto;
-    //let produtoUpperCase = (produto == 'habitual-premium') ? 'habitualPremium' : produto;
-    //console.log(produtoUpperCase);
-    
-    //session.cotacao.itens[produtoUpperCase] = dadosCobertura;
-    
+        
     if (produto != "habitual" && produto != "habitual-premium" && produto != "veraneio"){
         let error = { error: "Produto não identificado.", redirect: false };
         return res.status(400).json(error);
@@ -48,7 +72,6 @@ router.post('/', async (req, res) => {
     let coberturas = data.itemData;
     let vigencia = data.vigencia || 1;
 
-    
     data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     data.item = coberturas;
     data.vigencia = vigencia;
@@ -71,9 +94,7 @@ router.post('/', async (req, res) => {
         if (orcamento.status == 200){
             orcamento.data.tipo = produto;
             orcamento.data.criadoEm = new Date();
-
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
-            
         }else{
             errorData = orcamento.data;
             errorData.tipo = produto;
@@ -113,10 +134,6 @@ async function portoOrcamentoApi(produto, formData, token){
 
         let dataFim = new Date(dataSegmentada[0], dataSegmentada[1], dataSegmentada[2]);
         dataFim = dataFim.toISOString().split('T')[0];
-        //let dataFim = new Date();
-        //dataFim.setDate(dataFim.getDate() + (365.25 * data.vigencia) );
-        //dataFim = dataFim.toISOString().split('T')[0];
-        //console.log(dataInicio, '||', dataFim);
 
         let dataNascimento = data.segurado.dataNascimento.toString();
         dataNascimento = dataNascimento.split("-");
@@ -181,222 +198,19 @@ async function portoOrcamentoApi(produto, formData, token){
             "item": itemList
         }
 
-        //console.log(payload);
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let delay = 100
+
         if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
+
         delay += (data.vigencia - 1) * 30;
         setTimeout(async () => { 
-            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
+            let request = await axios.post( url, payload, header).catch((error)=>{ 
+                console.log(error.response.status); resolve(error.response); 
+            });
             resolve( request ); 
         }, delay);
     });
 }
-/*
-async function porto_orcamento_habitual(formData, token){
-    return new Promise(async (resolve, reject)=>{
-        let data = formData;
-        //console.log(data)
-
-        let dataInicio = new Date();
-        dataInicio = dataInicio.toISOString().split('T')[0];
-
-        let dataFim = new Date()
-        dataFim.setDate(dataFim.getDate() + 366);
-        dataFim = dataFim.toISOString().split('T')[0];
-
-        let dataNascimento = data.segurado.dataNascimento;
-        dataNascimento = dataNascimento.split("-");
-        dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
-
-        let itens = data.item;
-        let itemList = {};
-
-        allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-        //console.log(itemList);
-
-        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual/orcamentos";
-        let json = {
-            "susep": data.susep,
-            "codigoOperacao": data.codigo, 
-            "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
-            "codigoCanal": data.codigoCanal,
-            "tipoResidencia": 2,
-            "tipoVigencia": 1,
-            "dataInicioVigencia": dataInicio,
-            "dataFimVigencia": dataFim,
-            "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
-            "segurado": {
-                "nome": data.segurado.nome,
-                "numeroTelefone": data.segurado.numeroTelefone,
-                "tipoTelefone": data.segurado.tipoTelefone,
-                "cpfCnpj": data.segurado.cpf,
-                "dataNascimento": dataNascimento,
-                "endereco": {
-                    "cep": data.segurado.endereco.cep,
-                    "logradouro": data.segurado.endereco.logradouro,
-                    "tipo": data.segurado.endereco.tipo,
-                    "numero": data.segurado.endereco.numero,
-                    "bairro": data.segurado.endereco.bairro,
-                    "cidade": data.segurado.endereco.cidade,
-                    "uf": data.segurado.endereco.uf,
-                    "complemento": data.segurado.endereco
-                }
-            },
-            "item": itemList
-        };
-        let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post( url, json, header).catch((error)=>{ console.log(error.response); resolve(error.response); });
-        
-        if (request){
-            if (request.status == 200){ 
-                let novoOrcamento = {
-                    criadoEm: new Date(),
-                    numeroOrcamento: request.data.numeroOrcamento,
-                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                    tipo: "habitual"
-                };
-                let orcamento = new Orcamentos(novoOrcamento);
-                orcamento = await orcamento.save();
-            }
-        }
-        setTimeout(() => { resolve( request ); }, 200);
-    });
-}
-
-async function porto_orcamento_habitual_premium(formData, token){
-    return new Promise(async (resolve, reject)=>{
-        let data = formData;
-        let dataInicio = new Date();
-        dataInicio = dataInicio.toISOString().split('T')[0];
-
-        let dataFim = new Date()
-        dataFim.setDate(dataFim.getDate() + 366);
-        dataFim = dataFim.toISOString().split('T')[0];
-
-        let dataNascimento = data.segurado.dataNascimento;
-        dataNascimento = dataNascimento.split("-");
-        dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
-
-        let itens = data.item;
-        let itemList = {};
-        allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-        //console.log(itemList);
-
-        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual-premium/orcamentos";
-        let json = {
-            "susep": data.susep,
-            "codigoOperacao": data.codigo,
-            "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
-            "codigoCanal": data.codigoCanal,
-            "tipoResidencia": 2,
-            "tipoVigencia": 1,
-            "dataInicioVigencia": dataInicio,
-            "dataFimVigencia": dataFim,
-            "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
-            "segurado": {
-                "nome": data.segurado.nome,
-                "numeroTelefone": data.segurado.numeroTelefone,
-                "tipoTelefone": data.segurado.tipoTelefone,
-                "cpfCnpj": data.segurado.cpf,
-                "dataNascimento": dataNascimento,
-                "endereco": {
-                    "cep": data.segurado.endereco.cep,
-                    "logradouro": data.segurado.endereco.logradouro,
-                    "tipo": data.segurado.endereco.tipo,
-                    "numero": data.segurado.endereco.numero,
-                    "bairro": data.segurado.endereco.bairro,
-                    "cidade": data.segurado.endereco.cidade,
-                    "uf": data.segurado.endereco.uf,
-                    "complemento": data.segurado.endereco
-                }
-            },
-            "item": itemList
-        };
-        let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
-        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
-        
-        if (request){
-            if (request.status == 200){ 
-                let novoOrcamento = {
-                    criadoEm: new Date(),
-                    numeroOrcamento: request.data.numeroOrcamento,
-                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                    tipo: "premium"
-                };
-                let orcamento = new Orcamentos(novoOrcamento);
-                orcamento = await orcamento.save();
-            }
-        }
-        setTimeout(() => { resolve( request ); }, 200);
-    });
-}
-
-async function porto_orcamento_veraneio(formData, token){
-    return new Promise(async (resolve, reject)=>{
-        let data = formData;
-        let dataInicio = new Date();
-        dataInicio = dataInicio.toISOString().split('T')[0];
-
-        let dataFim = new Date()
-        dataFim.setDate(dataFim.getDate() + 366);
-        dataFim = dataFim.toISOString().split('T')[0];
-
-        let dataNascimento = data.segurado.dataNascimento;
-        dataNascimento = dataNascimento.split("-");
-        dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
-
-        let itens = data.item;
-        let itemList = {};
-        allItems.map((item, index)=>{ if (itens[item]){ itemList[item] = itens[item]; } });
-
-        let url = "https://portoapi-hml.portoseguro.com.br/re/residencial/v1/veraneio/orcamentos";
-        let json = {
-            "susep": data.susep,
-            "codigoOperacao": data.codigo,
-            "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
-            "codigoCanal": data.codigoCanal,
-            "tipoResidencia": 2,
-            "tipoVigencia": 1,
-            "dataInicioVigencia": dataInicio,
-            "dataFimVigencia": dataFim,
-            "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
-            "segurado": {
-                "nome": data.segurado.nome,
-                "numeroTelefone": data.segurado.numeroTelefone,
-                "tipoTelefone": data.segurado.tipoTelefone,
-                "cpfCnpj": data.segurado.cpf,
-                "dataNascimento": dataNascimento,
-                "endereco": {
-                    "cep": data.segurado.endereco.cep,
-                    "logradouro": data.segurado.endereco.logradouro,
-                    "tipo": data.segurado.endereco.tipo,
-                    "numero": data.segurado.endereco.numero,
-                    "bairro": data.segurado.endereco.bairro,
-                    "cidade": data.segurado.endereco.cidade,
-                    "uf": data.segurado.endereco.uf,
-                    "complemento": data.segurado.endereco
-                }
-            },
-            "item": itemList
-        };
-        let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
-        let request = await axios.post(url, json, header).catch((error)=>{ console.log(error.response.status); resolve(error.response); });
-        if (request){
-            if (request.status == 200){ 
-                let novoOrcamento = {
-                    criadoEm: new Date(),
-                    numeroOrcamento: request.data.numeroOrcamento,
-                    numeroVersaoOrcamento: request.data.numeroVersaoOrcamento,
-                    tipo: "veraneio"
-                };
-                let orcamento = new Orcamentos(novoOrcamento)
-                orcamento = await orcamento.save();
-            }
-        }
-        setTimeout(() => { resolve( request ); }, 200);
-    });
-}
-*/
 module.exports = router;

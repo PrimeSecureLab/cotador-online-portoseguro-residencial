@@ -75,6 +75,7 @@ $(document).ready(function () {
 
     let juros = true;
     let valorSemJuros = 0;
+    let maximoParcelas = 1
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
             if (parcela.quantidadeParcelas == 1){ valorSemJuros = parcela.valorPrimeiraParcela; }
@@ -83,6 +84,7 @@ $(document).ready(function () {
                 let primeiraParcela = parcela.valorPrimeiraParcela;
                 let demaisParcelas = parcela.valorDemaisParcelas;
                 let valorTotal = (numeroParcelas - 1) * demaisParcelas + primeiraParcela;
+                maximoParcelas = numeroParcelas;
 
                 if (Math.abs(valorSemJuros - valorTotal) < 0.05){ juros = false; }
 
@@ -154,7 +156,7 @@ $(document).ready(function () {
             return;
         }
         localData.pagamento = {
-            parcelas: 1,
+            parcelas: maximoParcelas,
             nomeImpresso: $("input#nome_impresso").val(),
             numeroCpf: $("input#cpf").val(),
             numeroCartao: $("input#numero-cartao").val(),

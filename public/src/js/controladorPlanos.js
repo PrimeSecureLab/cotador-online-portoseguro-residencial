@@ -284,7 +284,6 @@ $(document).ready(function() {
         atualizarVigencia('veraneio', index);
     });
 
-
     var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
 
@@ -445,7 +444,7 @@ $(document).ready(function() {
         });
     }
 
-    function salvarOrcamento(produto){
+    async function salvarOrcamento(produto){
         let orcamento = orcamentos[produto][tempoVigencia];
         if (tempoVigencia != 0 && tempoVigencia != 1 && tempoVigencia != 2){ return; }
         if (!orcamento){ return; }
@@ -463,8 +462,27 @@ $(document).ready(function() {
         console.log(encryptedData);
         localStorage.setItem('finalData', JSON.stringify(encryptedData));
 
-        window.location.href = './login';
-        return;
+        $("#loading-screen").show();
+        try {
+            const response = await fetch("/planos/salvar-orcarmento", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify(orcamento),
+            });
+            if (response.ok) {
+                let data = await response.json();
+                $("#loading-screen").hide();
+                window.location.href = './login';
+            } else {
+                let data = await response.json();
+                $("#loading-screen").hide();
+                window.location.href = './login';
+            } 
+        } catch (error) {
+            let data = await response.json();
+            $("#loading-screen").hide();
+            window.location.href = './login';
+        }      
     }
 
     function apiCallOrcamento(produto, vigencia) {

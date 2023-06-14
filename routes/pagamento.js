@@ -6,6 +6,7 @@ const CryptoJS = require("crypto-js");
 
 const Usuarios = require('../collections/usuarios');
 const Propostas = require('../collections/propostas');
+const Orcamentos = require('../collections/orcamentos');
 const authToken = require('../configs/authToken');
 const validation = require('../configs/validation');
 
@@ -27,34 +28,38 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     // Verifica se sessão possui user_id;
     let session = (req.session) ? req.session : {};
-    if (!session.user_id){ return res.status(400).json({fatal: 1}); }
+    if (!session.user_id){ return res.status(400).json({fatal: 1, id: 0}); }
 
     // Verifica se user_id é válido
     let user = await Usuarios.findOne({_id: session.user_id});
-    if (!user){ req.session.destroy((e) => { return res.status(400).json({redirect: '/login'}); }); }
+    if (!user){ req.session.destroy((e) => { return res.status(400).json({redirect: '/login', id: 1}); }); }
 
     let errorList = [];
-    let body = req.body;
+    let body = req.body || {};
+    let produto = body.produto || {};
 
-    console.log(body);
-
-    if (!body){ return res.status(400).json({fatal: 3}); }
-    if (!body.formData){ return res.status(400).json({redirect: '/'}); } //Verifica se dados da Cotação ainda são válidos
-    if (!body.pagamento){ return res.status(400).json({fatal: 4}); }
-
-    if (!body.produto){ return res.status(400).json({fatal: 5}); }
-    let produto = data.produto;
-
-    if (produto != 'habitual' && produto != 'habitual-premium' && produto != 'veraneiro'){ return res.status(400).json({fatal: 6}); }
-    let bytes = CryptoJS.AES.decrypt(data.formData, process.env.CRYPTO_TOKEN);
-    if (!bytes){ return res.status(400).json({redirect: '/'}); }
+    if (!body){ return res.status(400).json({fatal: 3, id: 2}); }
+    if (!body.formData){ return res.status(400).json({redirect: '/', id: 3}); } //Verifica se dados da Cotação ainda são válidos
+    if (!body.pagamento){ return res.status(400).json({fatal: 4, id: 4}); }
+    if (!body.produto){ return res.status(400).json({redirect: '/planos', id: 5}); } // Verifica se registrou o plano
     
-    let formData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    if (!formData){ return res.status(400).json({redirect: '/'}); }
+    let orcamento = await Orcamentos.findOne({numeroOrcamento: body.orcamento.numeroOrcamento});
+    if (!orcamento){ orcamento = {}; }//.propostaCriada = true; await orcamento.save(); }
+    
+    if (orcamento.propostaCriada){ return res.status(400).json({redirect: '/planos', id: 6}); } // Orçamento ja teve proposta realizada
 
-    formData.item = data.itemData;    
+    let formData = validacaoCotacao.decriptarDados(body.formData);
+    if (!formData){ return res.status(400).json({redirect: '/', id: 7}); }
 
-    let pagamento = data.pagamento || {};
+    if (!['habitual', 'habitual-premium', 'veraneio'].includes(produto)){ return res.status(400).json({redirect: '/planos', id: 8}); }
+
+    formData.item = body.itemData;    
+
+    let pagamento = body.pagamento || {};
+    let numeroParcelas = pagamento.parcelas || 0;
+
+    if (numeroParcelas < 1){ numeroParcelas = orcamento.listaParcelamento.length; }
+
     pagamento.codigoBandeira = 0;
 
     if (pagamento.nomeImpresso.length < 3){ 
@@ -66,7 +71,6 @@ router.post("/", async (req, res) => {
     if (!/^\d{2}$/.test(pagamento.mesValidade)){ 
         if (/^[1-9]$/.test(pagamento.mesValidade)){// Caso tenha apenas 1 dígito 
             pagamento.mesValidade = `0${pagamento.mesValidade}`; 
-            $("#mes").val(pagamento.mesValidade); 
         }else{ // Caso tenha mais de 2 digitos
             errorList.push({message: "Mês inválido", id: "mes"}); 
         }
@@ -75,7 +79,7 @@ router.post("/", async (req, res) => {
     }
     if (!/^\d{4}$/.test(pagamento.anoValidade)){ 
         if (/^\d{2}$/.test(pagamento.anoValidade)){
-            $("#ano").val(`20${pagamento.anoValidade}`);
+            pagamento.anoValidade = `20${pagamento.anoValidade}`; 
             if (parseInt(pagamento.anoValidade) < 23){ errorList.push({message: "Ano inválido", id: "ano"}); }
         }else{
             errorList.push({message: "Ano inválido", id: "ano"});
@@ -90,13 +94,12 @@ router.post("/", async (req, res) => {
         for (var i = pagamento.numeroCartao.length - 1; i >= 0; i--) {
             let digito = parseInt(pagamento.numeroCartao.charAt(i), 10);
             if (dobrar) { if ((digito *= 2) > 9){ digito -= 9; } }
-            soma += digito;
-            dobrar = !dobrar;
+            soma += digito; dobrar = !dobrar;
         }
         if ((soma % 10) != 0){ errorList.push({message: "Número de cartão inválido", id: "numero-cartao"}); }
     }
 
-    if (errorList.length){ return res.status(400).json({fatal: false, errors: errorList}); }
+    if (errorList.length){ return res.status(400).json({fatal: false, errors: errorList, id: 9}); }
 
     if (!validation.eloCardPattern.test(pagamento.numeroCartao)){ pagamento.codigoBandeira = 5; }
     if (!validation.dinersCardPattern.test(pagamento.numeroCartao)){ pagamento.codigoBandeira = 3; }
@@ -105,7 +108,8 @@ router.post("/", async (req, res) => {
 
     let segurado = formData.segurado || {};
     let endereco = segurado.endereco || {};
-    let pessoaFisica = user.pessoaFisica || {};    
+    let pessoaFisica = user.pessoaFisica || {};  
+    let documento = pessoaFisica.documento || {};  
     
     endereco.cep = endereco.cep || '';
     endereco.cep = endereco.cep.replace(/\D/g, '');
@@ -116,18 +120,18 @@ router.post("/", async (req, res) => {
     documento.numero  = documento.numero || '';
     documento.numero = documento.numero.replace(/\D/g, '');
 
-    let dataNascimeto = pessoaFisica.dataNascimento || '';
-    dataNascimeto = dataNascimeto.formatarDataAmericana(dataNascimento);
+    let dataNascimento = pessoaFisica.dataNascimento || '';
+    dataNascimento = validacaoCotacao.formatarDataAmericana(dataNascimento);
 
     let dataExpedicao = documento.dataExpedicao || '';
-    dataExpedicao = dataExpedicao.formatarDataAmericana(dataExpedicao);
+    dataExpedicao = validacaoCotacao.formatarDataAmericana(dataExpedicao);
 
-    pagamento.numeroParcelas = 1;
+    pagamento.numeroParcelas = numeroParcelas;
     pagamento.formaPagamento = "CARTAO_DE_CREDITO_62";
 
     let proposta = {        
-        "numeroOrcamento": data.orcamento.numeroOrcamento,
-        "codigoPessoaPoliticamenteExposta": pessoaFisica.pessoaPoliticamenteExposta,
+        "numeroOrcamento": body.orcamento.numeroOrcamento,
+        "codigoPessoaPoliticamenteExposta": pessoaFisica.pessoaPoliticamenteExposta, // 1 - Sim; 2 - Não; 3 - Relacionamento Próximo;
         "segurado": {
             "enderecoCobranca": {
                 "cep": endereco.cep,
@@ -147,20 +151,12 @@ router.post("/", async (req, res) => {
                 "cidade": endereco.cidade,
                 "uf": endereco.uf
             },
-            //"contato": {
-            //   "email": segurado.email
-            //},
-            //"pessoaPoliticamenteExposta": {
-            //    "cpf": "64010333049",
-            //    "nome": "Gilbor Baohon Koxyorim",
-            //    "codigoGrauRelacionamento": 1
-            //},
             "pessoaFisica": {
-                "dataNascimento": dataNascimeto,
-                "codigoSexo": pessoaFisica.sexo,
-                "codigoEstadoCivil": pessoaFisica.estadoCivil,
+                "dataNascimento": dataNascimento,
+                "codigoSexo": parseInt(pessoaFisica.sexo),
+                "codigoEstadoCivil": parseInt(pessoaFisica.estadoCivil),
                 "codigoPaisResidencia": 237,
-                "codigoFaixaRenda": pessoaFisica.faixaRenda,
+                "codigoFaixaRenda": parseInt(pessoaFisica.faixaRenda),
                 "documentoIdentificacao": {
                     "tipoDocumento": documento.tipo,
                     "numeroDocumento": documento.numero,
@@ -173,48 +169,105 @@ router.post("/", async (req, res) => {
             "formaPagamento": pagamento.formaPagamento,
             "quantidadeParcelas": pagamento.numeroParcelas,
             "cartao": {
-                "numeroCartao": "5408094831763990",
+                "numeroCartao": "5502093811848651",
                 "codigoBandeira": pagamento.codigoBandeira,
-                "mesValidade": pagamento.mesValidade,
-                "anoValidade": pagamento.anoValidade
+                "mesValidade": parseInt(pagamento.mesValidade),
+                "anoValidade": parseInt(pagamento.anoValidade)
             }
         }
     };
 
     let contato = { email: user.email || '' };
-    if (numeroTelefone.length == 10){ contato.numeroTelefoneResidencial = numeroTelefone; }
-    if (numeroTelefone.length == 11){ contato.numeroTelefoneCelular = numeroTelefone; }    
-
+    if (segurado.numeroTelefone.length == 10){ contato.numeroTelefoneResidencial = segurado.numeroTelefone; }
+    if (segurado.numeroTelefone.length == 11){ contato.numeroTelefoneCelular = segurado.numeroTelefone; }    
+    
+    proposta.segurado.contato = contato;    
+    
     let politicamenteExposta = pessoaFisica.politicamenteExposta || {};
     politicamenteExposta.cpf = politicamenteExposta.cpf || '';
     politicamenteExposta.cpf = politicamenteExposta.cpf.replace(/\D/g, '');
     politicamenteExposta.nome = politicamenteExposta.nome || '';
-    politicamenteExposta.grauRelacionamento = politicamenteExposta.grauRelacionamento;
-
-    proposta.segurado.contato = contato;
+    politicamenteExposta.grauRelacionamento = parseInt(politicamenteExposta.grauRelacionamento) || '';
+    
     proposta.segurado.pessoaPoliticamenteExposta = politicamenteExposta;
     
-    /*
-    let politicamenteExposta = {
-        "cpf": pessoaFisica.politicamenteExposta.cpf,
-        "nome": pessoaFisica.politicamenteExposta.nome,
-        "codigoGrauRelacionamento": pessoaFisica.politicamenteExposta.grauRelacionamento
-    };*/
+    let token = await authToken();
+    let subUrl = '-sandbox';
+    let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
+
+    if (process.env.AMBIENTE == 'HOMOLOGACAO'){ subUrl = '-hml'; }
+    if (process.env.AMBIENTE == 'PRODUCAO'){ subUrl = ''; }
+    
+    if (process.env.AMBIENTE != 'SANDBOX'){
+        try{
+            let url = `https://portoapi${subUrl}.portoseguro.com.br/re/cartoes/v1/cartoes?numeroCartao=${pagamento.numeroCartao}`;
+            let payload = {"numeroCartao": pagamento.numeroCartao};
+            let result = await axios.post(url, payload, header).catch((error)=>{ 
+                console.log(error.response.data); 
+                return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao", id: 10}]});
+            });
+            if (result.status == 200){ 
+                console.log(result.data); 
+                proposta.pagamento.cartao.numeroCartao = result.data.ticket;
+            }
+        }catch(error){ console.log(error); }
+    }    
+
+    try{
+        let propostaUrl = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
+        let result = await axios.post(propostaUrl, proposta, header).catch((error)=>{ console.log(error.response.data); });
+        if (result.status == 200){            
+            let proposta = {
+                criadoEm: new Date(),
+                proposta: { 
+                    numeroProposta: result.data.numeroProposta || '', 
+                    numeroVersaoProposta: result.data.numeroVersaoProposta || '' },
+                    numeroOrcamento: body.orcamento.numeroOrcamento || '',
+                usuario:{ 
+                    id: user.id || '', 
+                    nome: user.pessoaFisica.nome || '', 
+                    cpf: user.pessoaFisica.cpf || '', 
+                    email: user.email || '' 
+                },
+                pagamento: {
+                    formaPagamento: pagamento.formaPagamento || '',
+                    quantidadeParcelas: pagamento.numeroParcelas || '',
+                    codigoBandeira: pagamento.codigoBandeira || '',
+                    ticket: '' || '' ,
+                }
+            }
+            orcamento.propostaCriada = true;
+            await orcamento.save();
+            
+            let entry = new Propostas(proposta); 
+            entry = await entry.save();
+
+            console.log(result.data);
+        }
+    }catch(error){
+        console.log(error);
+    }
+    //console.log('---');
+    //console.log(result);
+    //console.log(result.data);
+    return res.status(400).json({mesage: "", id: 11});//proposta: result.data, id: 11});
+
+    
+    /*let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
+    let result = await axios.post(request_url, _proposta, header).catch((error)=>{ console.log(error.response.data); });
+
+
+
+    
+    
+
     /*
 
     if (formData.segurado.numeroTelefone){ formData.segurado.numeroTelefone = formData.segurado.numeroTelefone.replace(/\D/g, ''); }
 
     let pessoaFisica = user.pessoaFisica;
     
-    let dataNascimento = pessoaFisica.dataNascimento.toString();
-    dataNascimento = dataNascimento.split('-');
-    dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
-    
-    let documento = pessoaFisica.documento;
 
-    let dataExpedicao = documento.dataExpedicao.toString();
-    dataExpedicao = dataExpedicao.split('-');
-    dataExpedicao = `${dataExpedicao[2]}-${dataExpedicao[1]}-${dataExpedicao[0]}`;
     
     let proposta = {
         "numeroOrcamento": data.orcamento.numeroOrcamento,
@@ -278,15 +331,7 @@ router.post("/", async (req, res) => {
         }
     };
 
-    let numeroTelefone = formData.segurado.numeroTelefone.replace(/[^0-9]+/g, "");
-    if (numeroTelefone.length == 10){ proposta.segurado.contato.numeroTelefoneResidencial = numeroTelefone; }
-    if (numeroTelefone.length == 11){ proposta.segurado.contato.numeroTelefoneCelular = numeroTelefone; }
 
-    let politicamenteExposta = {
-        "cpf": pessoaFisica.politicamenteExposta.cpf,
-        "nome": pessoaFisica.politicamenteExposta.nome,
-        "codigoGrauRelacionamento": pessoaFisica.politicamenteExposta.grauRelacionamento
-    };
     console.log('A:', proposta);
     if (pessoaFisica.pessoaPoliticamenteExposta == 3){ proposta.segurado.pessoaFisica.pessoaPoliticamenteExposta = politicamenteExposta; }
     console.log('B:', proposta);
@@ -382,13 +427,13 @@ router.post("/", async (req, res) => {
             }
         }
     };
- */
+ 
     let token = await authToken();
     let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
     let url = 'https://portoapi-hml.portoseguro.com.br/re/residencial/v1/habitual/propostas';
     let result = await axios.post(url, _proposta, header).catch((error)=>{ console.log(error.response.data); });
     console.log(result);
-    console.log(result.data);
+    console.log(result.data);*/
     /*let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
     let result = await axios.post(request_url, _proposta, header).catch((error)=>{ console.log(error.response.data); });
     
@@ -415,7 +460,7 @@ router.post("/", async (req, res) => {
     proposta = new Propostas(novaProposta);
     proposta = await proposta.save();
     //console.log(result.data);*/
-    return res.status(400).json({mesage: "", proposta: result.data});
+    
 });
 
 module.exports = router;
