@@ -245,6 +245,7 @@ $(document).ready(function() {
 
     //$("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
     var tempoVigencia = 0;
+    var inicializarCards = [true, false, false];
 
     var buttonHabitual = $("#btn-plano-1");
     var buttonHabitualPremium = $("#btn-plano-2");
@@ -342,6 +343,9 @@ $(document).ready(function() {
 
         encryptedData = encryptedData.formData;
 
+        $('.my-pills-link').removeClass('active');
+        $('#btn-vigencia-1').addClass('active');
+
         gerarToggleSwitch();
         /*let todasInputRange = $('input[type="range"]');
 
@@ -427,9 +431,26 @@ $(document).ready(function() {
         setTimeout(()=>{ apiCallOrcamento('habitual-premium', 0); }, 150); 
         setTimeout(()=>{ apiCallOrcamento('veraneio', 0); }, 300);
 
-        setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 450);
-        setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 600);
-        setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 750);
+        $('#btn-vigencia-2').on('click', ()=>{
+            if (!inicializarCards[1]){
+                limparCards();
+                setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 10); 
+                setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 150); 
+                setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 300);
+                inicializarCards[1] = true;
+            }
+        });
+
+        //setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 450);
+        //setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 600);
+        //setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 750);
+    }
+
+    function limparCards(){
+        let card = $('.card-price')
+        card.html('<span class="parcela">--x</span> --,--<span class="period" style="display: none;">Sem Juros</span>');
+        let cardContainer = card.parent();
+        cardContainer.children('p.text-center').html('Valor Total: -- ');
     }
 
     function gerarToggleSwitch(){
@@ -462,12 +483,15 @@ $(document).ready(function() {
         console.log(encryptedData);
         localStorage.setItem('finalData', JSON.stringify(encryptedData));
 
+        let payload = JSON.parse(JSON.stringify(orcamento));
+        payload.coberturas = valoresCobertura[produto];
+
         $("#loading-screen").show();
         try {
             const response = await fetch("/planos/salvar-orcarmento", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
-                body: JSON.stringify(orcamento),
+                body: JSON.stringify(payload),
             });
             if (response.ok) {
                 let data = await response.json();
