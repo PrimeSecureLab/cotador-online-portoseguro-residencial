@@ -1,4 +1,5 @@
 $("#loading-screen").hide();
+
 $(document).ready(function () { 
     $('input#cpf_pessoa_exposta').mask('000.000.000-00');
     
@@ -17,25 +18,19 @@ if (!finalData){ finalData = {}; }
 if (!finalData.orcamento){ finalData.orcamento = {}; }
 
 var orcamento = finalData.orcamento;
-console.log(orcamento);
+//console.log(orcamento);
 if (orcamento.numeroOrcamento){ $("input#protocolo").val(orcamento.numeroOrcamento); }
-if (orcamento.tipo == "habitual"){ 
-    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano'); 
-}
-if (orcamento.tipo == "veraneio"){ 
-    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); 
-}
-if (orcamento.tipo == "habitual-premium"){ 
-    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); 
-}
+if (orcamento.tipo == "habitual"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano'); }
+if (orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); }
+if (orcamento.tipo == "habitual-premium"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); }
 
 $.ajax({
     url: '/datalayer',
     type: 'POST',
     contentType: 'application/json',
     data: JSON.stringify({etapa: 'step-5', page: 'cadastro', orcamento: orcamento}),
-    success: function(res) { console.log('Sucesso:', res); },
-    error: function(xhr, status, error) { console.error('Error:', error); }
+    success: function(res) { /*console.log('Sucesso:', res);*/ },
+    error: function(xhr, status, error) { /*console.error('Error:', error);*/ }
 });
 
 if (orcamento.listaParcelamento){
@@ -64,15 +59,12 @@ if (orcamento.listaParcelamento){
 }
 
 //console.log(finalData);
-$("input#email").on("input", ()=>{ 
-    if ($('label#_email-error').length){ $('label#_email-error').html(""); } 
-});
-$("input#senha").on("input", ()=>{ 
-    if ($('label#_senha-error').length){ $('label#_senha-error').html(""); } });
+$("input#email").on("input", ()=>{ if ($('label#_email-error').length){ $('label#_email-error').html(""); } });
+$("input#senha").on("input", ()=>{ if ($('label#_senha-error').length){ $('label#_senha-error').html(""); } });
 $("select").on("change", (e)=>{
     let selectId = e.target.id;
     if ($(`select#${selectId}`).hasClass('error')){ $(`select#${selectId}`).removeClass('error'); $(`label#${selectId}-error`).remove(); }
-})
+});
 
 document.getElementById("form-register").addEventListener("submit", async (event)=>{
     event.preventDefault(); 
@@ -127,7 +119,7 @@ document.getElementById("form-register").addEventListener("submit", async (event
             $('#form-register select').removeClass('error');
             $('label.error').remove();
             let data = await response.json();
-            console.log(data);
+            //console.log(data);
             data.errors.map((error, index)=>{
                 if ($(`input#${error.id}`).length){
                     $(`input#${error.id}`).addClass('error');
@@ -144,83 +136,10 @@ document.getElementById("form-register").addEventListener("submit", async (event
             });
         }
     } catch (error) {
-        console.error(error);
-        console.error("Não foi possível estabeleces uma conexão com o servidor.");
+        //console.error(error);
+        //console.error("Não foi possível estabeleces uma conexão com o servidor.");
         //$("#loading-screen").hide();
     }
-    
-    /*let form = {
-        email: document.getElementById("email").value,
-        senha: document.getElementById("senha").value,
-        confirmSenha: document.getElementById("confirm_senha").value
-    }
-    let errorLabels = {
-        email: document.getElementById("email-error"),
-        senha: document.getElementById("senha-error"),
-        confirm_senha: document.getElementById("confirm_senha-error")
-    }
-    if (form.email.length < 5 || !form.email.includes('@') || !form.email.includes('.')){ 
-        if (!$("label#_email-error").length){ 
-            $('<label id="_email-error" class="_error" for="email" style="color: red"></label>').insertAfter('input#email'); 
-        }
-        $('label#_email-error').html('O e-mail inserido não é válido');
-        loading = false; 
-        return; 
-    }
-    if (form.senha.length < 8){ 
-        if (!$("label#_senha-error").length){ 
-            $('<label id="_senha-error" class="_error" for="senha" style="color: red"></label>').insertAfter('input#senha'); 
-        }
-        $('label#_senha-error').html('Sua senha deve ter no mínimo 8 caracteres');
-        loading = false; 
-        return; 
-    }
-    if (form.senha != form.confirmSenha){ loading = false; return; }
-
-    let data = { login: { email: form.email, senha: form.senha }, data: finalData};
-    try{
-        $("#loading-screen").show();
-        const response = await fetch( "/cadastro", { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" }, 
-            body: JSON.stringify(data)
-        });
-        if (response.ok) {
-            let data = await response.json();
-            $("#loading-screen").hide();
-            window.location.href = "/pagamento";
-        } else if (response.status === 400) {
-            let data = await response.json();
-            if (!data.fatal){
-                if (data.id == "email"){
-                    if (!$("label#_email-error").length){ 
-                        $('<label id="_email-error" class="_error" for="email" style="color: red"></label>').insertAfter('input#email'); 
-                    }
-                    $('label#_email-error').html(data.message);
-                }
-                if (data.id == "senha"){
-                    if (!$("label#_senha-error").length){ 
-                        $('<label id="_senha-error" class="_error" for="senha" style="color: red"></label>').insertAfter('input#senha'); 
-                    }
-                    $('label#_senha-error').html(data.message);
-                }
-            }
-            //if (data.code == 30){
-            //    if (!$("label#_email-error").length){ 
-            //        $('<label id="_email-error" class="_error" for="email" style="color: red"></label>').insertAfter('input#email'); 
-            //    }
-            //    $('label#_email-error').html('Já existe uma conta utilizando este endereço de e-mail');
-            //}
-            console.error("Erro:", data);
-        } else {
-            console.error("Ocorreu um erro inesperado.");
-        }
-        $("#loading-screen").hide();
-    } catch (error) {
-        console.error(error);
-        console.error("Não foi possível estabeleces uma conexão com o servidor.");
-        $("#loading-screen").hide();
-    }*/
 });
 
 function visualizarSenha() {
@@ -228,13 +147,9 @@ function visualizarSenha() {
     var confirmSenha = document.getElementById("confirm_senha");
     var checkBox = document.getElementById("visualizar_senha");
 
-    if (checkBox.checked) { senha.type = "text";
-        confirmSenha.type = "text";
-    } else {
-        senha.type = "password";
-        confirmSenha.type = "password";
-    }
+    if (checkBox.checked) { senha.type = "text"; confirmSenha.type = "text"; } else { senha.type = "password"; confirmSenha.type = "password"; }
 }
+
 $(function () {
     $("#form-register").validate({
       rules: {
@@ -277,8 +192,3 @@ $(function () {
     });
 });
 
-/*$(document).ready(function () {
-    if (loading){ loading = false; }
-    //$('#numero-cartao').mask('0000 0000 0000 0000');
-    
-});*/

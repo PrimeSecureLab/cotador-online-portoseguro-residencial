@@ -1,14 +1,8 @@
 function visualizarSenha() {
-  var senha = document.getElementById("senha-login");
-  var checkBox = document.getElementById("visualizar_senha");
+    var senha = document.getElementById("senha-login");
+    var checkBox = document.getElementById("visualizar_senha");
 
-  if (checkBox.checked) {
-    senha.type = "text";
-    confirmSenha.type = "text";
-  } else {
-    senha.type = "password";
-    confirmSenha.type = "password";
-  }
+    if (checkBox.checked) { senha.type = "text"; confirmSenha.type = "text"; } else { senha.type = "password"; confirmSenha.type = "password"; }
 }
 
 function enviarEmail(){
@@ -23,6 +17,7 @@ function enviarEmail(){
     }
     if (!email.val()){ return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())){ return; }
+
     $.ajax({
         url: '/recuperar-senha/esqueceu-a-senha',
         type: 'POST',

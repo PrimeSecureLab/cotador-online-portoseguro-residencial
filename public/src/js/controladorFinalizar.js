@@ -7,7 +7,7 @@ var loading = false;
 if (localData){ localData = JSON.parse(localData); }
 if (!localData.itemData){ window.location.href = './planos'; loading = true; }
 if (!localData.orcamento && !loading){ window.location.href = './planos'; loading = true; }
-console.log(localData)
+//console.log(localData)
 
 var orcamento = localData.orcamento;
 if (!orcamento.numeroOrcamento && !loading){ window.location.href = './planos'; loading = true; }
@@ -194,15 +194,15 @@ $(document).ready(function () {
                         $(`label#_${error.id}-error`).html(error.message);
                     });
                 }
-                console.error("Erro:", data);
+                //console.error("Erro:", data);
             } else {
-                console.error("Ocorreu um erro inesperado.");
+                //console.error("Ocorreu um erro inesperado.");
             }
             $("#loading-screen").hide();
         } catch (error) {
             $("#loading-screen").hide();
-            console.error(error);
-            console.error("Não foi possível estabeleces uma conexão com o servidor.");
+            //console.error(error);
+            //console.error("Não foi possível estabeleces uma conexão com o servidor.");
         }
     });
 });
