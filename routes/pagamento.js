@@ -214,8 +214,8 @@ router.post("/", async (req, res) => {
     }    
 
     try{
-        let propostaUrl = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
-        let result = await axios.post(propostaUrl, proposta, header).catch((error)=>{ console.log(error.response.data); });
+        let url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;
+        let result = await axios.post(url, proposta, header).catch((error)=>{ console.log(error.response.data); });
         if (result.status == 200){            
             let proposta = {
                 criadoEm: new Date(),
