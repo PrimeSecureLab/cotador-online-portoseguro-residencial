@@ -433,7 +433,7 @@ $(document).ready(function() {
 
         $('#btn-vigencia-2').on('click', ()=>{
             if (!inicializarCards[1]){
-                limparCards();
+                limparCards(1); limparCards(2); limparCards(3);
                 setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 10); 
                 setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 150); 
                 setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 300);
@@ -446,8 +446,8 @@ $(document).ready(function() {
         //setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 750);
     }
 
-    function limparCards(){
-        let card = $('.card-price')
+    function limparCards(index){
+        let card = $(`#card-price-${index}`)
         card.html('<span class="parcela">--x</span> --,--<span class="period" style="display: none;">Sem Juros</span>');
         let cardContainer = card.parent();
         cardContainer.children('p.text-center').html('Valor Total: -- ');
@@ -594,11 +594,13 @@ $(document).ready(function() {
     } 
     
     function atualizarVigencia(produto, vigencia){
+        
         let produtos = ['habitual', 'habitual-premium', 'veraneio'];
         let index = produtos.indexOf(produto);
         index = index + 1;
 
         tempoVigencia = vigencia;
+        
 
         let mainContainer = $(`.card-price#card-price-${index}`).parent();
         let priceContainer = $(`.card-price#card-price-${index}`);
@@ -607,9 +609,12 @@ $(document).ready(function() {
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
         let button = $(`#btn-plano-${index}`);
 
-        let card = dadosCobertura[produto].card[vigencia];
-        console.log(dadosCobertura[produto]);
 
+        console.log(dadosCobertura[produto]);
+        let cobertura = dadosCobertura[produto] || {};
+        let card = cobertura.card[vigencia] || false;
+        if (!card){ return; }
+        
         let numeroParcelas = card.numeroParcelas; 
         let primeiraParcela = card.primeiraParcela;
         //let demaisParcelas = card.demaisParcelas;
