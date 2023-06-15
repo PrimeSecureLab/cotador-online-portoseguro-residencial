@@ -17,10 +17,17 @@ if (!finalData){ finalData = {}; }
 if (!finalData.orcamento){ finalData.orcamento = {}; }
 
 var orcamento = finalData.orcamento;
-if (orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
-if (orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
-if (orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
+console.log(orcamento);
 if (orcamento.numeroOrcamento){ $("input#protocolo").val(orcamento.numeroOrcamento); }
+if (orcamento.tipo == "habitual"){ 
+    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano'); 
+}
+if (orcamento.tipo == "veraneio"){ 
+    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); 
+}
+if (orcamento.tipo == "habitual-premium"){ 
+    $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); 
+}
 
 $.ajax({
     url: '/datalayer',

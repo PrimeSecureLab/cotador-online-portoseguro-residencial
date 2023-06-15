@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     // Verifica se sessão possui user_id;
     let session = (req.session) ? req.session : {};
-    if (!session.user_id){ return res.status(400).json({fatal: 1, id: 0}); }
+    if (!session.user_id){ return res.status(400).json({message:'Você deve estar logado para finalizar a transação.', fatal: true, id: 0}); }
 
     // Verifica se user_id é válido
     let user = await Usuarios.findOne({_id: session.user_id});
@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
     let orcamento = await Orcamentos.findOne({numeroOrcamento: body.orcamento.numeroOrcamento});
     if (!orcamento){ orcamento = {}; }//.propostaCriada = true; await orcamento.save(); }
     
-    if (orcamento.propostaCriada){ return res.status(400).json({redirect: '/planos', id: 6}); } // Orçamento ja teve proposta realizada
+    if (orcamento.propostaCriada && process.env.AMBIENTE != 'SANDBOX'){ return res.status(400).json({redirect: '/planos', id: 6}); } // Orçamento ja teve proposta realizada
 
     let formData = validacaoCotacao.decriptarDados(body.formData);
     if (!formData){ return res.status(400).json({redirect: '/', id: 7}); }
@@ -250,7 +250,7 @@ router.post("/", async (req, res) => {
     //console.log('---');
     //console.log(result);
     //console.log(result.data);
-    return res.status(400).json({mesage: "", id: 11});//proposta: result.data, id: 11});
+    return res.status(200).json({mesage: "Proposta foi criada com sucesso."});//proposta: result.data, id: 11});
 
     
     /*let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;

@@ -61,16 +61,13 @@ $(document).ready(function () {
     $("input#protocolo").val(orcamento.numeroOrcamento);
 
     if (localData.orcamento.tipo == "habitual"){ 
-        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
-        $("input#plano-escolhido").val(`Essencial - ${vigencia}`); 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano');
     }
     if (localData.orcamento.tipo == "veraneio"){ 
-        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
-        $("input#plano-escolhido").val(`Conforto - ${vigencia}`); 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); 
     }
     if (localData.orcamento.tipo == "habitual-premium"){ 
-        let vigencia = (orcamento.vigencia > 1) ? `${orcamento.vigencia} Anos` : `${orcamento.vigencia} Ano`;
-        $("input#plano-escolhido").val(`Exclusive - ${vigencia}`); 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); 
     }
 
     let juros = true;
@@ -184,6 +181,7 @@ $(document).ready(function () {
                     error: function(xhr, status, error) { console.error('Error:', error); }
                 });
                 localStorage.removeItem("finalData");
+                localStorage.removeItem("formData");
                 $("#loading-screen").hide();
                 window.location.href = "./obrigado";
             } else if (response.status === 400) {

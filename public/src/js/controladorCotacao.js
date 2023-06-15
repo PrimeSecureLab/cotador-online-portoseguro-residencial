@@ -24,7 +24,6 @@ $(document).ready(function() {
         contentType: 'application/json',
         data: JSON.stringify({}),
         success: function(form) { 
-            //console.log('Sucesso:', form); 
             for(let key in form){
                 if (key == 'criadoEm'){ continue; }
                 if (key == 'itens'){ continue; }
@@ -41,8 +40,8 @@ $(document).ready(function() {
                 valoresCobertura['generica'][key] = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
             }
             controleCoberturasGenerico();
-            console.log(form);
-            console.log(dadosCobertura['generica']);            
+            //console.log(form);
+            //console.log(dadosCobertura['generica']);            
         },
         error: function(xhr, status, error) { console.error('Error:', error); }
     });
@@ -54,9 +53,9 @@ $(document).ready(function() {
         pattern: /^[0-9]{5}-[0-9]{3}/      
     });
 
-    $(".datanascimento").mask("00-00-0000", {
+    $(".datanascimento").mask("00/00/0000", {
         translation: { 0: { pattern: /[0-9]/, }, },
-        pattern: /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/
+        pattern: /^[0-9]{4}\/(1[0-2]{1}|0[0-9]{1})\/([0-2]{1}[0-9]{1}|3[0-1]{1})/
     });
     
     let numeroTelefone = $(".numerotelefone");
@@ -392,8 +391,8 @@ document.getElementById("form").addEventListener("submit", async (event) => {
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(dataLayer),
-        success: function(res) { console.log('Sucesso:', res); },
-        error: function(xhr, status, error) { console.error('Error:', error); }
+        success: function(res) { /*console.log('Sucesso:', res);*/ },
+        error: function(xhr, status, error) { /*console.error('Error:', error);*/ }
     });
   
     try {
@@ -410,7 +409,7 @@ document.getElementById("form").addEventListener("submit", async (event) => {
             window.location.href = "./planos"; // Redireciona para página de planos
         } else if (response.status === 400) {
             const errorData = await response.json();
-            console.error("Erros:", errorData);
+            //console.error("Erros:", errorData);
             //Loop por array com erros vindos da API
             errorData.map((error, index)=>{ 
                 //erro = {error: mensagem de erro, field: id do campo com erro, step: etapa com erro}
@@ -423,16 +422,15 @@ document.getElementById("form").addEventListener("submit", async (event) => {
                     e.data.input.removeClass('error'); 
                 });
             });
-
             let currentStep = $(".form-step.active"); //JQuery para etapa atual
             let nextStep = $("#step-" + errorData[0].step); //JQuery para primeira etapa com um erro associado
             //Mudança para etapa com erro
             currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); });
         } else {
-            console.error("Ocorreu um erro ao enviar os dados Porto Seguro");
+            //console.error("Ocorreu um erro ao enviar os dados Porto Seguro");
         }
     } catch (error) {
-        console.error(error);
-        console.error("Ocorreu um erro ao enviar os dados para a Porto Seguro");
+        //console.error(error);
+        //console.error("Ocorreu um erro ao enviar os dados para a Porto Seguro");
     }
 });

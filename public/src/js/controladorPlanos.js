@@ -8,186 +8,13 @@ $(document).ready(function() {
         return (value / 1000000) + " milhão";
     }
     function setupRangeInput(config) {
-        // Atualiza o valor formatado ao carregar a página
         $("." + config.rangeValueClass).text(formatCurrency($("#" + config.inputId).val()));
-
-        // Atualiza o valor formatado quando o usuário ajusta o range
         $("#" + config.inputId).on("input", function() {
             $("." + config.rangeValueClass).text(formatCurrency($(this).val()));
             $("." + config.rangeValueClass).css("left", "calc(100% * (" + $(this).val() + " - " + $(this).attr("min") + ") / (" + $(this).attr("max") + " - " + $(this).attr("min") + "))");
         });
-    }
-    // Configuração dos Sliders
-    const incendioConfig = {
-        inputId: "valorcoberturaincendio",
-        rangeValueClass: "range-value0",
-        min: 10000,
-        max: 1000000
-    };
-    const substracaoBensConfig = {
-        inputId: "valorcoberturasubstracaobens",
-        rangeValueClass: "range-value1",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturapagamentoaluguelConfig = {
-        inputId: "valorcoberturapagamentoaluguel",
-        rangeValueClass: "range-value2",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturarcfamiliar = {
-        inputId: "valorcoberturarcfamiliar",
-        rangeValueClass: "range-value3",
-        min: 10000,
-        max: 1000000
-    };
-    const valorCoberturaDanosEletricos = {
-        inputId: "valorcoberturadanoseletricos",
-        rangeValueClass: "range-value4",
-        min: 10000,
-        max: 1000000
-    };
-    const valorCoberturaVendaval = {
-        inputId: "valorcoberturavendaval",
-        rangeValueClass: "range-value5",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturadesmoronamento = {
-        inputId: "valorcoberturadesmoronamento",
-        rangeValueClass: "range-value6",
-        min: 10000,
-        max: 1000000
-    }
-    const valorcoberturavazamentostanquestubulacoes = {
-        inputId: "valorcoberturavazamentostanquestubulacoes",
-        rangeValueClass: "range-value7",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturaquebravidros = {
-        inputId: "valorcoberturaquebravidros",
-        rangeValueClass: "range-value8",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturapagamentocondominio = {
-        inputId: "valorcoberturapagamentocondominio",
-        rangeValueClass: "range-value9",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturamorteacidental = {
-        inputId: "valorcoberturamorteacidental",
-        rangeValueClass: "range-value10",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturatremorterraterremoto = {
-        inputId: "valorcoberturatremorterraterremoto",
-        rangeValueClass: "range-value11",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturaalagamento = {
-        inputId: "valorcoberturaalagamento",
-        rangeValueClass: "range-value12",
-        min: 10000,
-        max: 1000000
-    };
-    const flagcontratarvalordenovo = {
-        inputId: "flagcontratarvalordenovo",
-        rangeValueClass: "range-value13",
-        min: 10000,
-        max: 1000000
-    };
-    const flaglmidiscriminado = {
-        inputId: "flaglmidiscriminado",
-        rangeValueClass: "range-value14",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturaedificio = {
-        inputId: "valorcoberturaedificio",
-        rangeValueClass: "range-value15",
-        min: 10000,
-        max: 1000000
-    };
-    const valorcoberturaconteudo = {
-        inputId: "valorcoberturaconteudo",
-        rangeValueClass: "range-value16",
-        min: 10000,
-        max: 1000000
-    };
-    const valorimpactoveiculos = {
-        inputId: "valorimpactoveiculos",
-        rangeValueClass: "range-value17",
-        min: 10000,
-        max: 1000000
-    };
-    const valorsubtracaobicicleta = {
-        inputId: "valorsubtracaobicicleta",
-        rangeValueClass: "range-value18",
-        min: 10000,
-        max: 1000000
-    };
-    const valornegociocasa = {
-        inputId: "valornegociocasa",
-        rangeValueClass: "range-value19",
-        min: 10000,
-        max: 1000000
-    };
-    const valorpequenasreformas = {
-        inputId: "valorpequenasreformas",
-        rangeValueClass: "range-value20",
-        min: 10000,
-        max: 1000000
-    };
-    const valorfuneralfamiliar = {
-        inputId: "valorfuneralfamiliar",
-        rangeValueClass: "range-value21",
-        min: 10000,
-        max: 1000000
-    };
-    const valordanosmorais = {
-        inputId: "valordanosmorais",
-        rangeValueClass: "range-value22",
-        min: 10000,
-        max: 1000000
-    };
-    const valorrcempregador = {
-        inputId: "valorrcempregador",
-        rangeValueClass: "range-value23",
-        min: 10000,
-        max: 1000000
-    }
-    // Inicializa os controles deslizantes com suas respectivas configurações
-    setupRangeInput(incendioConfig);
-    setupRangeInput(substracaoBensConfig);
-    setupRangeInput(valorcoberturapagamentoaluguelConfig);
-    setupRangeInput(valorcoberturarcfamiliar);
-    setupRangeInput(valorCoberturaDanosEletricos);
-    setupRangeInput(valorCoberturaVendaval);
-    setupRangeInput(valorcoberturadesmoronamento);
-    setupRangeInput(valorcoberturavazamentostanquestubulacoes);
-    setupRangeInput(valorcoberturaquebravidros);
-    setupRangeInput(valorcoberturapagamentocondominio);
-    setupRangeInput(valorcoberturamorteacidental);
-    setupRangeInput(valorcoberturatremorterraterremoto);
-    setupRangeInput(valorcoberturaalagamento);
-    setupRangeInput(flagcontratarvalordenovo);
-    setupRangeInput(flaglmidiscriminado);
-    setupRangeInput(valorcoberturaedificio);
-    setupRangeInput(valorcoberturaconteudo);
-    setupRangeInput(valorimpactoveiculos);
-    setupRangeInput(valorsubtracaobicicleta);
-    setupRangeInput(valornegociocasa);
-    setupRangeInput(valorpequenasreformas);
-    setupRangeInput(valorfuneralfamiliar);
-    setupRangeInput(valordanosmorais);
-    setupRangeInput(valorrcempregador);
-    
+    }    
+
     var relacaoItemId = [];
     var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
     'valorCoberturaDanosEletricos', 'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaVazamentosTanquesTubulacoes', 'valorCoberturaQuebraVidros', 
@@ -205,31 +32,19 @@ $(document).ready(function() {
     $(".modal-dialog").on("click", function(e) { e.stopPropagation(); });
     $("div#modal-editar-plano1").on("click", function() { 
         salvarItens(); 
-        if (indexJanela > 0){ 
-            apiCallOrcamento(produto[indexJanela - 1], 0); 
-            apiCallOrcamento(produto[indexJanela - 1], 1); 
-        } 
+        if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1], 0); apiCallOrcamento(produto[indexJanela - 1], 1); } 
     });
     $("button#btn-save").on("click", function() { 
         salvarItens(); 
-        if (indexJanela > 0){ 
-            apiCallOrcamento(produto[indexJanela - 1], 0); 
-            apiCallOrcamento(produto[indexJanela - 1], 1); 
-        } 
+        if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1], 0); apiCallOrcamento(produto[indexJanela - 1], 1); } 
     });
     $("button.btn-close").on("click", function() { 
         salvarItens(); 
-        if (indexJanela > 0){ 
-            apiCallOrcamento(produto[indexJanela - 1], 0); 
-            apiCallOrcamento(produto[indexJanela - 1], 1); 
-        } 
+        if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1], 0); apiCallOrcamento(produto[indexJanela - 1], 1); } 
     });
     $("button#btn-cancel").on("click", function() { 
         salvarItens(); 
-        if (indexJanela > 0){ 
-            apiCallOrcamento(produto[indexJanela - 1], 0); 
-            apiCallOrcamento(produto[indexJanela - 1], 1); 
-        } 
+        if (indexJanela > 0){ apiCallOrcamento(produto[indexJanela - 1], 0); apiCallOrcamento(produto[indexJanela - 1], 1); } 
     });
     
     $("#editar-plano-1").on("click", function() { indexJanela = 1; configurarJanelaDePlano(); });
@@ -245,59 +60,26 @@ $(document).ready(function() {
 
     //$("button.btn-editar-plano").on("click", function() { atualizarInputs(encryptedData.itemData); });
     var tempoVigencia = 0;
-    var inicializarCards = [true, false, false];
 
     var buttonHabitual = $("#btn-plano-1");
     var buttonHabitualPremium = $("#btn-plano-2");
     var buttonVeraneio = $("#btn-plano-3");
 
-    buttonHabitual.on("click", function(e) { 
-        e.preventDefault(); 
-        if (!loadingProduto.habitual[tempoVigencia]){ 
-            salvarOrcamento('habitual'); 
-        } 
-    });
-    buttonHabitualPremium.on("click", function(e) { 
-        e.preventDefault(); 
-        if (!loadingProduto.habitualPremium[tempoVigencia]){ 
-            salvarOrcamento('habitual-premium'); 
-        } 
-    });
-    buttonVeraneio.on("click", function(e) { 
-        e.preventDefault(); 
-        if (!loadingProduto.habitualPremium[tempoVigencia]){ 
-            salvarOrcamento('veraneio'); 
-        } 
-    });
-
-    var tabVigencia = $(".my-pills-link");
-    tabVigencia.on("click", (e)=>{ 
-        tabVigencia.removeClass("active"); 
-        let tab = $(`#${e.target.id}`);
-        tab.addClass('active');
-
-        let index = tab.html().replace(/[^0-9]+/g, "");
-        index = parseInt(index) - 1;
-        if (index == tempoVigencia){ return; }
-
-        atualizarVigencia('habitual', index);
-        atualizarVigencia('habitual-premium', index);
-        atualizarVigencia('veraneio', index);
-    });
+    buttonHabitual.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitual[tempoVigencia]){ salvarOrcamento('habitual'); } });
+    buttonHabitualPremium.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium[tempoVigencia]){ salvarOrcamento('habitual-premium'); } });
+    buttonVeraneio.on("click", function(e) { e.preventDefault(); if (!loadingProduto.habitualPremium[tempoVigencia]){ salvarOrcamento('veraneio'); } });
 
     var produto = ['habitual', 'habitual-premium', 'veraneio'];
     var indexJanela = -1;
 
-    var tentativaTimeOut = {
-        habitual: [0, 0, 0],
-        habitualPremium: [0, 0, 0],
-        veraneio: [0, 0, 0]
-    };
-    var loadingProduto = { 
-        habitual: [false, false, false], 
-        habitualPremium: [false, false, false], 
-        veraneio: [false, false, false] 
-    };
+    var tentativaTimeOut = { habitual: [0, 0, 0], habitualPremium: [0, 0, 0], veraneio: [0, 0, 0] };
+
+    var loadingProduto = { habitual: [false, false, false], habitualPremium: [false, false, false], veraneio: [false, false, false] };
+
+    var produtoReady = [];
+    produtoReady[0] = [false, false, false];
+    produtoReady[1] = [false, false, false];
+    produtoReady[2] = [false, false, false];
 
     var valoresCobertura = [];
     var dadosCobertura = [];
@@ -338,8 +120,8 @@ $(document).ready(function() {
         if (storageCobertura.veraneio){ coberturas.veraneio = storageCobertura.veraneio; }
         if (coberturas.veraneio.valorcoberturaincendio){ dadosCobertura['veraneio'] = storageCobertura.veraneio; }
 
-        console.log('encryptedData:', encryptedData);
-        console.log('Coberturas:', coberturas);
+        //console.log('encryptedData:', encryptedData);
+        //console.log('Coberturas:', coberturas);
 
         encryptedData = encryptedData.formData;
 
@@ -347,81 +129,6 @@ $(document).ready(function() {
         $('#btn-vigencia-1').addClass('active');
 
         gerarToggleSwitch();
-        /*let todasInputRange = $('input[type="range"]');
-
-        $.ajax({
-            url: '/formulario',
-            type: 'GET',
-            contentType: 'application/json',
-            data: JSON.stringify({}),
-            success: function(form) { 
-                let itens = form.itens;
-                let empty = [];               
-                if (!itens){ itens = {}; }
-                
-                if (!itens.habitual){ empty.push('habitual'); }
-                if (itens.habitual.valorcoberturaincendio && !empty.includes('habitual')){ empty.push('habitual'); }
-                
-                if (!itens.habitualPremium){ empty.push('habitual-premium'); }
-                if (itens.habitualPremium.valorcoberturaincendio && !empty.includes('habitual-premium')){ empty.push('habitual-premium'); }
-                
-                if (!itens.veraneio){ empty.push('veraneio'); }
-                if (itens.veraneio.valorcoberturaincendio && !empty.includes('veraneio')){ empty.push('veraneio'); }
-
-                if (!itens.generico){ empty.push('generico'); }
-                if (itens.generico.valorcoberturaincendio && !empty.includes('generico')){ empty.push('generico'); }
-
-                if (!empty.includes('generico')){ coberturaGenerica = itens.generico; }
-                
-                if (!empty.includes('habitual') || !empty.includes('habitual-premium') || !empty.includes('veraneio')){
-                    todasInputRange.each((index)=>{
-                        let input = todasInputRange[index];
-                        if (!empty.includes('habitual')){
-                            if (!dadosCobertura['habitual']){ dadosCobertura['habitual'] = {}; }
-                            dadosCobertura['habitual'].id = input.id;
-                            dadosCobertura['habitual'].value = itens.habitual.value;
-                            dadosCobertura['habitual'].min = input.min;
-                            dadosCobertura['habitual'].max = input.max;
-                            dadosCobertura['habitual'].disabled = itens.habitual.disabled;
-                            dadosCobertura['habitual'].display = true;
-                        }
-                    }); 
-                }
-                //
-                
-                todasInputRange.each((index)=>{ 
-                let input = todasInputRange[index];
-                    id: , 
-                    value: parseInt(cobertura.value), 
-                    min: cobertura.min, 
-                    max: cobertura.max, 
-                    disabled: (cobertura.disabled) ? true : false, 
-                    display: true
-                
-                console.log('Sucesso:', form); 
-                for(let key in form){
-                    if (key == 'criadoEm'){ continue; }
-                    if (key == 'itens'){ continue; }
-                    let input = $(`#${key}`);
-                    if (input.length){ input.val(form[key]); }
-                }
-                if (!form.itens){ form.itens = {}; }
-                if (!form.itens.generico){ form.itens.generico = {}; }
-                
-                for(let key in form.itens.generico){
-                    if (!dadosCobertura['generica'][key]){ continue; }
-                    dadosCobertura['generica'][key].value = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
-                    dadosCobertura['generica'][key].disabled = (form.itens.generico[key].disable);
-                    valoresCobertura['generica'][key] = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
-                }
-                controleCoberturasGenerico();
-                console.log(form);
-                console.log(dadosCobertura['generica']);    
-            },
-            error: function(xhr, status, error) { 
-                console.error('Error:', error); 
-            }
-        });*/  
 
         controleCoberturaMain('habitual');
         controleCoberturaMain('habitual-premium');
@@ -431,19 +138,37 @@ $(document).ready(function() {
         setTimeout(()=>{ apiCallOrcamento('habitual-premium', 0); }, 150); 
         setTimeout(()=>{ apiCallOrcamento('veraneio', 0); }, 300);
 
-        $('#btn-vigencia-2').on('click', ()=>{
-            if (!inicializarCards[1]){
-                limparCards(1); limparCards(2); limparCards(3);
-                setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 10); 
-                setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 150); 
-                setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 300);
-                inicializarCards[1] = true;
-            }
+        $('#btn-vigencia-1').on('click', ()=>{
+            //console.log(tempoVigencia);
+            let delay = 0;
+
+            if (!produtoReady[0][0]){ limparCards(1); setTimeout(()=>{ apiCallOrcamento('habitual', 0); }, delay); delay += 150; }
+            if (!produtoReady[0][1]){ limparCards(2); setTimeout(()=>{ apiCallOrcamento('habitual-premium', 0); }, delay); delay += 150; }
+            if (!produtoReady[0][2]){ limparCards(3); setTimeout(()=>{ apiCallOrcamento('veraneio', 0); }, delay); delay += 150; }
+
+            $(".my-pills-link").removeClass('active');
+            $('#btn-vigencia-1').addClass('active');
+
+            atualizarVigencia('habitual', 0);
+            atualizarVigencia('habitual-premium', 0);
+            atualizarVigencia('veraneio', 0);
         });
 
-        //setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, 450);
-        //setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, 600);
-        //setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, 750);
+        $('#btn-vigencia-2').on('click', ()=>{
+            //console.log(tempoVigencia);
+            let delay = 0;
+
+            if (!produtoReady[1][0]){ limparCards(1); setTimeout(()=>{ apiCallOrcamento('habitual', 1); }, delay); delay += 150; }
+            if (!produtoReady[1][1]){ limparCards(2); setTimeout(()=>{ apiCallOrcamento('habitual-premium', 1); }, delay); delay += 150; }
+            if (!produtoReady[1][2]){ limparCards(3); setTimeout(()=>{ apiCallOrcamento('veraneio', 1); }, delay); delay += 150; }   
+
+            $(".my-pills-link").removeClass('active');
+            $('#btn-vigencia-2').addClass('active');
+
+            atualizarVigencia('habitual', 1);
+            atualizarVigencia('habitual-premium', 1);
+            atualizarVigencia('veraneio', 1);
+        });
     }
 
     function limparCards(index){
@@ -480,7 +205,7 @@ $(document).ready(function() {
         orcamento.vigencia = tempoVigencia + 1;
         encryptedData.orcamento = orcamento;
         encryptedData.itemData = valoresCobertura[produto];
-        console.log(encryptedData);
+        //console.log(encryptedData);
         localStorage.setItem('finalData', JSON.stringify(encryptedData));
 
         let payload = JSON.parse(JSON.stringify(orcamento));
@@ -552,14 +277,14 @@ $(document).ready(function() {
                     tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
                     orcamentos[produto][vigencia] = false;
                     apiCallOrcamento(produto, vigencia); 
-                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
+                    //console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
                     return;
                 }
                 if (res.error && res.status > 499 && tentativaTimeOut[produtoUpperCase][vigencia] < 3){ 
                     tentativaTimeOut[produtoUpperCase][vigencia] += 1; 
                     orcamentos[produto][vigencia] = false;
                     apiCallOrcamento(produto, vigencia); 
-                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
+                    //console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status}, Tentativas: ${tentativaTimeOut[produtoUpperCase][vigencia]}`); 
                     return;
                 }
                 if (res.error && res.status != 200){
@@ -568,8 +293,9 @@ $(document).ready(function() {
                     if (stopLoading){ loadingScreen.hide(); }
                     tentativaTimeOut[produtoUpperCase][vigencia] = 0; 
                     orcamentos[produto][vigencia] = false;   
+                    produtoReady[vigencia][indexProduto] = true;
                     atualizarCard(produto, vigencia, {}, true);
-                    console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status} -`, res.data.messages);
+                    //console.log(`[${vigencia + 1} ANO] ${produto}: ${res.status} -`, res.data.messages);
                     return;
                 }
                 let stopLoading = true;
@@ -578,8 +304,9 @@ $(document).ready(function() {
                 tentativaTimeOut[produtoUpperCase][vigencia] = 0;  
                 orcamentos[produto][vigencia] = res.data;  
                 button.css('background-color', '');
+                produtoReady[vigencia][indexProduto] = true;
                 atualizarCard(produto, vigencia, res.data, false);
-                console.log(`[${vigencia + 1} ANO] ${produto}: OK`);
+                //console.log(`[${vigencia + 1} ANO] ${produto}: OK`);
             },
             error: function(xhr, status, error) {  
                 let stopLoading = true;
@@ -587,20 +314,21 @@ $(document).ready(function() {
                 if (stopLoading){ loadingScreen.hide(); }
                 tentativaTimeOut[produtoUpperCase][vigencia] = 0;    
                 loadingProduto[produtoUpperCase][vigencia] = false;
+                produtoReady[vigencia][indexProduto] = true;
                 atualizarCard(produto, vigencia, {}, true);
-                console.log(`[${vigencia + 1} ANO] ${produto}`, 'Error:', error, 'Status:', status); 
+                //console.log(`[${vigencia + 1} ANO] ${produto}`, 'Error:', error, 'Status:', status); 
             }
         });
     } 
     
     function atualizarVigencia(produto, vigencia){
-        
+        //console.log(vigencia)
         let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        let tituloPlano = ['ESSENCIAL', 'CONFORTO', 'EXCLUSIVE'];
         let index = produtos.indexOf(produto);
         index = index + 1;
 
         tempoVigencia = vigencia;
-        
 
         let mainContainer = $(`.card-price#card-price-${index}`).parent();
         let priceContainer = $(`.card-price#card-price-${index}`);
@@ -609,10 +337,15 @@ $(document).ready(function() {
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
         let button = $(`#btn-plano-${index}`);
 
+        let cardContainer = mainContainer.parent();
+        let titleContainer = cardContainer.children('h5.card-title');
+        let cardTitle = (vigencia == 0) ? `${tituloPlano[index-1]}` : `${tituloPlano[index-1]} - ${vigencia + 1} ANOS`;
+        titleContainer.html(cardTitle);
 
-        console.log(dadosCobertura[produto]);
+        //console.log(dadosCobertura[produto]);
         let cobertura = dadosCobertura[produto] || {};
         let card = cobertura.card[vigencia] || false;
+        //console.log('card:', card)
         if (!card){ return; }
         
         let numeroParcelas = card.numeroParcelas; 
@@ -632,15 +365,20 @@ $(document).ready(function() {
 
     function atualizarCard(produto, vigencia, data, error){
         let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+        let tituloPlano = ['ESSENCIAL', 'CONFORTO', 'EXCLUSIVE'];
         let index = produtos.indexOf(produto);
+        let cobertura = dadosCobertura[produto];
         if (index < 0){ return; }
         index = index + 1;
 
-        let mainContainer = $(`.card-price#card-price-${index}`).parent();
+        let mainContainer = $(`.card-price#card-price-${index}`).parent();        
         let priceContainer = $(`.card-price#card-price-${index}`);
         let totalContainer = mainContainer.children('p.text-center');
         let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
+
+        let cardContainer = mainContainer.parent();
+        let titleContainer = cardContainer.children('h5.card-title');
 
         if (error){
             if (tempoVigencia == vigencia){
@@ -649,17 +387,17 @@ $(document).ready(function() {
                 totalContainer.html(`Valor Total: R$--,--`);
                 parcelasContainer.html(`--x`);
                 jurosFlag.css('display', 'none');
-
-            }
-            if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-            dadosCobertura[produto].card[vigencia] = { 
-                numeroParcelas: '--', 
-                primeiraParcela: '--,--', 
-                demaisParcelas: '--,--', 
-                valorTotal: '--,--', 
-                displayJuros: 'none',
-                error: true
-            };
+            }            
+            if (!cobertura.card){ cobertura.card = []; }
+                cobertura.card = { 
+                    vigencia: vigencia,
+                    numeroParcelas: '--', 
+                    primeiraParcela: '--,--', 
+                    demaisParcelas: '--,--', 
+                    valorTotal: '--,--', 
+                    displayJuros: 'none',
+                    error: true
+                };
             return;
         }
         
@@ -685,27 +423,29 @@ $(document).ready(function() {
                 primeiraParcela = primeiraParcela.toFixed(2).replace(".", ",");
                 valorTotal = valorTotal.toFixed(2).replace(".", ",");
 
-                if (!dadosCobertura[produto].card){ dadosCobertura[produto].card = []; }
-                dadosCobertura[produto].card[vigencia] = { 
+                if (!cobertura.card){ cobertura.card = []; }
+                cobertura.card[vigencia] = { 
+                    vigencia: vigencia,
                     numeroParcelas: numeroParcelas, 
                     primeiraParcela: primeiraParcela, 
                     demaisParcelas: demaisParcelas, 
                     valorTotal: valorTotal, 
                     displayJuros: 'none',
                     error: false 
-                };
-                
+                };                
                 if (tempoVigencia == vigencia){
+                    let cardTitle = (vigencia == 0) ? `${tituloPlano[index-1]}` : `${tituloPlano[index-1]} - ${vigencia + 1} ANOS`;
                     let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
                     textParcela.each(function() { this.textContent = primeiraParcela; });
                     totalContainer.html(`Valor Total: R$${valorTotal}`);
                     parcelasContainer.html(`${numeroParcelas}x`);
                     //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
                     jurosFlag.css('display', 'none');
+                    titleContainer.html(cardTitle);
                 }
             }
         });
-        console.log(dadosCobertura);
+        //console.log('dadosCobertura:', dadosCobertura);
         return;
     }
     
@@ -718,8 +458,8 @@ $(document).ready(function() {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(payload),
-            success: function(res) { console.log('Sucesso:', res); },
-            error: function(xhr, status, error) { console.error('Error:', error); }
+            success: function(res) { /*console.log('Sucesso:', res);*/ },
+            error: function(xhr, status, error) { /*console.error('Error:', error);*/ }
         });
     }
 
@@ -754,13 +494,45 @@ $(document).ready(function() {
     }
 
     function controleCoberturaMain(event){
-        console.log(event, dadosCobertura);
+        //console.log(event, dadosCobertura);
         var produto = event;
         if (produto != 'habitual' && produto != 'habitual-premium' && produto != 'veraneio'){ produto = event.data.param1; }
         let inputs = {};
         let inputChange = this.id;
         let todasInputRange = $('input[type="range"]');
-        
+
+        var premiumBaseValue = {}
+        premiumBaseValue.valorcoberturaincendio = 5000000;
+        premiumBaseValue.valorcoberturasubstracaobens = 150000;
+        premiumBaseValue.valorcoberturapagamentoaluguel = 40000;
+        premiumBaseValue.valorcoberturarcfamiliar = 50000;
+        premiumBaseValue.valorcoberturadanoseletricos = 160000;
+        premiumBaseValue.valorcoberturavendaval = 60000;
+        premiumBaseValue.valorcoberturadesmoronamento = 15000;
+        premiumBaseValue.valorcoberturavazamentostanquestubulacoes = 40000;
+        premiumBaseValue.valorcoberturaquebravidros = 90000;
+        premiumBaseValue.valorcoberturapagamentocondominio = 1300;
+        premiumBaseValue.valorcoberturatremorterraterremoto = 15000;
+        premiumBaseValue.valorcoberturaalagamento = 20000;
+        premiumBaseValue.valorimpactoveiculos = 160000;
+        premiumBaseValue.valorsubtracaobicicleta = 2500;
+        premiumBaseValue.valornegociocasa = 20000;
+        premiumBaseValue.valorpequenasreformas = 60000;
+        premiumBaseValue.valordanosmorais = 5000;
+
+        var veraneioBaseValue = {}
+        veraneioBaseValue.valorcoberturaincendio = 450000;
+        veraneioBaseValue.valorcoberturasubstracaobens = 60000;
+        veraneioBaseValue.valorcoberturarcfamiliar = 10000;
+        veraneioBaseValue.valorcoberturadanoseletricos = 75000;
+        veraneioBaseValue.valorcoberturavendaval = 75000;
+        veraneioBaseValue.valorcoberturadesmoronamento = 10000;
+        veraneioBaseValue.valorcoberturavazamentostanquestubulacoes = 25000;
+        veraneioBaseValue.valorcoberturaquebravidros = 35000;
+        veraneioBaseValue.valorcoberturatremorterraterremoto = 10000;
+        veraneioBaseValue.valorcoberturaalagamento = 10000;
+        veraneioBaseValue.valorimpactoveiculos = 90000;
+
         if (!dadosCobertura[produto].valorcoberturaincendio){
             todasInputRange.each((index)=>{ 
                 let input = todasInputRange[index];
@@ -768,7 +540,6 @@ $(document).ready(function() {
 
                 if (!cobertura){ cobertura = input; }
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
-
                 inputs[input.id] = { 
                     id: input.id, 
                     value: parseInt(cobertura.value), 
@@ -777,6 +548,26 @@ $(document).ready(function() {
                     disabled: (cobertura.disabled) ? true : false, 
                     display: true 
                 };
+                if (produto == 'habitual-premium'){
+                    inputs[input.id] = { 
+                        id: input.id, 
+                        value: (premiumBaseValue[input.id]) ? premiumBaseValue[input.id] : parseInt(cobertura.value), 
+                        min: cobertura.min, 
+                        max: cobertura.max, 
+                        disabled: (cobertura.disabled) ? true : false, 
+                        display: true 
+                    };
+                }
+                if (produto == 'veraneio'){
+                    inputs[input.id] = { 
+                        id: input.id, 
+                        value: (veraneioBaseValue[input.id]) ? veraneioBaseValue[input.id] : parseInt(cobertura.value), 
+                        min: cobertura.min, 
+                        max: cobertura.max, 
+                        disabled: (cobertura.disabled) ? true : false, 
+                        display: true 
+                    };
+                }                
             });
         }else{
             todasInputRange.each((index)=>{ 
@@ -786,14 +577,7 @@ $(document).ready(function() {
                 if (!cobertura){ cobertura = input;}
                 if (inputChange && inputChange == input.id){ cobertura.value = this.value; }
 
-                inputs[input.id] = { 
-                    id: input.id, 
-                    value: cobertura.value, 
-                    min: cobertura.min, 
-                    max: cobertura.max, 
-                    disabled: (cobertura.disabled) ? true : false, 
-                    display: true 
-                };
+                inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled) ? true : false, display: true };
             });
         }
 
@@ -807,7 +591,7 @@ $(document).ready(function() {
         inputs.valorcoberturaincendio.max = (tipoResidencia == 2) ? 700000 : 1000000;
 
         if (produto == 'habitual-premium'){ inputs.valorcoberturaincendio.min = (tipoResidencia == 2) ? 7100000 : 1100000; inputs.valorcoberturaincendio.max = 20000000; }
-        if (produto == 'veraneio'){ inputs.valorcoberturaincendio.max = (tipoResidencia == 3 || tipoResidencia == 8) ? 700000 : 10000000; }
+        if (produto == 'veraneio'){ inputs.valorcoberturaincendio.max = (tipoResidencia == 3 || tipoResidencia == 8) ? 700000 : 4000000; }
 
         if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; }
         if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; }
@@ -904,7 +688,7 @@ $(document).ready(function() {
             inputs.valorpequenasreformas.max = 200000; //R$200.00 da Básica
             //inputs.valorpequenasreformas.disabled = (residencia == 5 || residencia == 6 || residencia == 7);
     
-            inputs.valorcoberturapagamentocondominio.min = 300;
+            inputs.valorcoberturapagamentocondominio.min = 500;
             inputs.valorcoberturapagamentocondominio.max = 5000;
     
             inputs.valorcoberturaquebravidros.min = 2000;
@@ -1152,10 +936,10 @@ $(document).ready(function() {
                 }
                 dadosCobertura[produto][input.id].disabled = !(dadosCobertura[produto][input.id].disabled);
                 inputElement.prop("disabled", dadosCobertura[produto][input.id].disabled);
-                console.log(input.id, !(dadosCobertura[produto][input.id].disabled));
+                //console.log(input.id, !(dadosCobertura[produto][input.id].disabled));
 
                 controleCoberturaMain(produto);
-                console.log(valoresCobertura);
+                //console.log(valoresCobertura);
                 //controleCoberturasHabitual();
                 return;
             });
@@ -1169,5 +953,5 @@ $(document).ready(function() {
     }
 
     validacaoInicial();        
-    console.log(encryptedData);
+    //console.log(encryptedData);
 });
