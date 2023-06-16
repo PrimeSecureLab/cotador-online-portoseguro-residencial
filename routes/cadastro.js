@@ -7,6 +7,8 @@ const Usuarios = require('../collections/usuarios');
 const validation = require('../configs/validation');
 const orgaoEmissor = require('../configs/orgaoEmissor');
 
+const NodeMailer = require('../configs/nodeMailer');
+
 const ValidarCotacao = require('../configs/validarCotacao');
 var validacaoCotacao = new ValidarCotacao;
 
@@ -41,6 +43,7 @@ router.post("/", async (req, res)=>{
     }else{
         let user = await Usuarios.findOne({ email: form.email.trim().toLowerCase() });
         if (user){ errorList.push({message: 'O email já esta em uso', id: 'email', value: form.email}); }
+        
     }
     if (form.senha.length < 8){
         if (!form.senha){
@@ -207,6 +210,10 @@ router.post("/", async (req, res)=>{
         conta = await conta.save(); 
         req.session.user_id = conta.id;
         req.session.sessionStart = new Date();
+        //console.log(conta);
+        let mailer = new NodeMailer();
+        mailer.controladorEmail(conta, 'conta-criada');
+
         return res.status(200).json({message: 'Cadastro realizado com sucesso!'});
     } catch (err) { 
         console.log(err); 

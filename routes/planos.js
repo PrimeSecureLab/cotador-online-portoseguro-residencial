@@ -15,12 +15,26 @@ router.get('/', (req, res) => { res.sendFile('planos.html', { root: 'public' });
 
 router.post('/salvar-orcarmento', async (req, res) => {
     let body = req.body;
-    console.log(body);
+    let session = (req.session) ? req.session : {};
+    let redirect = '/cadastro';
+
     if (!body){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
+
+    if (session.user_id){ 
+        let user = await Usuarios.findOne({_id: session.user_id});
+        if (!user){ 
+            if (!session.cotacao){ session.cotacao = {}; }
+            let cpf = session.cotacao.cpf || '000.000.000-00';
+            cpf = cpf.replace(/[^0-9]+/g, '');
+            user = await Usuarios.findOne({"pessoaFisica.cpf": body.cpf.replace(/[^0-9]+/g, '')});
+            if (user){ redirect = "/login"; }else{ redirect = "/cadastro" }            
+        }else{ redirect = "/pagamento"; }
+    }
+
     if (!body.numeroOrcamento){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
     
     let orcamento = await Orcamentos.findOne({numeroOrcamento: body.numeroOrcamento});
-    if (orcamento){ return res.status(200).json({redirect: "/login"}); }
+    if (orcamento){ return res.status(200).json({redirect: redirect}); }
 
     orcamento = {
         criadoEm: body.criadoEm || new Date(),
@@ -43,7 +57,7 @@ router.post('/salvar-orcarmento', async (req, res) => {
 
     let entry = new Orcamentos(orcamento);
     entry = await entry.save();
-    return res.status(200).json({redirect: "/login"});
+    return res.status(200).json({redirect: redirect});
 });
 
 // Define a rota para receber os dados do formulário
@@ -209,7 +223,7 @@ async function portoOrcamentoApi(produto, formData, token){
         delay += (data.vigencia - 1) * 30;
         setTimeout(async () => { 
             let request = await axios.post( url, payload, header).catch((error)=>{ 
-                console.log(error.response.status); resolve(error.response); 
+                console.log(produto + ':', error.response.status); resolve(error.response); 
             });
             resolve( request ); 
         }, delay);

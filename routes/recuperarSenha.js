@@ -11,6 +11,21 @@ dotenv.config()
 
 router.get('/', async (req, res) => { res.sendFile('recuperar-senha.html', { root: 'public' }); });
 
+router.post('/cancelar/:token', async (req, res) => {
+    let body = req.body;
+    let token = req.params.token;
+
+    if (!token){ return res.status(400).json({message: 'Desculpe, ocorreu um erro ao tentar cancelar a recuperação de senha.'}); }
+
+    let user = await Usuarios.findOne({'recuperarSenha.tokenCancelar': token});
+    if (!user){ return res.status(400).json({message: 'Desculpe, ocorreu um erro ao tentar cancelar a recuperação de senha.'}); }
+
+    user.recuperarSenha = undefined;
+    await user.save();
+
+    return res.status(200).json({message: 'Recuperação de senha cancelada com sucesso.'});
+});
+
 router.post('/esqueceu-a-senha', async (req, res) => {
     let data = req.body;
     if (!data){ return res.status(400).json({message: ''}); }
@@ -22,14 +37,14 @@ router.post('/esqueceu-a-senha', async (req, res) => {
     if (!user){ return res.status(400).json({message: ''}); }
 
     if (user.recuperarSenha){
-        const criadoEm = user.recuperarSenha.criadoEm;
-        let hoje = new Date();
-        if (!criadoEm){ criadoEm = new Date(); }else{ criadoEm = new Date(user.recuperarSenha.criadoEm.toString()); }
+        var criadoEm = new Date(user.recuperarSenha.criadoEm);
+        var hoje = new Date();
+        if (isNaN(criadoEm.getTime())){ criadoEm = new Date(); }
 
         let outdated = Math.abs(hoje.getTime() - criadoEm.getTime());
-        outdated = outdated / (1000 * 60 * 60);
+        outdated = outdated / (1000 * 60);
 
-        if (outdated < 1){ return res.status(400).json({message: 'Not outdated'}); }
+        if (outdated < 15){ return res.status(400).json({message: 'Aguarde mais alguns minutos antes de solicitar a alteração de senha novamente.'}); }
     }
 
     let tokenA = '';
@@ -44,8 +59,8 @@ router.post('/esqueceu-a-senha', async (req, res) => {
     );
     user = await user.save();
 
-    let mailer = new NodeMailer(user);
-    mailer.sendEmail(user, 'recuperar-senha');
+    let mailer = new NodeMailer();
+    mailer.controladorEmail(user, 'recuperar-senha');
 
     return res.status(200).json({message: ''});
 });
@@ -72,16 +87,19 @@ router.post('/:token', async (req, res)=>{
     if (!user.recuperarSenha.token){ return res.status(400).json({message: '', redirect: '/login'}); }
 
     let hoje = new Date();
-    let criadoEm = new Date(user.recuperarSenha.criadoEm.toString());
+    let criadoEm = new Date(user.recuperarSenha.criadoEm);
     
     let outdated = Math.abs(hoje - criadoEm);
-    outdated = Math.ceil(outdated / (1000 * 60 * 60));
+    outdated = Math.ceil(outdated / (1000 * 60 * 60 * 24));
 
     if (outdated > 24){ return res.status(400).json({message: '', redirect: '/login'}); }
 
     user.recuperarSenha = undefined;
     user.senha = CryptoJS.MD5(data.senha).toString();
     user = await user.save();
+
+    let mailer = new NodeMailer();
+    mailer.controladorEmail(user, 'senha-alterada');
 
     return res.status(200).json({message: 'Senha alterada com sucesso!', redirect: '/login'});
 });

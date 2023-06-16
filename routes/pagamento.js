@@ -9,6 +9,7 @@ const Propostas = require('../collections/propostas');
 const Orcamentos = require('../collections/orcamentos');
 const authToken = require('../configs/authToken');
 const validation = require('../configs/validation');
+const NodeMailer = require('../configs/nodeMailer');
 
 const ValidarCotacao = require('../configs/validarCotacao');
 var validacaoCotacao = new ValidarCotacao;
@@ -203,11 +204,11 @@ router.post("/", async (req, res) => {
             let url = `https://portoapi${subUrl}.portoseguro.com.br/re/cartoes/v1/cartoes?numeroCartao=${pagamento.numeroCartao}`;
             let payload = {"numeroCartao": pagamento.numeroCartao};
             let result = await axios.post(url, payload, header).catch((error)=>{ 
-                console.log(error.response.data); 
+                console.log('cartão-erro:', error.response.data); 
                 return res.status(400).json({fatal: false, errors: [{message: "Número de cartão inválido", id: "numero-cartao", id: 10}]});
             });
             if (result.status == 200){ 
-                console.log(result.data); 
+                console.log('cartão-sucesso:', result.data); 
                 proposta.pagamento.cartao.numeroCartao = result.data.ticket;
             }
         }catch(error){ console.log(error); }
@@ -243,6 +244,9 @@ router.post("/", async (req, res) => {
             entry = await entry.save();
 
             console.log(result.data);
+            let mailer = new NodeMailer();
+            mailer.controladorEmail({user: user, proposta: result.data}, 'proposta-criada');
+            return res.status(200).json({mesage: "Proposta foi criada com sucesso."});//proposta: result.data, id: 11});
         }
     }catch(error){
         console.log(error);
@@ -250,7 +254,7 @@ router.post("/", async (req, res) => {
     //console.log('---');
     //console.log(result);
     //console.log(result.data);
-    return res.status(200).json({mesage: "Proposta foi criada com sucesso."});//proposta: result.data, id: 11});
+    
 
     
     /*let request_url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/propostas`;

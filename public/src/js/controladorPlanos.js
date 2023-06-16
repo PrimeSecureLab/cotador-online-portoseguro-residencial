@@ -210,6 +210,7 @@ $(document).ready(function() {
 
         let payload = JSON.parse(JSON.stringify(orcamento));
         payload.coberturas = valoresCobertura[produto];
+        
 
         $("#loading-screen").show();
         try {
@@ -221,16 +222,16 @@ $(document).ready(function() {
             if (response.ok) {
                 let data = await response.json();
                 $("#loading-screen").hide();
-                window.location.href = './login';
+                window.location.href = data.redirect;//'./login';
             } else {
                 let data = await response.json();
                 $("#loading-screen").hide();
-                window.location.href = './login';
+                window.location.href = data.redirect;//'./login';
             } 
         } catch (error) {
             let data = await response.json();
             $("#loading-screen").hide();
-            window.location.href = './login';
+            window.location.href = data.redirect;//'./login';
         }      
     }
 

@@ -1,12 +1,14 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 class emailNovaSenha {
-    contructor(){
-        
-    }
+    contructor(){ }
+
     gerarEmailHTML(user){
         console.log(user);
-        let nome = this.user.pessoaFisica.nome;
-        let url = `http://localhost:3000/recuperar-senha/${this.user.recuperarSenha.token}`;
-        let urlCancelar = `http://localhost:3000/recuperar-senha/${this.user.recuperarSenha.tokenCancelar}`;
+        let nome = user.pessoaFisica.nome;
+        let url = `${process.env.URL_RAIZ}/recuperar-senha/${user.recuperarSenha.token}`;
+        let urlCancelar = `${process.env.URL_RAIZ}/cancelar/${user.recuperarSenha.tokenCancelar}`;
         let html = `
             <head>
                 <meta charset="UTF-8">
