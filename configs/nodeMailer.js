@@ -57,6 +57,8 @@ class NodeMailer {
         }
     }
     enviarEmail(subject, html, emailTo){
+        return; //Cancela o envio de emails por enquanto
+
         if (!html){ return; }
 
         var mailOptions = { from: this.emailFrom, to: emailTo, subject: subject, html: html };
