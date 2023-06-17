@@ -163,7 +163,7 @@ input[type=number] {
 }
 
 range {
-  color: #03a8db;
+  color: black;
 }
 
 .range-value0,
@@ -190,8 +190,9 @@ range {
 .range-value21,
 .range-value22,
 .range-value23 {
+  width: max-content;
   position: absolute;
-  top: -2rem;
+  top: -1.5rem;
   left: calc(3.0404%);
   transform: translateX(-50%);
   background-color: #1f88df;
@@ -288,7 +289,7 @@ input[type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   animate: 0.2s;
   box-shadow: 0px 0px 0px #000000;
-  background: #2497E3;
+  background: #2497E3; /*HERE*/
   border-radius: 1px;
   border: 0px solid #000000;
 }
@@ -372,11 +373,80 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #2497E3;
 }
+.container-toggle{
+  width: 45px; 
+  height: 25px; 
+  background-color: #C7C7C7; 
+  border-radius: 25px; 
+  position: absolute; 
+  border: 3px solid #C7C7C7; 
+  overflow: hidden; 
+  cursor: pointer;
+  right: 15px;
+}
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  margin: 0; 
+.toggle-switch{
+  width: 19px; 
+  height: 19px; 
+  background-color: #FFF; 
+  border-radius: 50%; 
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.17); 
+  transition: all 0.2s linear;
+  cursor: pointer;
+}
+
+input[type=range]:disabled::-webkit-slider-runnable-track {
+  background: #C7C7C7;
+}
+
+
+input[type=range]:disabled::-webkit-slider-runnable-track {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-webkit-slider-thumb {
+  background: #C7C7C7;
+  border: 1px solid #C7C7C7;
+}
+
+input[type=range]:disabled:focus::-webkit-slider-runnable-track {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-moz-range-track {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-moz-range-thumb {
+  background: #C7C7C7;
+  border: 1px solid #C7C7C7;
+}
+
+input[type=range]:disabled::-ms-track {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-ms-fill-lower {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-ms-fill-upper {
+  background: #C7C7C7;
+}
+
+input[type=range]:disabled::-ms-thumb {
+  background: #C7C7C7;
+  border: 1px solid #C7C7C7;
+}
+
+input[type=range]:disabled:focus::-ms-fill-lower {
+  background: #C7C7C7
+}
+
+#telefoneError {
+  position: absolute; 
+  width: fit-content; 
+  top: 75px; 
+  font-size: 15px; 
+  display: none;
 }

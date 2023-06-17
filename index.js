@@ -13,11 +13,13 @@ const loginRoutes = require('./routes/login');
 const pagamentoRoutes = require('./routes/pagamento');
 const sairRoutes = require('./routes/sair');
 const obrigadoRoutes = require('./routes/obrigado');
-const recuperarSenhaRoutes = require('./routes/recuperar-senha');
+const recuperarSenhaRoutes = require('./routes/recuperarSenha');
 const dataLayerRoutes = require('./routes/datalayer');
 
 /// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
+
+process.on('uncaughtException', (err) => { console.error('Unhandled Exception:', err); });
 
 // Conecta ao banco de dados
 database.mongoose

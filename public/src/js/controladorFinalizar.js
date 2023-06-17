@@ -7,6 +7,7 @@ var loading = false;
 if (localData){ localData = JSON.parse(localData); }
 if (!localData.itemData){ window.location.href = './planos'; loading = true; }
 if (!localData.orcamento && !loading){ window.location.href = './planos'; loading = true; }
+//console.log(localData)
 
 var orcamento = localData.orcamento;
 if (!orcamento.numeroOrcamento && !loading){ window.location.href = './planos'; loading = true; }
@@ -26,7 +27,11 @@ if (!loading){
     let hoje = new Date();
     let outdated = Math.abs(hoje - dataOrcamento);
     outdated = Math.ceil(outdated / (1000 * 60 * 60 * 24));
-    if (outdated > 10){ localStorage.removeItem("finalData"); window.location.href = './planos'; loading = true; }
+    if (outdated > 10){ 
+        localStorage.removeItem("finalData"); 
+        window.location.href = './planos'; 
+        loading = true; 
+    }
 }
 
 //console.log(localData);
@@ -55,22 +60,37 @@ $(document).ready(function () {
     
     $("input#protocolo").val(orcamento.numeroOrcamento);
 
-    if (localData.orcamento.tipo == "habitual"){ $("input#plano-escolhido").val("Essencial"); }
-    if (localData.orcamento.tipo == "veraneio"){ $("input#plano-escolhido").val("Conforto"); }
-    if (localData.orcamento.tipo == "premium"){ $("input#plano-escolhido").val("Exclusive"); }
+    if (localData.orcamento.tipo == "habitual"){ 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano');
+    }
+    if (localData.orcamento.tipo == "veraneio"){ 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); 
+    }
+    if (localData.orcamento.tipo == "habitual-premium"){ 
+        $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); 
+    }
 
+    let juros = true;
+    let valorSemJuros = 0;
+    let maximoParcelas = 1
     orcamento.listaParcelamento.map((parcela, index)=>{
         if (parcela.codigo == 62){  
-            if (parcela.quantidadeParcelas == 1){
-                let valor = parcela.valorPrimeiraParcela.toFixed(2);
-                valor = valor.split(".");
-                $("span#value-120").html(`R$${valor[0]},<span class="small-zero-120">${valor[1]}</span>`);
-            }
+            if (parcela.quantidadeParcelas == 1){ valorSemJuros = parcela.valorPrimeiraParcela; }
             if (orcamento.listaParcelamento[index + 1].codigo != 62){
-                let valor = parcela.valorPrimeiraParcela.toFixed(2);
-                valor = valor.split(".");
-                $("h2.price > span.value").html(`R$${valor[0]},<span class="small-zero">${valor[1]}</span>`);
-                $("span.installment").html(`${parcela.quantidadeParcelas}x&nbsp;`)
+                let numeroParcelas = parcela.quantidadeParcelas;
+                let primeiraParcela = parcela.valorPrimeiraParcela;
+                let demaisParcelas = parcela.valorDemaisParcelas;
+                let valorTotal = (numeroParcelas - 1) * demaisParcelas + primeiraParcela;
+                maximoParcelas = numeroParcelas;
+
+                if (Math.abs(valorSemJuros - valorTotal) < 0.05){ juros = false; }
+
+                valorTotal = valorTotal.toFixed(2).split(".");
+                primeiraParcela = primeiraParcela.toFixed(2).split(".");
+
+                $("span#value-120").html(`R$${valorTotal[0]},<span class="small-zero-120">${valorTotal[1]}</span>`);
+                $("h2.price > span.value").html(`R$${primeiraParcela[0]},<span class="small-zero">${primeiraParcela[1]}</span>`);
+                $("span.installment").html(`${numeroParcelas}x&nbsp;`)
             }
         }
     });
@@ -133,7 +153,7 @@ $(document).ready(function () {
             return;
         }
         localData.pagamento = {
-            parcelas: 1,
+            parcelas: maximoParcelas,
             nomeImpresso: $("input#nome_impresso").val(),
             numeroCpf: $("input#cpf").val(),
             numeroCartao: $("input#numero-cartao").val(),
@@ -143,10 +163,12 @@ $(document).ready(function () {
         }
         try{
             $("#loading-screen").show();
+            let _localData = localData;
+            _localData.produto = localData.orcamento.tipo;
             const response = await fetch( "/pagamento", { 
                 method: "POST", 
                 headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(localData)
+                body: JSON.stringify(_localData)
             });
             if (response.ok) {
                 let data = await response.json();
@@ -159,6 +181,7 @@ $(document).ready(function () {
                     error: function(xhr, status, error) { console.error('Error:', error); }
                 });
                 localStorage.removeItem("finalData");
+                localStorage.removeItem("formData");
                 $("#loading-screen").hide();
                 window.location.href = "./obrigado";
             } else if (response.status === 400) {
@@ -171,15 +194,15 @@ $(document).ready(function () {
                         $(`label#_${error.id}-error`).html(error.message);
                     });
                 }
-                console.error("Erro:", data);
+                //console.error("Erro:", data);
             } else {
-                console.error("Ocorreu um erro inesperado.");
+                //console.error("Ocorreu um erro inesperado.");
             }
             $("#loading-screen").hide();
         } catch (error) {
             $("#loading-screen").hide();
-            console.error(error);
-            console.error("Não foi possível estabeleces uma conexão com o servidor.");
+            //console.error(error);
+            //console.error("Não foi possível estabeleces uma conexão com o servidor.");
         }
     });
 });

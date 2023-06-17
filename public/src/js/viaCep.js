@@ -1,20 +1,10 @@
 // Função que preenche os campos com as informações do endereço
 function preencherCamposEndereco(dados) {
-    document.querySelector("#logradouro").value = dados.logradouro || '';
-    document.querySelector("#bairro").value = dados.bairro || '';
-    document.querySelector("#cidade").value = dados.localidade || '';
-    document.querySelector("#uf").value = dados.uf || '';
-    if (!dados.logradouro && !dados.bairro && !dados.cidade && !dados.uf){
-        let input = $(`input#cep`); //Input do campo com erro
-        let label = $(`label[for="cep"]`); //Label do campo com erro
-        input.addClass('error');
-        label.addClass('error');
-        input.on('change keydown paste input', {label: label, input: input} ,(e)=>{ 
-            e.data.label.removeClass('error'); 
-            e.data.input.removeClass('error'); 
-        });
-    }
-}
+    document.querySelector("#logradouro").value = dados.logradouro || "";
+    document.querySelector("#bairro").value = dados.bairro || "";
+    document.querySelector("#cidade").value = dados.localidade || "";
+    document.querySelector("#uf").value = dados.uf || "";
+  }
   
 // função que limpa os campos do endereço
 function limparCamposEndereco() {

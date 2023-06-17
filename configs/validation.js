@@ -19,11 +19,13 @@ const validation = {
     cidadePattern: /^[A-Za-z\s\.\-]+$/,
     _cidadePattern: /^([^0-9]*).{2,}$/,
     ufPattern: /^[A-Z]{2}$/,
+    tipoResidenciaPattern: /^[1-7]{1}$/,
     eloCardPattern: /^(40117[8-9]|4011[8-9][0-9]|4[23][0-9]{2}|5[1-5][0-9]{2}|5[6][0-9][0-9]|6[0-9]{3})[0-9]{10}$/,
     dinersCardPattern: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
     visaCardPattern: /^4[0-9]{12}(?:[0-9]{3})?$/,
     masterCardPattern: /^5[1-5][0-9]{14}$/,
     _geral: /^[A-zÀ-ú0-9\s]+$/,
+    listaTipoRua: [ "R", "AV", "AL", "CH", "COND", "CJ", "EST", "LD", "LRG", "PRQ", "PC", "PR", "Q", "ROD", "TV", "V" ],
     listaUF: [ 
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 
         'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'

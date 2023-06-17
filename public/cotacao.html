@@ -62,7 +62,7 @@
         <div class="wizard-v1-content">
             <div class="wizard-form">
                 <div id="form-total">
-                    <form action="/enviar-dados" id="form" method="POST">
+                    <form id="form">
                         <div>
                             <!-- Inicio da Etapa 1 -->
                             <div id="step-1" class="form-step active">
@@ -141,9 +141,10 @@
                                         <div class="form-group">
                                             <label for="tipotelefone">Tipo de Telefone:</label>
                                             <select class="form-control" id="tipotelefone" name="tipotelefone">
-                                                <option value="0">Telefone Celular</option>
+                                                <option value="3">Telefone Celular</option>
                                                 <option value="1">Telefone Fixo</option>
                                             </select>
+                                            <label for="tipotelefone" id="telefoneError"></label>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +154,7 @@
                                             <label for="datanascimento">Data de Nascimento:</label>
                                             <input type="text" class="form-control col datanascimento"
                                                 id="datanascimento" name="datanascimento" minlength="10" maxlength="10"
-                                                placeholder="DD/MM/YYYY" autocomplete="off" required />
+                                                placeholder="DD/MM/AAAA" autocomplete="off" required />
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +168,7 @@
 
                             <!-- Etapa 2 -->
                             <div id="step-2" style="display: none" class="form-step">
-                                <h2 class="text-center">Dados de Endereço do Imóvel</h2>
+                                <h2 class="text-center">Dados do Imóvel</h2>
 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -175,6 +176,22 @@
                                             <label for="cep">CEP:</label>
                                             <input type="text" class="form-control col cep" id="cep" name="cep"
                                                 minlength="9" maxlength="9" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tiporesidencia">Tipo de Residência</label>
+                                            <select class="form-control tipo" id="tiporesidencia" name="tiporesidencia">
+                                                <option value="">Selecione</option>
+                                                <option value="2">Apartamento</option>
+                                                <option value="1">Casa de Alvenaria</option>
+                                                <option value="3">Casa de Madeira (Zona Urbana)</option>
+                                                <option value="8">Casa de Madeira (Zona Rural)</option>
+                                                <option value="4">Chácara, Sítio ou Fazenda</option>
+                                                <option value="6">Apartamento Desocupado</option>
+                                                <option value="5">Casa de Alvenaria Desocupada</option>
+                                                <option value="7">Chácara, Sítio ou Fazenda Desocupado</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -190,10 +207,25 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="tipo">Tipo</label>
-                                            <select class="form-control tipo" id="tiporua" name="tiporua">
-                                                <option value="0">Rua</option>
-                                                <option value="1">Praça</option>
+                                            <label for="tiporua">Tipo de Logradouro</label>
+                                            <select class="form-control tiporua" id="tiporua" name="tiporua">
+                                                <option value="">Selecione</option>
+                                                <option value="R">Rua</option>
+                                                <option value="AV">Avenida</option>
+                                                <option value="AL">Alameda</option>
+                                                <option value="CH">Chácara</option>
+                                                <option value="COND">Condominio</option>
+                                                <option value="CJ">Conjunto</option>
+                                                <option value="EST">Estrada</option>
+                                                <option value="LD">Ladeira</option>
+                                                <option value="LRG">Largo</option>
+                                                <option value="PRQ">Parque</option>
+                                                <option value="PC">Praça</option>
+                                                <option value="PR">Praia</option>
+                                                <option value="Q">Quadra</option>
+                                                <option value="ROD">Rodovia</option>
+                                                <option value="TV">Travessa</option>
+                                                <option value="V">Via</option>
                                             </select>
                                         </div>
                                     </div>
@@ -243,25 +275,33 @@
                                 <h2 class="text-center">
                                     Agora Você Pode Personalizar o Seu Seguro
                                 </h2>
-                                <div class="form-group">
-                                    <label for="valorcoberturaincendio"
-                                        class="form-label label-coberturas">Incêndio:</label>
-                                    <div class="range-container">
-                                        <input type="range" class="form-range input-coberturas"
-                                            id="valorcoberturaincendio" min="30000" max="1000000" value="10000"
-                                            step="10000" />
-                                        <div class="range-value0"></div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturaincendio"
+                                                class="form-label label-coberturas">Incêndio/Explosão:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturaincendio" min="30000" max="1000000" value="300000"
+                                                    step="10000" />
+                                                <div class="range-value0" id="valorcoberturaincendio-label"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- valorCoberturaSubstracaoBens -->
-                                <div class="form-group">
-                                    <label for="valorcoberturasubstracaobens"
-                                        class="form-label label-coberturas">Subtração de Bens:</label>
-                                    <div class="range-container">
-                                        <input type="range" class="form-range input-coberturas"
-                                            id="valorcoberturasubstracaobens" min="10000" max="1000000" value="10000"
-                                            step="10000" />
-                                        <div class="range-value1"></div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorcoberturasubstracaobens"
+                                                class="form-label label-coberturas">Subtração de Bens/Roubo ou Furto Qualificado:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorcoberturasubstracaobens" min="10000" max="500000" value="60000"
+                                                    step="1000" />
+                                                <div class="range-value1" id="valorcoberturasubstracaobens-label"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- valorCoberturaPagamentoAluguel -->
@@ -272,9 +312,9 @@
                                                 class="form-label label-coberturas">Pagamento de Aluguel:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturapagamentoaluguel" min="10000" max="1000000"
-                                                    value="10000" step="10000" />
-                                                <div class="range-value2">R$ 10.000</div>
+                                                    id="valorcoberturapagamentoaluguel" min="3000" max="200000"
+                                                    value="10000" step="1000" />
+                                                <div class="range-value2" id="valorcoberturapagamentoaluguel-label">R$ 10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -283,13 +323,12 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">RC
-                                                Familiar:</label>
+                                            <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">Responsabilidade Civil Familiar:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturarcfamiliar" min="10000" max="1000000"
-                                                    value="10000" step="10000" />
-                                                <div class="range-value3">R$ 10.000</div>
+                                                    id="valorcoberturarcfamiliar" min="0" max="200000"
+                                                    value="10000" step="1000" />
+                                                <div class="range-value3" id="valorcoberturarcfamiliar-label">R$ 10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -300,13 +339,12 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="valorcoberturavendaval" class="form-label label-coberturas">
-                                                Cobertura
-                                                Vendaval</label>
+                                                Cobertura Vendaval</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturavendaval" min="10000" max="1000000" value="10000"
-                                                    step="10000" />
-                                                <div class="range-value5">R$10.000</div>
+                                                    id="valorcoberturavendaval" min="0" max="500000" value="6000"
+                                                    step="1000" />
+                                                <div class="range-value5" id="valorcoberturavendaval-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -320,9 +358,9 @@
                                                 Desmoronamento</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturadesmoronamento" min="10000" max="1000000"
-                                                    value="10000" step="10000" />
-                                                <div class="range-value6">R$10.000</div>
+                                                    id="valorcoberturadesmoronamento" min="0" max="500000"
+                                                    value="6000" step="1000" />
+                                                <div class="range-value6" id="valorcoberturadesmoronamento-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -337,9 +375,9 @@
                                                 Alagamento</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturaalagamento" min="10000" max="1000000"
-                                                    value="10000" step="10000" />
-                                                <div class="range-value12">R$10.000</div>
+                                                    id="valorcoberturaalagamento" min="0" max="500000"
+                                                    value="5000" step="1000" />
+                                                <div class="range-value12" id="valorcoberturaalagamento-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -354,9 +392,9 @@
                                                 Bicicleta</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorsubtracaobicicleta" min="10000" max="1000000" value="10000"
-                                                    step="10000" />
-                                                <div class="range-value18">R$10.000</div>
+                                                    id="valorsubtracaobicicleta" min="0" max="10000" value="1000"
+                                                    step="100" />
+                                                <div class="range-value18" id="valorsubtracaobicicleta-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -371,9 +409,9 @@
                                                 Reformas</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorpequenasreformas" min="10000" max="1000000" value="10000"
-                                                    step="10000" />
-                                                <div class="range-value20">R$10.000</div>
+                                                    id="valorpequenasreformas" min="0" max="100000" value="30000"
+                                                    step="1000" />
+                                                <div class="range-value20" id="valorpequenasreformas-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -384,7 +422,7 @@
                                 </button>
                                 <i class="fa fa-spinner fa-spin loading-icon" style="display: none"></i>
                                 <button type="submit" class="btn btn-success submit-form">
-                                    Enviar cotação
+                                    Avançar
                                 </button>
                             </div>
                             <!-- Fim da Etapa 3-->

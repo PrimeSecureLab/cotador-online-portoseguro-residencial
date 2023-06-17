@@ -31,7 +31,7 @@ const usuarioSchema = new mongoose.Schema({
     },
     endereco: {
         cep: { type: String },
-        tipoRua: { type: Number },
+        tipoRua: { type: String },
         logradouro: { type: String },
         bairro: { type: String },
         cidade: { type: String },
@@ -39,6 +39,7 @@ const usuarioSchema = new mongoose.Schema({
     },
     recuperarSenha: {
         token: { type: String },
+        tokenCancelar: { type: String },
         criadoEm: { type: Date }
     }
 });

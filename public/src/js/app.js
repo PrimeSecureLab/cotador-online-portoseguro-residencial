@@ -1,11 +1,34 @@
-// Adicionar máscara ao campo de CPF
-$(document).ready(function () {
-    $("#cpf").mask("999.999.999-99");
-  });
+$(document).ready(function() {
+    // Ao clicar no botão "next-step", avança para a próxima etapa do formulário
+    /*$(".next-step").click(async function() {
+        var currentStep = $(this).closest(".form-step");
+        var nextStep = currentStep.next(".form-step");
+        if (nextStep.length > 0) {
+            console.log(currentStep[0].id);
+            currentStep.removeClass("active").fadeOut(250, function() {
+                nextStep.addClass("active").fadeIn(250);
+            });
+        }
+    });
 
-  document.getElementById("form").addEventListener("submit", function (event) {
+    // Ao clicar no botão "prev-step", volta para a etapa anterior do formulário
+    $(".prev-step").click(function() {
+        var currentStep = $(this).closest(".form-step");
+        var prevStep = currentStep.prev(".form-step");
+        if (prevStep.length > 0) {
+            currentStep.removeClass("active").fadeOut(250, function() {
+                prevStep.addClass("active").fadeIn(250);
+            });
+        }
+    });*/
+});
+
+// Adicionar máscara ao campo de CPF
+
+
+document.getElementById("form").addEventListener("submit", function (event) {
     // Obter o valor atual do campo de CPF
-    const cpfField = document.getElementById("cpf");
+    /*const cpfField = document.getElementById("cpf");
     let cpf = cpfField.value;
   
     // Remover tudo o que não é dígito
@@ -15,35 +38,7 @@ $(document).ready(function () {
     cpf = cpf.replace(/\D/g, "").substring(0, 11);
   
     // Atualizar o valor do campo de CPF antes de enviar o formulário
-    cpfField.value = cpf;
-  });
-
-//Aplica Mascaras nos Inputs
-$(document).ready(function () {
-    //if ($("#cep").val().length > 8){ 
-        $(".cep").mask("00000-000", {
-            translation: {
-                0: {
-                    pattern: /[0-9]/,
-                },
-            },
-            pattern:
-                /^[0-9]{5}-[0-9]{3}/,
-        });
-    //}
-
-    $(".datanascimento").mask("00-00-0000", {
-        translation: {
-            0: {
-                pattern: /[0-9]/,
-            },
-        },
-        pattern:
-            /^[0-9]{4}-(1[0-2]{1}|0[0-9]{1})-([0-2]{1}[0-9]{1}|3[0-1]{1})/,
-    });
-    
-    $(".numerotelefone").mask("(00) 00000-0000", { translation: { 0: { pattern: /^[0-9]{1,2}/, }, }, });
-
+    cpfField.value = cpf;*/
 });
 
 $(document).ready(function() {

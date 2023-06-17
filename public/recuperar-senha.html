@@ -15,7 +15,7 @@
 
     <!--CSS-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./src/css/pagamento.css" />
+    <link rel="stylesheet" href="./src/css/recuperar-senha.css" />
 
     <!--Scripts-->
     <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
@@ -53,42 +53,7 @@
         </nav>
     </header>
 
-    <div class="page-content">
-        <div class="wizard-v1-content">
-            <div class="wizard-form">
-                <div class="header-preco-content">
-                    <div class=" proto">
-                        <div class="row custom-row d-flex justify-content-center">
-                            <div class="col-md-6">
-                                <div class="form-inline">
-                                    <label for="plano" class="mr-2">Protocolo:</label>
-                                    <input type="text" placeholder="" class="custom-input" id="protocolo"
-                                        disabled />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-inline">
-                                    <label for="plano" class="mr-2">Plano Escolhido:</label>
-                                    <input type="text" placeholder="" class="custom-input" id="plano-escolhido"
-                                        name="plano" disabled />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 d-flex justify-content-center">
-                            <div class="price-block">
-                                <h2 class="price">Total a Pagar: <span class="installment">--x </span><span
-                                        class="value">R$--,<span class="small-zero">--</span></span></h2>
-                                <h4 class="cash-price">Valor Total: <span class="value-120" id="value-120">R$--,<span
-                                            class="small-zero-120">--</span></span></h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="page-content">
+    <div class="page-content mt-3">
         <div class="wizard-v1-content">
             <div class="wizard-form">
                 <div class="header-preco-content">
@@ -99,39 +64,33 @@
                         <div class="inner">
                           <div class="form-row">
                             <div class="form-holder form-holder-2">
-                                <h1 class="text-center">Finalize o Pagamento</h1>
-                              <label for="cpf">CPF:*</label>
-                              <input type="text" placeholder="Insira seu cpf" class="form-control" id="cpf" name="cpf" required />
+                                <h2 class="text-center">Recuperar Senha</h1>
+                            </div>
+                          </div>
+                          <div class="form-row" id="lista-erros" style="display: none; color: red;">
+                            <div class="form-holder form-holder-3">
+                              
                             </div>
                           </div>
                           <div class="form-row">
                             <div class="form-holder form-holder-3">
-                              <label for="nome_impresso">Nome Impresso No Cartão:*</label>
-                              <input type="text" placeholder="Insira o nome impresso no cartão" class="nome_impresso"
-                                id="nome_impresso" name="nome_impresso" required />
+                              <label for="confirmar-email">Confirmar Email</label>
+                              <input type="text" id="confirmar-email" class="fadeIn second" name="confirmar-email" placeholder="Email" autocomplete="off">
                             </div>
-                            <div class="form-holder form-holder-3">
-                              <label for="numero-cartao">Número do Cartão</label>
-                              <input type="text" name="numero-cartao" class="numero-cartao" id="numero-cartao"
-                                placeholder="ex: 489050625008xxxx" />
+                            <div class="form-holder">
+                              <label for="nova-senha">Senha</label>
+                              <input type="password" id="nova-senha" class="fadeIn third" name="nova-senha" placeholder="Senha" autocomplete="off">
                             </div>
-                            <div class="form-holder form-holder-4">
-                              <label for="cvc">CVC</label>
-                              <input type="text" name="cvc" class="cvc" id="cvc" placeholder="xxx" pattern="\d{3}"
-                                maxlength="3" />
+                            <div class="form-holder">
+                              <label for="confirmar-nova-senha">Confirmar Senha</label>
+                              <input type="password" id="confirmar-nova-senha" class="fadeIn third" name="confirmar-nova-senha" placeholder="Confirmar Senha" autocomplete="off">
                             </div>
-                            <div class="form-holder form-holder-4">
-                              <label for="mes">Mês Vencimento</label>
-                              <input type="text" name="mes" class="mes" id="mes" placeholder="xx" pattern="\d{2}" maxlength="2" />
-                            </div>
-                            <div class="form-holder form-holder-4">
-                              <label for="cvc">Ano Vencimento</label>
-                              <input type="text" name="ano" class="ano" id="ano" placeholder="xxxx" pattern="\d{4}"
-                                maxlength="4" />
-                            </div>
+                            <div style="padding: 0px 0px 22px 15px; display: flex;">
+                              <input type="checkbox" id="visualizar-senha" style="margin-right: 10px; width: 15px;"> Visualizar Senhas
+                            </div>                            
                           </div>
-                          <button type="submit" class="btn btn-success submit-form" id="btn-enviar">
-                            Finalizar Cadastro
+                          <button type="submit" class="btn btn-success submit-form" id="btn-confirmar">
+                            Alterar Senha
                         </button>
                         </div>
                       </section>
@@ -298,12 +257,9 @@
   </div>
   <script src="./src/js/jquery-3.6.4.js"></script>
   <script src="./src/js/bootstrap.bundle.min.js"></script>
-  <script src="./src/js/additional-methods.min.js"></script>
   <script src="./src/js/jquery.validate.min.js"></script>
-  <script src="./src/js/cadastroMain.js"></script>
-  <script src="./src/js/cadastroSteps.js"></script>
   <script src="./src/js/jquery.mask.min.js"></script>
-  <script src="./src/js/controladorFinalizar.js"></script>
+  <script src="./src/js/controladorRecuperarSenha.js"></script>
 
 </body>
 

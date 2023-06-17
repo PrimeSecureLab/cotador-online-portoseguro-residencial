@@ -1,15 +1,34 @@
 function visualizarSenha() {
-  var senha = document.getElementById("senha-login");
-  var checkBox = document.getElementById("visualizar_senha");
+    var senha = document.getElementById("senha-login");
+    var checkBox = document.getElementById("visualizar_senha");
 
-  if (checkBox.checked) {
-    senha.type = "text";
-    confirmSenha.type = "text";
-  } else {
-    senha.type = "password";
-    confirmSenha.type = "password";
-  }
+    if (checkBox.checked) { senha.type = "text"; confirmSenha.type = "text"; } else { senha.type = "password"; confirmSenha.type = "password"; }
 }
+
+function enviarEmail(){
+    let email = $('input#email');
+    let label = $('label#recuperar-senha');
+    if (!label.length){
+        email.after(`
+            <label id="recuperar-senha" style="font-size: 14px; margin-top: 10px;">
+                Para recuperarmos sua senha, enviaremos um link para seu e-mail.
+            </label>`
+        );
+    }
+    if (!email.val()){ return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())){ return; }
+
+    $.ajax({
+        url: '/recuperar-senha/esqueceu-a-senha',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({email: email.val()}),
+        success: function(res) { console.log('Sucesso:', res); },
+        error: function(xhr, status, error) { console.error('Error:', error); }
+    });
+    return;
+}
+
 var loading = false;
 $("#loading-screen").hide();
 
@@ -35,12 +54,12 @@ document.getElementById("form-login").addEventListener("submit", async (event) =
     let form = { login: $("#login").val(), senha: $("#senha-login").val() }
     if (form.login.length < 5){ 
         if (!$("#error-message").length){ $("#form-login").before('<label id="error-message" style="color: red;"></label>'); } 
-        $("#error-message").html("Email/CPF ou senha incorretos");
+        $("#error-message").html("Email, CPF ou senha incorretos");
         return; 
     }
     if (form.senha.length < 8){ 
         if (!$("#error-message").length){ $("#form-login").before('<label id="error-message" style="color: red;"></label>'); } 
-        $("#error-message").html("Email/CPF ou senha incorretos");
+        $("#error-message").html("Email, CPF ou senha incorretos");
         return; 
     }
 
