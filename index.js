@@ -19,6 +19,8 @@ const dataLayerRoutes = require('./routes/datalayer');
 /// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
+process.on('uncaughtException', (err) => { console.error('Unhandled Exception:', err); });
+
 // Conecta ao banco de dados
 database.mongoose
     .connect(database.url, { useNewUrlParser: true, useUnifiedTopology: true })
