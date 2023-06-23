@@ -62,7 +62,7 @@
         <div class="wizard-v1-content">
             <div class="wizard-form">
                 <div id="form-total">
-                    <form id="form">
+                    <div id="form" action="#">
                         <div>
                             <!-- Inicio da Etapa 1 -->
                             <div id="step-1" class="form-step active">
@@ -294,7 +294,7 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="valorcoberturasubstracaobens"
-                                                class="form-label label-coberturas">Subtração de Bens/Roubo ou Furto Qualificado:</label>
+                                                class="form-label label-coberturas">Roubo ou Furto Qualificado:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
                                                     id="valorcoberturasubstracaobens" min="10000" max="500000" value="60000"
@@ -421,13 +421,13 @@
                                     Etapa anterior
                                 </button>
                                 <i class="fa fa-spinner fa-spin loading-icon" style="display: none"></i>
-                                <button type="submit" class="btn btn-success submit-form">
+                                <button id="btn-submit" class="btn btn-success submit-form">
                                     Avançar
                                 </button>
                             </div>
                             <!-- Fim da Etapa 3-->
                         </div>
-                    </form>
+                    </div>
 
 
                 </div>

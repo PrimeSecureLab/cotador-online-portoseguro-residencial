@@ -355,6 +355,7 @@ $(document).ready(function() {
             }
 
             toggleElement.off("click").on("click", ()=>{
+                if (input.id == 'valorcoberturaincendio'){ return; }
                 dadosCobertura['generica'][input.id].disabled = !(dadosCobertura['generica'][input.id].disabled);
                 inputElement.prop("disabled", dadosCobertura['generica'][input.id].disabled);
                 controleCoberturasGenerico();
@@ -370,7 +371,9 @@ $(document).ready(function() {
     controleCoberturasGenerico();
 });
 
-document.getElementById("form").addEventListener("submit", async (event) => {
+$('#form').submit((e)=>{ e.preventDefault(); return false; });
+//document.getElementById("form").addEventListener("submit", async (event)=>{
+$('#btn-submit').on('click', async (event)=>{
     event.preventDefault();
     var data = {};
 
