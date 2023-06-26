@@ -15,6 +15,7 @@ class NodeMailer {
         this.password = process.env.SMTP_PASSWORD;
         this.emailFrom = 'matheus.marques.prime@gmail.com';
     }
+    
     controladorEmail(data, action){
         if (!action){ return; }
         
@@ -70,11 +71,14 @@ class NodeMailer {
             auth: { user: this.user, pass: this.password },
             tls: { rejectUnauthorized: false } 
         });
-
-        transporter.sendMail(mailOptions, (error, info)=>{
-            if (error) { console.log('Error:', error); return; }
-            console.log('Email sent:', info.response);             
-        });
+        try{
+            transporter.sendMail(mailOptions, (error, info)=>{
+                if (error) { console.log('Error:', error); return; }
+                console.log('Email sent:', info.response);             
+            });
+        }catch(error){
+            console.log(error);
+        }
     }
 }
 
