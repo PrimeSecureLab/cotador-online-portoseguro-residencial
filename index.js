@@ -75,3 +75,18 @@ app.use('/datalayer', dataLayerRoutes);
 // Inicia o servidor
 const port = process.env.PORT || 3000;
 app.listen(port, () => { console.log(`Servidor rodando na porta ${port}`); });
+
+
+/*
+jQuery(document).on('click', 'button.rd-button', (e)=>{
+    e.preventDefault();
+    let dadosLandPage = {
+        nome: jQuery('input[name="name"]').val(),
+        jQuery('input[name="email"]').val(),
+        jQuery('input[name="mobile_phone"]').val(),
+        jQuery('input[name="privacy_data[consent]"]').val()
+    }
+    localStorage.setItem('dadosLandPageResidecial', JSON.stringfy(dadosLandPage));
+    jQuery('form#conversion-form-seguro-residencial-porto-seguro-lpv2').submit();
+});
+*/
