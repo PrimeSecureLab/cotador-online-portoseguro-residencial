@@ -10,9 +10,42 @@ class ValidarCotacao extends Object{
         this.patterns = {
             data_1: /^(\d{2})\/(\d{2})\/(\d{4})$/,
             data_2: /^(\d{2})\-(\d{2})\-(\d{4})$/,
-            data_3: /^(\d{4})\-(\d{2})\-(\d{2})$/
+            data_3: /^(\d{4})\-(\d{2})\-(\d{2})$/,
+            celular: /^\(([0-9]{2})\)\s[0-9]{5}\-[0-9]{4}$/,
+            celular_1: /^\(([0-9]{2})\)\s[0-9]{4}\-[0-9]{5}$/,
+            telefone: /^\(([0-9]{2})\)\s[0-9]{4}\-[0-9]{4}$/
         }
     }
+
+    validarDadosLandPage(body){
+        let nome = body.nome || '';
+        nome = nome.toString().trim();
+
+        let email = body.email || '';
+        email = email.toString().trim();
+
+        let telefone = body.telefone || '';
+        telefone = telefone.toString().trim();
+        
+        let codPais = telefone.indexOf('(');
+        if (codPais > -1){ telefone = telefone.slice(codPais); }
+            
+        if (!this.patterns.celular.test(telefone) && !this.patterns.celular_1.test(telefone) && !this.patterns.telefone.test(telefone)){
+            telefone = telefone.replace(/[^0-9]+/g, '');
+            
+            if (telefone.length > 11){ telefone = telefone.slice(0, 11); }
+            
+            let mask = '(##) #####-####';
+            let numeroTelefone = '';
+            let j = 0;
+
+            for(let i = 0; i < mask.length; i++){ if (mask[i] === '#'){  numeroTelefone += telefone[j] || ''; j++; }else{ numeroTelefone += mask[i]; } }
+            telefone = numeroTelefone;
+        }       
+
+        return { nome: nome, email: email, telefone: telefone };
+    }
+
     decriptarDados(body){
         //console.log('A:', body);
         let bytes = CryptoJS.AES.decrypt(body, process.env.CRYPTO_TOKEN);

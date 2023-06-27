@@ -4,9 +4,7 @@ const router = express.Router();
 const dotenv = require('dotenv');
 const axios = require("axios");
 
-const Leads = require("../collections/leads");
 const validation = require("../configs/validation");
-const authToken = require('../configs/authToken');
 
 const PortoCoberturas = require('../configs/coberturas');
 var portoCoberturas = new PortoCoberturas;
@@ -18,7 +16,9 @@ var validacaoCotacao = new ValidarCotacao;
 dotenv.config();
 
 // Define a rota para a página HTML
-router.get("/", async (req, res) => { res.sendFile("cotacao.html", { root: "public" }); });
+router.get("/", async (req, res) => {     
+    res.sendFile("cotacao.html", { root: "public" }); 
+});
 
 router.get("/formulario", async (req, res)=>{
     let session = req.session;
@@ -30,7 +30,7 @@ router.get("/formulario", async (req, res)=>{
     let dataInicio = new Date(session.cotacao.criadoEm);
     let intervalo = (new Date() - dataInicio) / (1000 * 60 * 60 * 24);
     
-    if (intervalo > 5){ session.cotacao = {}; return res.status(400).json({}); }
+    if (intervalo > 5){ session.cotacao = {}; return res.status(400).json({}); }    
     return res.status(200).json(session.cotacao);
 });
 
@@ -172,8 +172,7 @@ router.post("/enviar-dados", async (req, res) => {
     // Encripta dados a serem enviados
     var encryptedForm = CryptoJS.AES.encrypt( JSON.stringify(data), process.env.CRYPTO_TOKEN ).toString();
 
-    res.json({ formData: encryptedForm, itemData: items });    
-   
+    res.json({ formData: encryptedForm, itemData: items });
 });
 
 module.exports = router;

@@ -7,6 +7,7 @@ const sessionStore = require('connect-mongodb-session')(session);
 
 // Carrega as rotas
 const cotacaoRoutes = require('./routes/cotacao');
+const cotacaoRapidaRoutes = require('./routes/cotacaoRapida');
 const planosRoutes = require('./routes/planos');
 const cadastroRoutes = require('./routes/cadastro');
 const loginRoutes = require('./routes/login');
@@ -63,6 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Registra as rotas
 app.use('/', cotacaoRoutes);
+app.use('/cotacao-rapida', cotacaoRapidaRoutes);
 app.use('/planos', planosRoutes);
 app.use('/login', loginRoutes);
 app.use('/cadastro', cadastroRoutes);
@@ -75,3 +77,39 @@ app.use('/datalayer', dataLayerRoutes);
 // Inicia o servidor
 const port = process.env.PORT || 5000;
 app.listen(port, () => { console.log(`Servidor rodando na porta ${port}`); });
+
+
+/*
+jQuery(document).on('click', 'button.rd-button', (e)=>{
+    e.preventDefault();
+    let dadosLandPage = {
+        nome: jQuery('input[name="name"]').val(),
+        email: jQuery('input[name="email"]').val(),
+        telefone: jQuery('input[name="mobile_phone"]').val(),
+        privacidade: jQuery('input[name="privacy_data[consent]"]').val()
+    }
+    localStorage.setItem('dadosLandPageResidecial', JSON.stringfy(dadosLandPage));
+    jQuery('form#conversion-form-seguro-residencial-porto-seguro-lpv2').submit();
+});
+
+
+var landPageStorage = localStorage.getItem('dadosLandPageResidecial') || '{}';
+landPageStorage = JSON.stringify(landPageStorage);
+
+var _uri = 'http://localhost:5000/cotacao-rapida/'
+
+let _nome = landPageStorage.nome || '';
+let _email = landPageStorage.email || '';
+let _telefone = landPageStorage.telefone || '';
+
+_nome = encodeURIComponent(_nome);
+_email = encodeURIComponent(_email);
+_telefone = encodeURIComponent(_telefone);
+
+let _url = `${_uri}?nome=${_nome}&email=${_email}&telefone=${_telefone}`;
+localStorage.removeItem('dadosLandPageResidecial');
+window.location.href = url;
+
+*/
+
+
