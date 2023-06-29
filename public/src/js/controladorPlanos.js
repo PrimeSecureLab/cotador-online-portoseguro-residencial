@@ -173,7 +173,13 @@ $(document).ready(function() {
 
     function limparCards(index){
         let card = $(`#card-price-${index}`)
-        card.html('<span class="parcela">--x</span> --,--<span class="period" style="display: none;">Sem Juros</span>');
+        card.html(`
+            <span class="parcela">--x</span>
+            <span class="moeda">R$</span>
+            <span class="inteiro">--</span>
+            <span class="centavos">,--</span>
+            <span class="period" style="display: none;"> Sem Juros</span>
+        `);
         let cardContainer = card.parent();
         cardContainer.children('p.text-center').html('Valor Total: -- ');
     }
@@ -325,7 +331,7 @@ $(document).ready(function() {
     function atualizarVigencia(produto, vigencia){
         //console.log(vigencia)
         let produtos = ['habitual', 'habitual-premium', 'veraneio'];
-        let tituloPlano = ['ESSENCIAL', 'CONFORTO', 'EXCLUSIVE'];
+        let tituloPlano = ['ESSENCIAL', 'EXCLUSIVE', 'CONFORTO'];
         let index = produtos.indexOf(produto);
         index = index + 1;
 
@@ -335,6 +341,8 @@ $(document).ready(function() {
         let priceContainer = $(`.card-price#card-price-${index}`);
         let totalContainer = mainContainer.children('p.text-center');
         let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
+        let centavosContainer = $(`.card-price#card-price-${index} > .centavos`);
+        let inteiroContainer = $(`.card-price#card-price-${index} > .inteiro`);
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
         let button = $(`#btn-plano-${index}`);
 
@@ -353,9 +361,12 @@ $(document).ready(function() {
         let primeiraParcela = card.primeiraParcela;
         //let demaisParcelas = card.demaisParcelas;
         let valorTotal = card.valorTotal;
+        let valor = primeiraParcela.split(',');
 
-        let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
-        textParcela.each(function() { this.textContent = primeiraParcela; });
+        //let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+        //textParcela.each(function() {  this.textContent = valor[0];/*primeiraParcela;*/ });
+        inteiroContainer.html(`${valor[0]}`);
+        centavosContainer.html(`,${valor[1]}`);
         totalContainer.html(`Valor Total: R$${valorTotal}`);
         parcelasContainer.html(`${numeroParcelas}x`);
         //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
@@ -366,7 +377,7 @@ $(document).ready(function() {
 
     function atualizarCard(produto, vigencia, data, error){
         let produtos = ['habitual', 'habitual-premium', 'veraneio'];
-        let tituloPlano = ['ESSENCIAL', 'CONFORTO', 'EXCLUSIVE'];
+        let tituloPlano = ['ESSENCIAL', 'EXCLUSIVE', 'CONFORTO'];
         let index = produtos.indexOf(produto);
         let cobertura = dadosCobertura[produto];
         if (index < 0){ return; }
@@ -376,6 +387,8 @@ $(document).ready(function() {
         let priceContainer = $(`.card-price#card-price-${index}`);
         let totalContainer = mainContainer.children('p.text-center');
         let parcelasContainer = $(`.card-price#card-price-${index} > .parcela`);
+        let inteiroContainer = $(`.card-price#card-price-${index} > .inteiro`);
+        let centavosContainer = $(`.card-price#card-price-${index} > .centavos`);
         let jurosFlag = $(`.card-price#card-price-${index} > .period`);
 
         let cardContainer = mainContainer.parent();
@@ -383,8 +396,10 @@ $(document).ready(function() {
 
         if (error){
             if (tempoVigencia == vigencia){
-                let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
-                textParcela.each(function() { this.textContent = '--,--'; });
+                //let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+                //textParcela.each(function() { this.textContent = '--'; });
+                inteiroContainer.html('--');
+                centavosContainer.html(',--')
                 totalContainer.html(`Valor Total: R$--,--`);
                 parcelasContainer.html(`--x`);
                 jurosFlag.css('display', 'none');
@@ -436,8 +451,11 @@ $(document).ready(function() {
                 };                
                 if (tempoVigencia == vigencia){
                     let cardTitle = (vigencia == 0) ? `${tituloPlano[index-1]}` : `${tituloPlano[index-1]} - ${vigencia + 1} ANOS`;
-                    let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
-                    textParcela.each(function() { this.textContent = primeiraParcela; });
+                    //let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
+                    let valor = primeiraParcela.split(',');
+                    //textParcela.each(function() { this.textContent = valor[0];/*primeiraParcela;*/ });
+                    inteiroContainer.html(`${valor[0]}`);
+                    centavosContainer.html(`,${valor[1]}`);
                     totalContainer.html(`Valor Total: R$${valorTotal}`);
                     parcelasContainer.html(`${numeroParcelas}x`);
                     //if (!juros){ jurosFlag.css('display', 'inline'); }else{ jurosFlag.css('display', 'none'); }
@@ -471,21 +489,21 @@ $(document).ready(function() {
         modalTitle.html(defaultTitle);
         switch(indexJanela){
             case 1:
-                modalTitle.html('Personalize Mais Ainda o Seu Plano Essencial')
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Essencial');
                 controleCoberturaMain('habitual');
                 inputsRange
                     .off('change', controleCoberturaMain )
                     .on('change', {param1: 'habitual'}, controleCoberturaMain );
                 break;
             case 2:
-                modalTitle.html('Personalize Mais Ainda o Seu Plano Conforto')
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Exclusive');
                 controleCoberturaMain('habitual-premium');
                 inputsRange
                     .off('change', controleCoberturaMain )
                     .on('change', {param1: 'habitual-premium'}, controleCoberturaMain );
                 break;
             case 3:
-                modalTitle.html('Personalize Mais Ainda o Seu Plano Exclusive')
+                modalTitle.html('Personalize Mais Ainda o Seu Plano Conforto');
                 controleCoberturaMain('veraneio');
                 inputsRange
                     .off('change', controleCoberturaMain )

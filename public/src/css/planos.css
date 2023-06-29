@@ -253,4 +253,19 @@ body, html {
 
 .parcela {
   font-size: 20px;
+  padding-right: 5px;
+}
+
+.moeda {
+  font-size: 33px;
+  padding-right: 5px;
+}
+
+.centavos {
+  font-size: 25px;
+  padding-left: 3px;
+}
+
+h6.card-price {
+  display: inline-table;
 }
