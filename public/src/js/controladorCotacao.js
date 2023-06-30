@@ -190,8 +190,20 @@ $(document).ready(function() {
         inputList.each((index)=>{ 
             let input = inputList[index];
             let label = $(`label[for="${input.id}"]`);
-            let toggle = `<div id="${input.id}-toggle" class="container-toggle"><div class="toggle-switch"></div></div>`;
+            
+       
+            let toggle = `
+                <div id="${input.id}-toggle-conteiner" class="main-toggle-conteiner">
+                    <div id="${input.id}-toggle" class="container-toggle">
+                        <div class="toggle-switch"></div>
+                    </div>
+                    <div>Ativo</div>
+                </div>    
+            `;
+    
+            
             let divInativo = `<div id="${input.id}-inativo" style="position: absolute; width: fit-content; top: 25px;">(Inativo)</div>`
+
             label.before(toggle);
             label.before(divInativo);
         });

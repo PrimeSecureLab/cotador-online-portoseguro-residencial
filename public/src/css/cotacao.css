@@ -662,3 +662,17 @@ input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+.valorcoberturaincendio-obrigatorio {
+    color: red;
+    font-weight: 700;
+    font-size: 13px;
+    position: absolute;
+    right: 15px;
+    line-height: 24px;
+    opacity: 0.85;
+}
+
+.container-cobertura-obrigatoria {
+    display: flex;
+}
