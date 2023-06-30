@@ -32,12 +32,13 @@ $.ajax({
     success: function(res) { /*console.log('Sucesso:', res);*/ },
     error: function(xhr, status, error) { /*console.error('Error:', error);*/ }
 });
+
 $.ajax({
     url: '/cadastro/carregar',
     type: 'POST',
     contentType: 'application/json',
     data: JSON.stringify({etapa: 'step-5', page: 'cadastro', orcamento: orcamento}),
-    success: function(res) { console.log('Sucesso:', res); },
+    success: function(res) { if (res.email){ $('input#numero_documento').val(res.cpf); $('input#email').val(res.email); } },
     error: function(xhr, status, error) { /*console.error('Error:', error);*/ }
 });
 
