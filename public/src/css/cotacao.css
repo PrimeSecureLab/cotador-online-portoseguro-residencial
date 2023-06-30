@@ -646,8 +646,19 @@ body {
     }
   }
 
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
     .payment-logo {
-      width: 8%;
+        width: 8%;
     }
-  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
