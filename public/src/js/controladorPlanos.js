@@ -1,4 +1,7 @@
 $("#loading-screen").hide();
+
+var StringOptions = {  style: 'decimal', useGrouping: true, groupingSeparator: '.', minimumFractionDigits: 2, maximumFractionDigits: 2 };
+
 $(document).ready(function() {
     // Função para converter o valor em texto por extenso
     function formatCurrency(value) {
@@ -361,6 +364,7 @@ $(document).ready(function() {
         let primeiraParcela = card.primeiraParcela;
         //let demaisParcelas = card.demaisParcelas;
         let valorTotal = card.valorTotal;
+        
         let valor = primeiraParcela.split(',');
 
         //let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
