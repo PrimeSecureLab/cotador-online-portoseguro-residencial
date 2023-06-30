@@ -16,12 +16,25 @@ dotenv.config();
 
 router.get("/", async (req, res) => {
     let session = req.session;
-    if (!session.user_id){ return res.sendFile("cadastro.html", { root: "public" }); }
+    if (!session.user_id){ return res.sendFile("cadastro.html", { root: "public" }); }    
 
     let user = await Usuarios.findOne({_id: session.user_id});
     if (!user){ req.session.destroy(); return res.sendFile("cadastro.html", { root: "public" }); }
     
     return res.redirect('/pagamento');
+});
+
+router.post("/carregar", async (req, res)=>{
+    const session = req.session || {};
+    const cotacao = session.cotacao || {};
+    
+    let email = cotacao.email || '';
+    let cpf = cotacao.cpf || '';
+
+    email = email.toString().trim();
+    cpf = cpf.toString().trim();
+
+    return res.status(200).json({email: email, cpf: cpf}); 
 });
 
 router.post("/", async (req, res)=>{
