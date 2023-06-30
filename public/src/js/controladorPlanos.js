@@ -10,13 +10,13 @@ $(document).ready(function() {
         if (value >= 2000000){ return (value / 1000000) + " milhões"; }
         return (value / 1000000) + " milhão";
     }
-    function setupRangeInput(config) {
+    /*function setupRangeInput(config) {
         $("." + config.rangeValueClass).text(formatCurrency($("#" + config.inputId).val()));
         $("#" + config.inputId).on("input", function() {
             $("." + config.rangeValueClass).text(formatCurrency($(this).val()));
             $("." + config.rangeValueClass).css("left", "calc(100% * (" + $(this).val() + " - " + $(this).attr("min") + ") / (" + $(this).attr("max") + " - " + $(this).attr("min") + "))");
         });
-    }    
+    }*/  
 
     var relacaoItemId = [];
     var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 'codigoClausulasPortoSeguroServicos', 
