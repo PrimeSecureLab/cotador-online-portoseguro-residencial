@@ -450,6 +450,7 @@ input[type=range]:disabled:focus::-ms-fill-lower {
   font-size: 15px; 
   display: none;
 }
+
 #valorcoberturaincendio-toggle {
   display: none;
 }
