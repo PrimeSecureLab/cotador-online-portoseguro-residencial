@@ -178,7 +178,10 @@
                                                 minlength="9" maxlength="9" required />
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="tiporesidencia">Tipo de Residência</label>
                                             <select class="form-control tipo" id="tiporesidencia" name="tiporesidencia">
@@ -194,18 +197,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="logradouro">Endereço:</label>
-                                            <input type="text" class="form-control col logradouro" id="logradouro"
-                                                name="logradouro" minlength="1" maxlength="200" required />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="tiporua">Tipo de Logradouro</label>
                                             <select class="form-control tiporua" id="tiporua" name="tiporua">
@@ -229,7 +221,18 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col">
+
+                                </div>
+                                <div class="row">
+                                    
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="logradouro">Endereço:</label>
+                                            <input type="text" class="form-control col logradouro" id="logradouro"
+                                                name="logradouro" minlength="1" maxlength="200" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="numero">Nº do Imóvel</label>
                                             <input type="number" class="form-control col numero" id="numero"
@@ -237,14 +240,15 @@
                                                 required />
                                         </div>
                                     </div>
+
+
                                 </div>
                                 <div class="row">
-                                    
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="complemento">Complemento:</label>
-                                            <input type="text" class="form-control col complemento" id="complemento" name="complemento"
-                                                minlength="1" maxlength="40"/>
+                                            <label for="logradouro">Complemento (opcional):</label>
+                                            <input type="text" class="form-control col complemento" id="complemento"
+                                                name="complemento " minlength="1" maxlength="200" required />
                                         </div>
                                     </div>
                                     <div class="col">
@@ -263,12 +267,12 @@
                                                 minlength="1" maxlength="40" required />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col">       
                                         <div class="form-group">
                                             <label for="uf">Estado (UF):</label>
                                             <input type="text" class="form-control col uf" id="uf" name="uf" required />
                                         </div>
-                                    </div>
+                                    </div>    
                                 </div>
 
                                 <button type="button" class="btn btn-secondary prev-step">

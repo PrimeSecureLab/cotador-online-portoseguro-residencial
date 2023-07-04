@@ -269,3 +269,36 @@ body, html {
 h6.card-price {
   display: inline-table;
 }
+
+.valorcoberturaincendio-obrigatorio {
+  color: red;
+  font-weight: 700;
+  font-size: 13px;
+  position: absolute;
+  right: 15px;
+  line-height: 24px;
+  opacity: 0.6;
+}
+
+div.main-toggle-conteiner {
+  position: absolute;
+  display: flex;
+  right: 15px;
+}
+
+div.cobertura-ativa {
+  padding-right: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+}
+
+div.main-toggle-conteiner {
+  position: absolute;
+  display: flex;
+  right: 15px;
+}
+
+@media (max-width: 500px) {
+  .cobertura-ativa { display: none; }
+}

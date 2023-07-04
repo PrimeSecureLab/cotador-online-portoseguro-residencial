@@ -192,8 +192,17 @@ $(document).ready(function() {
         inputList.each((index)=>{ 
             let input = inputList[index];
             let label = $(`label[for="${input.id}"]`);
-            let toggle = `<div id="${input.id}-toggle" class="container-toggle"><div class="toggle-switch"></div></div>`;
+
+            if (input.id == 'valorcoberturaincendio'){ return true; }
+
+            let toggle = `
+                <div id="${input.id}-toggle-conteiner" class="main-toggle-conteiner">
+                    <div id="${input.id}-ativo" class="cobertura-ativa">Ativo</div>
+                    <div id="${input.id}-toggle" class="container-toggle"><div class="toggle-switch"></div></div>
+                </div>
+            `;
             let divInativo = `<div id="${input.id}-inativo" style="position: absolute; width: fit-content; top: 25px;">(Inativo)</div>`
+
             label.before(toggle);
             label.before(divInativo);
         });
@@ -817,6 +826,7 @@ $(document).ready(function() {
             let toggleElement = $(`#${input.id}-toggle`);
             let switchElement = toggleElement.children('.toggle-switch');
             let inativoElement = $(`#${input.id}-inativo`);
+            let ativoElement = $(`#${input.id}-ativo`);
 
             dadosCobertura[produto][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
             
@@ -898,7 +908,8 @@ $(document).ready(function() {
                     toggleElement.css('border-color', '#03A8DB');
                     switchElement.css('margin-left', '20px');
                     labelElement.css('display', 'block');
-                    inativoElement.css('display', 'none');   
+                    inativoElement.css('display', 'none');
+                    ativoElement.css('display', 'block');   
                 }else{
                     inputElement.prop("disabled", true); 
                     toggleElement.css('background-color', '#C7C7C7'); 
@@ -906,6 +917,7 @@ $(document).ready(function() {
                     switchElement.css('margin-left', '0px');
                     labelElement.css('display', 'none');
                     inativoElement.css('display', 'block');
+                    ativoElement.css('display', 'none');
                 }
             }else{ //Input Desativada
                 inputElement.prop("disabled", true); 
@@ -914,6 +926,7 @@ $(document).ready(function() {
                 switchElement.css('margin-left', '0px');
                 labelElement.css('display', 'none');
                 inativoElement.css('display', 'block');
+                ativoElement.css('display', 'none');
             }
 
             let rangeContainer = inputElement.parent();

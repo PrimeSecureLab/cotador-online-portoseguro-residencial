@@ -676,3 +676,30 @@ input[type="number"] {
 .container-cobertura-obrigatoria {
     display: flex;
 }
+
+@media (max-width: 500px) {
+    .cobertura-ativa { display: none; }
+}
+
+div.cobertura-ativa {
+    padding-right: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 25px;
+}
+
+div.main-toggle-conteiner {
+    position: absolute;
+    display: flex;
+    right: 15px;
+}
+
+.fa-check {
+    font-size: 14px;
+    color: #FFF;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: 5px;
+}

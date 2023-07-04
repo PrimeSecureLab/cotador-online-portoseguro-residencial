@@ -378,7 +378,7 @@ input[type=range]:focus::-ms-fill-upper {
   height: 25px; 
   background-color: #C7C7C7; 
   border-radius: 25px; 
-  position: absolute; 
+  /*position: absolute; */
   border: 3px solid #C7C7C7; 
   overflow: hidden; 
   cursor: pointer;
