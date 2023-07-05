@@ -120,7 +120,7 @@
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="nome">Nome:</label>
+                                            <label for="nome">Nome Completo:</label>
                                             <input type="text" class="form-control col nome" id="nome" name="nome"
                                                 minlength="1" maxlength="160" required />
                                         </div>
@@ -134,7 +134,7 @@
                                             <label for="numerotelefone">Celular/Telefone:</label>
                                             <input type="text" class="form-control col numerotelefone"
                                                 id="numerotelefone" name="numerotelefone" minlength="10" maxlength="11"
-                                                placeholder="(DDD) 00000-0000" required />
+                                                placeholder="(DD) 00000-0000" required />
                                         </div>
                                     </div>
                                     <div class="col">
@@ -188,9 +188,9 @@
                                                 <option value="3">Casa de Madeira (Zona Urbana)</option>
                                                 <option value="8">Casa de Madeira (Zona Rural)</option>
                                                 <option value="4">Chácara, Sítio ou Fazenda</option>
-                                                <option value="6">Apartamento Desocupado</option>
-                                                <option value="5">Casa de Alvenaria Desocupada</option>
-                                                <option value="7">Chácara, Sítio ou Fazenda Desocupado</option>
+                                                <!--<option value="6">Apartamento Desocupado</option>--> 
+                                                <!--<option value="5">Casa de Alvenaria Desocupada</option>-->
+                                                <!--<option value="7">Chácara, Sítio ou Fazenda Desocupado</option>-->
                                             </select>
                                         </div>
                                     </div>
@@ -288,14 +288,14 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturaincendio"
+                                            <label for="valorCoberturaIncendio"
                                                 class="form-label label-coberturas">Incêndio/Explosão:</label>
-                                            <span class="valorcoberturaincendio-obrigatorio">Cobertura obrigatória</span>
+                                            <span class="valorCoberturaIncendio-obrigatorio">Cobertura obrigatória</span>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturaincendio" min="30000" max="1000000" value="300000"
+                                                    id="valorCoberturaIncendio" min="100000" max="1000000" value="300000"
                                                     step="10000" />
-                                                <div class="range-value0" id="valorcoberturaincendio-label"></div>
+                                                <div class="range-value0" id="valorCoberturaIncendio-label"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -304,13 +304,13 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturasubstracaobens"
+                                            <label for="valorCoberturaSubstracaoBens"
                                                 class="form-label label-coberturas">Roubo ou Furto Qualificado:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturasubstracaobens" min="10000" max="500000" value="60000"
+                                                    id="valorCoberturaSubstracaoBens" min="10000" max="300000" value="60000"
                                                     step="1000" />
-                                                <div class="range-value1" id="valorcoberturasubstracaobens-label"></div>
+                                                <div class="range-value1" id="valorCoberturaSubstracaoBens-label"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -319,13 +319,13 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturapagamentoaluguel"
+                                            <label for="valorCoberturaPagamentoAluguel"
                                                 class="form-label label-coberturas">Pagamento de Aluguel:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturapagamentoaluguel" min="3000" max="200000"
+                                                    id="valorCoberturaPagamentoAluguel" min="3000" max="200000"
                                                     value="10000" step="1000" />
-                                                <div class="range-value2" id="valorcoberturapagamentoaluguel-label">R$ 10.000</div>
+                                                <div class="range-value2" id="valorCoberturaPagamentoAluguel-label">R$ 10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -334,28 +334,41 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturarcfamiliar" class="form-label label-coberturas">Responsabilidade Civil Familiar:</label>
+                                            <label for="valorCoberturaRCFamiliar" class="form-label label-coberturas">Responsabilidade Civil Familiar:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturarcfamiliar" min="0" max="200000"
-                                                    value="10000" step="1000" />
-                                                <div class="range-value3" id="valorcoberturarcfamiliar-label">R$ 10.000</div>
+                                                    id="valorCoberturaRCFamiliar" min="2000" max="200000"
+                                                    value="20000" step="1000" />
+                                                <div class="range-value3" id="valorCoberturaRCFamiliar-label">R$ 10.000</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
+                                <!--Snippet de valorCoberturaDanosEletricos-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaDanosEletricos" class="form-label label-coberturas">Danos Elétricos:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaDanosEletricos" min="2000" max="500000" value="6000"
+                                                    step="1000" />
+                                                <div class="range-value4" id="valorCoberturaDanosEletricos-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!--Snippet de valorCoberturaVendaval-->
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturavendaval" class="form-label label-coberturas">
+                                            <label for="valorCoberturaVendaval" class="form-label label-coberturas">
                                                 Cobertura Vendaval:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturavendaval" min="0" max="500000" value="6000"
+                                                    id="valorCoberturaVendaval" min="2000" max="50000" value="6000"
                                                     step="1000" />
-                                                <div class="range-value5" id="valorcoberturavendaval-label">R$10.000</div>
+                                                <div class="range-value5" id="valorCoberturaVendaval-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -364,31 +377,152 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturadesmoronamento"
+                                            <label for="valorCoberturaDesmoronamento"
                                                 class="form-label label-coberturas">Cobertura
                                                 Desmoronamento:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturadesmoronamento" min="0" max="500000"
+                                                    id="valorCoberturaDesmoronamento" min="0" max="500000"
                                                     value="6000" step="1000" />
-                                                <div class="range-value6" id="valorcoberturadesmoronamento-label">R$10.000</div>
+                                                <div class="range-value6" id="valorCoberturaDesmoronamento-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!--Snipet de valorCoberturaAlagamento-->
+                                <!--Snippet de valorCoberturaVazamentosTanquesTubulacoes-->
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorcoberturaalagamento"
+                                            <label for="valorCoberturaVazamentosTanquesTubulacoes"
+                                                class="form-label label-coberturas">Vazamentos:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaVazamentosTanquesTubulacoes" min="2000" max="100000"
+                                                    value="6000" step="1000" />
+                                                <div class="range-value7" id="valorCoberturaVazamentosTanquesTubulacoes-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snipet de valorCoberturaQuebraVidros -->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaQuebraVidros"
+                                                class="form-label label-coberturas">Quebra de Vidros:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaQuebraVidros" min="2000" max="20000"
+                                                    value="5000" step="1000" />
+                                                <div class="range-value8" id="valorCoberturaQuebraVidros-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snipet de valorCoberturaPagamentoCondominio -->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaPagamentoCondominio"
+                                                class="form-label label-coberturas">Pagamento Condominio:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaPagamentoCondominio" min="1000" max="5000"
+                                                    value="5000" step="500" />
+                                                <div class="range-value9" id="valorCoberturaPagamentoCondominio-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snipet de valorCoberturaMorteAcidental
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaMorteAcidental"
                                                 class="form-label label-coberturas">Cobertura
                                                 Alagamento:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorcoberturaalagamento" min="0" max="500000"
+                                                    id="valorCoberturaMorteAcidental" min="0" max="500000"
                                                     value="5000" step="1000" />
-                                                <div class="range-value12" id="valorcoberturaalagamento-label">R$10.000</div>
+                                                <div class="range-value12" id="valorCoberturaMorteAcidental-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <!--Snipet de valorCoberturaTremorTerraTerremoto -->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaTremorTerraTerremoto"
+                                                class="form-label label-coberturas">Tremor/Teremoto:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaTremorTerraTerremoto" min="2000" max="500000"
+                                                    value="5000" step="1000" />
+                                                <div class="range-value10" id="valorCoberturaTremorTerraTerremoto-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snipet de valorCoberturaAlagamento-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaAlagamento"
+                                                class="form-label label-coberturas">Alagamento:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaAlagamento" min="5000" max="500000"
+                                                    value="5000" step="1000" />
+                                                <div class="range-value11" id="valorCoberturaAlagamento-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snippet de valorCoberturaEdificio
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaEdificio"
+                                                class="form-label label-coberturas">Subtração
+                                                Bicicleta:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaEdificio" min="0" max="10000" value="1000"
+                                                    step="100" />
+                                                <div class="range-value18" id="valorCoberturaEdificio-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <!--Snippet de valorCoberturaConteudo
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorCoberturaConteudo"
+                                                class="form-label label-coberturas">Subtração
+                                                Bicicleta:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorCoberturaConteudo" min="0" max="10000" value="1000"
+                                                    step="100" />
+                                                <div class="range-value18" id="valorCoberturaConteudo-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <!--Snippet de valorImpactoVeiculos-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorImpactoVeiculos"
+                                                class="form-label label-coberturas">Impacto de Veículos:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorImpactoVeiculos" min="2000" max="20000" value="2000"
+                                                    step="1000" />
+                                                <div class="range-value12" id="valorImpactoVeiculos-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -398,14 +532,28 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorsubtracaobicicleta"
-                                                class="form-label label-coberturas">Subtração
-                                                Bicicleta:</label>
+                                            <label for="valorSubtracaoBicicleta"
+                                                class="form-label label-coberturas">Subtração Bicicleta:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorsubtracaobicicleta" min="0" max="10000" value="1000"
+                                                    id="valorSubtracaoBicicleta" min="2500" max="10000" value="1000"
                                                     step="100" />
-                                                <div class="range-value18" id="valorsubtracaobicicleta-label">R$10.000</div>
+                                                <div class="range-value13" id="valorSubtracaoBicicleta-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snippet de valorNegocioCasa-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorNegocioCasa"
+                                                class="form-label label-coberturas">Negócio em Casa:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorNegocioCasa" min="2000" max="10000" value="2000"
+                                                    step="1000" />
+                                                <div class="range-value14" id="valorNegocioCasa-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
@@ -415,18 +563,64 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
-                                            <label for="valorpequenasreformas"
-                                                class="form-label label-coberturas">Pequenas
-                                                Reformas:</label>
+                                            <label for="valorPequenasReformas"
+                                                class="form-label label-coberturas">Pequenas Reformas:</label>
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
-                                                    id="valorpequenasreformas" min="0" max="100000" value="30000"
+                                                    id="valorPequenasReformas" min="5000" max="200000" value="30000"
                                                     step="1000" />
-                                                <div class="range-value20" id="valorpequenasreformas-label">R$10.000</div>
+                                                <div class="range-value15" id="valorPequenasReformas-label">R$10.000</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!--Snippet de valorFuneralFamiliar
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorFuneralFamiliar"
+                                                class="form-label label-coberturas">Subtração
+                                                Bicicleta:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorFuneralFamiliar" min="0" max="10000" value="1000"
+                                                    step="100" />
+                                                <div class="range-value18" id="valorFuneralFamiliar-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <!--Snippet de valorDanosMorais-->
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorDanosMorais"
+                                                class="form-label label-coberturas">Danos Morais:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorDanosMorais" min="2000" max="100000" value="2000"
+                                                    step="1000" />
+                                                <div class="range-value16" id="valorDanosMorais-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Snippet de valorRCEmpregador
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valorRCEmpregador"
+                                                class="form-label label-coberturas">Subtração
+                                                Bicicleta:</label>
+                                            <div class="range-container">
+                                                <input type="range" class="form-range input-coberturas"
+                                                    id="valorRCEmpregador" min="0" max="10000" value="1000"
+                                                    step="100" />
+                                                <div class="range-value18" id="valorRCEmpregador-label">R$10.000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
 
                                 <button type="button" class="btn btn-secondary prev-step prev-step-3">
                                     Etapa anterior
@@ -601,6 +795,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+    <script src="./src/js/configurarSliders.js"></script>
+    <script src="./src/js/controladorValidacao.js"></script>
     <script src="./src/js/controladorCotacao.js"></script>
 </body>
 

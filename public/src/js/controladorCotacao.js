@@ -5,18 +5,21 @@ var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valo
 
 allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
 
-var dadosCobertura = [];
-var valoresCobertura = [];
+var dadosCobertura = {};
+var valoresCobertura = {};
+
+var tipoProduto = 'habitual';
+var tipoResidencia = 0;
 
 $(document).ready(function() {
-    dadosCobertura['generica'] = {};
-    valoresCobertura['generica'] = {};
+    //dadosCobertura['generica'] = {};
+    //valoresCobertura['generica'] = {};
 
     var inputsRange = $('input[type="range"]');
-    inputsRange.on('change', controleCoberturasGenerico );
+    //inputsRange.on('change', controleCoberturasGenerico );
 
-    gerarToggleSwitch();
-    controleCoberturasGenerico();
+    //gerarToggleSwitch();
+    //controleCoberturasGenerico();
 
     $.ajax({
         url: '/formulario',
@@ -30,6 +33,7 @@ $(document).ready(function() {
                 let input = $(`#${key}`);
                 if (input.length){ input.val(form[key]); }
             }
+            /*
             if (!form.itens){ form.itens = {}; }
             if (!form.itens.generico){ form.itens.generico = {}; }
             
@@ -39,7 +43,8 @@ $(document).ready(function() {
                 dadosCobertura['generica'][key].disabled = (form.itens.generico[key].disable);
                 valoresCobertura['generica'][key] = form.itens.generico[key].value || dadosCobertura['generica'][key].value;
             }
-            controleCoberturasGenerico();
+            */
+            //controleCoberturasGenerico();
             //console.log(form);
             //console.log(dadosCobertura['generica']);            
         },
@@ -95,40 +100,58 @@ $(document).ready(function() {
             data.newLead = newLead;
             newLead = false;
 
-            $.ajax({
+            /*$.ajax({
                 url: '/datalayer',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function(res) { console.log('Sucesso:', res); },
                 error: function(xhr, status, error) { console.error('Error:', error); }
-            });
+            });*/
 
             if (data.etapa == 'step-1'){
-                if (data.cpf.replace(/[^0-9]+/g, '').length != 11){ errorList.push({id: 'cpf'}); }
-                if (!data.nome){ errorList.push({id: 'nome'}); }
-                if (!data.tipotelefone){ errorList.push({id: 'tipotelefone'}); }
+                if (!validarCPF(data.cpf)){ errorList.push({id: 'cpf'}); }
+                if (!validarNome(nome)){ errorList.push({id: 'nome'}); }
+                if (!validarData(data.datanascimento)){ errorList.push({id: 'datanascimento'}); }
+
                 if (data.numerotelefone.replace(/[^0-9]+/g, '').length < 10){ errorList.push({id: 'numerotelefone'}); }
-                if (data.datanascimento.replace(/[^0-9]+/g, '').length < 8){ errorList.push({id: 'datanascimento'}); }
-                if (data.tipotelefone == 3 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 11){ 
-                    if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
-                }
-                if (data.tipotelefone == 1 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 10){ 
-                    if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
-                }
+                if (data.tipotelefone != 1 && data.tipotelefone != 3){ 
+                    errorList.push({id: 'tipotelefone'}); 
+                }else{
+                    if (data.tipotelefone == 1 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 10){  
+                        if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
+                    }
+                    if (data.tipotelefone == 3 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 11){ 
+                        if (!errorList.includes('tipotelefone')){ errorList.push({id: 'tipotelefone'}); }
+                    }
+                }               
             }
             if (data.etapa == 'step-2'){
-                if (data.cep.replace(/[^0-9]+/g, '').length != 8){ errorList.push({id: 'cep'}); }
+                if (!validarCEP(data.cep)){ errorList.push({id: 'cep'}); }
+                if (!validarTipoResidencia(data.tiporesidencia)){ errorList.push({id: 'tiporesidencia'}); }else{ tiporResidencia = data.tiporesidencia; }
+                if (!validarTipoRua(data.tiporua)){ errorList.push({id: 'tiporua'}); }
+                if (!validarLogradouro(data.logradouro)){ errorList.push({id: 'logradouro'}); }
+                if (!validarNumero(data.numero)){ errorList.push({id: 'numero'}); }
+                if (!validarBairro(data.bairro)){ errorList.push({id: 'bairro'}); }
+                if (!validarMunicipio(data.cidade)){ errorList.push({id: 'cidade'}); }
+                if (!validarUF(data.uf)){ errorList.push({id: 'uf'}); }
+
+                if (errorList.length == 0){  
+                    tipoResidencia = data.tiporesidencia;
+                    if (tipoResidencia == 8 || tipoResidencia == 4){ tipoProduto = 'veraneio'; }else{ tipoProduto = 'habitual'; }
+                }
+
+                /*if (data.cep.replace(/[^0-9]+/g, '').length != 8){ errorList.push({id: 'cep'}); }
                 if (!data.tiporesidencia){ errorList.push({id: 'tiporesidencia'}); }else{ tiporResidencia = data.tiporesidencia; }
                 if (!data.tiporua){ errorList.push({id: 'tiporua'}); }
                 if (!data.logradouro){ errorList.push({id: 'logradouro'}); }
                 if (!/^[0-9]{1,4}$/.test(data.numero)){ errorList.push({id: 'numero'}); }
                 if (!data.bairro){ errorList.push({id: 'bairro'}); }
                 if (!data.cidade){ errorList.push({id: 'cidade'}); }
-                if (!data.uf){ errorList.push({id: 'uf'}); }
-                controleCoberturasGenerico();
+                if (!data.uf){ errorList.push({id: 'uf'}); }*/
+                //controleCoberturasGenerico();
             }
-            console.log(data.etapa)
+            console.log(data.etapa);
         }
         if (errorList.length > 0){
             errorList.map((error, index)=>{
@@ -136,8 +159,9 @@ $(document).ready(function() {
                 let label = $(`label[for="${error.id}"]`); //Label do campo com erro
                 input.addClass('error');
                 label.addClass('error');
+                let errorLabel = false;
                 if (error.id == 'tipotelefone'){
-                    let errorLabel = $('label#telefoneError');
+                    errorLabel = $('label#telefoneError');
                     if (data.tipotelefone == 3 && data.numerotelefone.replace(/[^0-9]+/g, '').length != 11){
                         errorLabel.css('display', 'block');
                         errorLabel.html('Celular deve ter 11 dígitos');
@@ -155,27 +179,21 @@ $(document).ready(function() {
                     });
                 }
                 input.on('change keydown paste input', {label: label, input: input} ,(e)=>{ 
-                    errorLabel.html('');
-                    $('#telefoneError').css('display', 'none');
                     e.data.label.removeClass('error'); 
                     e.data.input.removeClass('error'); 
-                });
+                });                
             });
             return;
         }
-        if (nextStep.length > 0) {
-            currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); });
-        }
+        if (nextStep.length > 0) { currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); }); }
+        inciarCoberturaMain(tipoProduto, 'generica', tipoResidencia, dadosCobertura, valoresCobertura, false);
     });
-
-    // Ao clicar no botão "prev-step", volta para a etapa anterior do formulário
+    
     $(".prev-step").click(function() {
         newLead = false;
         var currentStep = $(this).closest(".form-step");
         var prevStep = currentStep.prev(".form-step");
-        if (prevStep.length > 0) {
-            currentStep.removeClass("active").fadeOut(250, function() { prevStep.addClass("active").fadeIn(250); });
-        }
+        if (prevStep.length > 0) { currentStep.removeClass("active").fadeOut(250, function() { prevStep.addClass("active").fadeIn(250); }); }
     });    
 
     function formatCurrency(value) {
@@ -191,7 +209,7 @@ $(document).ready(function() {
             let input = inputList[index];
             let label = $(`label[for="${input.id}"]`);            
        
-            if (input.id == 'valorcoberturaincendio'){ return true; }
+            if (input.id == 'valorCoberturaIncendio'){ return true; }
 
             let toggle = `
                 <div id="${input.id}-toggle-conteiner" class="main-toggle-conteiner">
@@ -212,7 +230,7 @@ $(document).ready(function() {
         let inputChange = this.id;
         let residencia = $('#tiporesidencia').val();
         
-        if (!dadosCobertura['generica'].valorcoberturaincendio){
+        if (!dadosCobertura['generica'].valorCoberturaIncendio){
             inputsRange.each((index)=>{ 
                 let input = inputsRange[index];
                 if (inputChange && inputChange == input.id){ input.value = this.value; }
@@ -227,41 +245,41 @@ $(document).ready(function() {
             });
         }
         
-        inputs.valorcoberturaincendio.min = 100000;
-        inputs.valorcoberturaincendio.max = (residencia == 2) ? 700000 : 1000000;
+        inputs.valorCoberturaIncendio.min = 100000;
+        inputs.valorCoberturaIncendio.max = (residencia == 2) ? 700000 : 1000000;
 
-        if (inputs.valorcoberturaincendio.value > inputs.valorcoberturaincendio.max){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.max; 
+        if (inputs.valorCoberturaIncendio.value > inputs.valorCoberturaIncendio.max){ 
+            inputs.valorCoberturaIncendio.value = inputs.valorCoberturaIncendio.max; 
         }
-        if (inputs.valorcoberturaincendio.value < inputs.valorcoberturaincendio.min){ 
-            inputs.valorcoberturaincendio.value = inputs.valorcoberturaincendio.min; 
+        if (inputs.valorCoberturaIncendio.value < inputs.valorCoberturaIncendio.min){ 
+            inputs.valorCoberturaIncendio.value = inputs.valorCoberturaIncendio.min; 
         }
 
-        let base = inputs.valorcoberturaincendio.value;
+        let base = inputs.valorCoberturaIncendio.value;
 
-        inputs.valorcoberturasubstracaobens.min = 2000;
-        inputs.valorcoberturasubstracaobens.max = (base * 0.3 > 200000) ? 200000 : base * 0.3;
+        inputs.valorCoberturaSubstracaoBens.min = 2000;
+        inputs.valorCoberturaSubstracaoBens.max = (base * 0.3 > 200000) ? 200000 : base * 0.3;
 
-        inputs.valorcoberturapagamentoaluguel.min = 3000;
-        inputs.valorcoberturapagamentoaluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
+        inputs.valorCoberturaPagamentoAluguel.min = 3000;
+        inputs.valorCoberturaPagamentoAluguel.max = (base * 0.50 > 200000) ? 200000 : base * 0.50;
 
-        inputs.valorcoberturarcfamiliar.min = 2000;
-        inputs.valorcoberturarcfamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5//base * 0.5;
-        inputs.valorcoberturarcfamiliar.value = (inputs.valorcoberturarcfamiliar.value > inputs.valorcoberturarcfamiliar.max) ? inputs.valorcoberturarcfamiliar.max : inputs.valorcoberturarcfamiliar.value;
+        inputs.valorCoberturaRCFamiliar.min = 2000;
+        inputs.valorCoberturaRCFamiliar.max = (base * 0.5 > 200000) ? 200000 : base * 0.5//base * 0.5;
+        inputs.valorCoberturaRCFamiliar.value = (inputs.valorCoberturaRCFamiliar.value > inputs.valorCoberturaRCFamiliar.max) ? inputs.valorCoberturaRCFamiliar.max : inputs.valorCoberturaRCFamiliar.value;
 
-        inputs.valorcoberturavendaval.min = 2000;
-        inputs.valorcoberturavendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;
+        inputs.valorCoberturaVendaval.min = 2000;
+        inputs.valorCoberturaVendaval.max = (base * 0.5 > 500000) ? 500000 : base * 0.5;
 
-        inputs.valorcoberturadesmoronamento.min = 2000;
-        inputs.valorcoberturadesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
+        inputs.valorCoberturaDesmoronamento.min = 2000;
+        inputs.valorCoberturaDesmoronamento.max = (base * 0.1 > 500000) ? 500000 : base * 0.1;
 
-        inputs.valorcoberturaalagamento.min = 5000;
-        inputs.valorcoberturaalagamento.max = 300000;//50000;
+        inputs.valorCoberturaAlagamento.min = 5000;
+        inputs.valorCoberturaAlagamento.max = 300000;//50000;
         //inputs.valorcoberturaalagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
 
         inputs.valorsubtracaobicicleta.min = 2500;
         inputs.valorsubtracaobicicleta.max = (base * 0.3 > 15000) ? 15000 : base * 0.3;//(base * 0.3 > 50000) ? 50000 : base * 0.3;
-        //inputs.valorsubtracaobicicleta.disabled = (inputs.valorcoberturaincendio.value < 250000);
+        //inputs.valorsubtracaobicicleta.disabled = (inputs.valorCoberturaIncendio.value < 250000);
 
         inputs.valorpequenasreformas.min = 2000;
         inputs.valorpequenasreformas.max = 100000;
@@ -294,7 +312,7 @@ $(document).ready(function() {
             let inativoElement = $(`#${input.id}-inativo`);
             let ativoElement = $(`#${input.id}-ativo`);
 
-            dadosCobertura['generica'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display};
+            dadosCobertura['generica'][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
             
             if (!input.disabled){ 
                 let enable = true;     
@@ -302,7 +320,7 @@ $(document).ready(function() {
                 inputElement.prop("disabled", false);
 
                 if (input.id == 'valorsubtracaobicicleta'){ 
-                    if (inputs.valorcoberturaincendio.value < 250000){
+                    if (inputs.valorCoberturaIncendio.value < 250000){
                         inativoElement.html('*Liberada quando cobertura de incêndio for maior que R$ 250.000,00');
                         inativoElement.css('font-size', '13px');
                         enable = false; 
@@ -369,10 +387,10 @@ $(document).ready(function() {
             }
 
             toggleElement.off("click").on("click", ()=>{
-                if (input.id == 'valorcoberturaincendio'){ return; }
+                if (input.id == 'valorCoberturaIncendio'){ return; }
                 dadosCobertura['generica'][input.id].disabled = !(dadosCobertura['generica'][input.id].disabled);
                 inputElement.prop("disabled", dadosCobertura['generica'][input.id].disabled);
-                controleCoberturasGenerico();
+                //controleCoberturasGenerico();
             });
 
             //let rangeContainer = inputElement.parent();
@@ -382,7 +400,7 @@ $(document).ready(function() {
         }
     }
     
-    controleCoberturasGenerico();
+    //controleCoberturasGenerico();
 });
 
 $('#form').submit((e)=>{ e.preventDefault(); return false; });

@@ -663,7 +663,7 @@ input[type="number"] {
   appearance: textfield;
 }
 
-.valorcoberturaincendio-obrigatorio {
+.valorCoberturaIncendio-obrigatorio {
     color: red;
     font-weight: 700;
     font-size: 13px;
