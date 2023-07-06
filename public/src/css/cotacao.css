@@ -664,7 +664,7 @@ input[type="number"] {
 }
 
 .valorCoberturaIncendio-obrigatorio {
-    color: red;
+    color: #555;
     font-weight: 700;
     font-size: 13px;
     position: absolute;

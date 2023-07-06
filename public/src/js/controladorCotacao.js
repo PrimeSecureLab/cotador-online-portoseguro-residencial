@@ -1,25 +1,18 @@
 var newLead = true;
-var relacaoItemId = [];
-var allItems = [ 'valorCoberturaIncendio', 'valorCoberturaSubstracaoBens', 'valorCoberturaPagamentoAluguel', 'valorCoberturaRCFamiliar', 
-    'valorCoberturaVendaval', 'valorCoberturaDesmoronamento', 'valorCoberturaAlagamento','valorSubtracaoBicicleta', 'valorPequenasReformas' ];
-
-allItems.map((item, index)=>{ relacaoItemId[item.toLowerCase()] = item; });
 
 var dadosCobertura = {};
 var valoresCobertura = {};
 
 var tipoProduto = 'habitual';
-var tipoResidencia = 0;
+var tipoResidencia = 1;
 
 $(document).ready(function() {
-    //dadosCobertura['generica'] = {};
-    //valoresCobertura['generica'] = {};
+
+    gerarToggleSwitch();
 
     var inputsRange = $('input[type="range"]');
-    //inputsRange.on('change', controleCoberturasGenerico );
 
-    //gerarToggleSwitch();
-    //controleCoberturasGenerico();
+    inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, dadosCobertura, valoresCobertura, e.target.id); });
 
     $.ajax({
         url: '/formulario',
@@ -128,7 +121,7 @@ $(document).ready(function() {
             }
             if (data.etapa == 'step-2'){
                 if (!validarCEP(data.cep)){ errorList.push({id: 'cep'}); }
-                if (!validarTipoResidencia(data.tiporesidencia)){ errorList.push({id: 'tiporesidencia'}); }else{ tiporResidencia = data.tiporesidencia; }
+                if (!validarTipoResidencia(data.tiporesidencia)){ errorList.push({id: 'tiporesidencia'}); }else{ tipoResidencia = data.tiporesidencia; }
                 if (!validarTipoRua(data.tiporua)){ errorList.push({id: 'tiporua'}); }
                 if (!validarLogradouro(data.logradouro)){ errorList.push({id: 'logradouro'}); }
                 if (!validarNumero(data.numero)){ errorList.push({id: 'numero'}); }
@@ -186,7 +179,10 @@ $(document).ready(function() {
             return;
         }
         if (nextStep.length > 0) { currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); }); }
-        inciarCoberturaMain(tipoProduto, 'generica', tipoResidencia, dadosCobertura, valoresCobertura, false);
+        
+        inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, dadosCobertura, valoresCobertura, false);
+        inputsRange.off('change');
+        inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, dadosCobertura, valoresCobertura, e.target.id); });
     });
     
     $(".prev-step").click(function() {
@@ -196,7 +192,7 @@ $(document).ready(function() {
         if (prevStep.length > 0) { currentStep.removeClass("active").fadeOut(250, function() { prevStep.addClass("active").fadeIn(250); }); }
     });    
 
-    function formatCurrency(value) {
+    /*function formatCurrency(value) {
         if (value < 1000) { return value + ""; }
         if (value < 1000000) { return (value / 1000) + " mil"; } 
         if (value >=  2000000) { return (value / 1000000) + " milhões"; } 
@@ -224,6 +220,7 @@ $(document).ready(function() {
             label.before(divInativo);
         });
     }
+    */
 
     function controleCoberturasGenerico(){
         let inputs = {};
