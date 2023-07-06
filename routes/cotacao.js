@@ -13,6 +13,9 @@ var todasCoberturas = portoCoberturas.listaCoberturas('all', false);
 const ValidarCotacao = require('../configs/validarCotacao');
 var validacaoCotacao = new ValidarCotacao;
 
+const ValidadorGeral = require('../configs/validacaoGeral');
+var validador = new ValidadorGeral;
+
 dotenv.config();
 
 // Define a rota para a página HTML
@@ -36,44 +39,57 @@ router.get("/formulario", async (req, res)=>{
 
 router.post("/enviar-dados", async (req, res) => {
     let body = req.body;
-
-    var relacaoCoberturas = [];
-    todasCoberturas.map((item, index)=>{ relacaoCoberturas[item.toLocaleLowerCase()] = item; });
+    
+    let produto = validador.retornarProduto(body.tiporesidencia);
+    let todasCoberturas = validador.retornarCoberturas(produto);
     
     let items = {};
-    for(let [key, value] of Object.entries(body)){ if (key in relacaoCoberturas){ items[relacaoCoberturas[key]] = value; } }
 
-    //const susep = '5600PJ'
-    //const codigooperacao = 40; //req.body.codigooperacao;
-    //const codigocanal = 60;//req.body.codigocanal;
+    for(let key in body){ if (todasCoberturas.includes(key)){ items[key] = body[key]; } }
 
-    //dados do usuário (Primeiro Step)
+    var errorList = [];
+
     body.cpf = body.cpf || "";
-    body.cpf = body.cpf.replace(/[^0-9]+/g, "");
-
     body.nome = body.nome || "";
-
     body.numerotelefone = body.numerotelefone || "";
-    body.numerotelefone = body.numerotelefone.replace(/[^0-9]+/g, "");
-
     body.tipotelefone = body.tipotelefone || "";
-
     body.datanascimento = body.datanascimento || "";
-    body.datanascimento = validacaoCotacao.formatarDataAmericana(body.datanascimento) || ""
 
-    body.tiporesidencia = body.tiporesidencia || "";
+    if (!validador.validarCPF(body.cpf)){ errorList.push({error: "CPF inválido.", field: "cpf", step: "1"}); }
+    if (!validador.validarNome(body.nome)){ errorList.push({error: "Nome inválido.", field: "nome", step: "1"}); }
+    if (!validador.validarData(body.datanascimento)){ errorList.push({error: "Data de nascimento inválida.", field: "datanascimento", step: "1"}); }
+    if (!validador.validarTelefone(body.numerotelefone)){ errorList.push({error: "Número de telefone inválido.", field: "numerotelefone", step: "1"}); }
 
+    if (body.tipotelefone == 1 && body.numerotelefone.replace(/[^0-9]+/g, '').length != 10){ errorList.push({error: "Telefone fixo deve ter 10 digitos.", field: "numerotelefone", step: "1"}); }
+    if (body.tipotelefone == 3 && body.numerotelefone.replace(/[^0-9]+/g, '').length != 11){ errorList.push({error: "Telefone celular deve ter 11 digitos.", field: "numerotelefone", step: "1"}); }
+    
     body.cep = body.cep || "";
-    body.cep = body.cep.replace(/[^0-9]+/g, "");
-
-    body.logradouro = body.logradouro;
+    body.tiporesidencia = body.tiporesidencia || "";
+    body.logradouro = body.logradouro || "";
     body.tiporua = body.tiporua || "";
     body.numero = body.numero || "";
     body.bairro = body.bairro || "";
     body.cidade = body.cidade || "";
     body.uf = body.uf || "";
+    body.complemento = body.complemento || "";
 
-    // Criar o objeto com os dados para enviar para a Porto Seguro
+    if (!validador.validarCEP(body.cep)){ errorList.push({error: "CEP inválido.", field: "cep", step: "2"}); }
+    if (!validador.validarTipoResidencia(body.tiporesidencia)){ errorList.push({error: "Tipo de residencia inválido.", field: "tiporesidencia", step: "2"}); }
+    if (!validador.validarLogradouro(body.logradouro)){ errorList.push({error: "Endereço inválido.", field: "logradouro", step: "2"}); }
+    if (!validador.validarTipoRua(body.tiporua)){ errorList.push({error: "Tipo de rua inválido.", field: "tiporua", step: "2"}); }
+    if (!validador.validarNumero(body.numero)){ errorList.push({error: "Número inválido.", field: "numero", step: "2"}); }
+    if (!validador.validarBairro(body.bairro)){ errorList.push({error: "Bairro inválido.", field: "bairro", step: "2"}); }
+    if (!validador.validarMunicipio(body.cidade)){ errorList.push({error: "Cidade inválida.", field: "cidade", step: "2"}); }
+    if (!validador.validarUF(body.uf)){ errorList.push({error: "UF inválido.", field: "uf", step: "2"}); }
+    if (!validador.validarComplemento(body.complemento)){ errorList.push({error: "Complemento inválido.", field: "complemento", step: "2"});  }
+
+    if (errorList.length > 0){ return res.status(400).json(errorList); }
+    
+    body.cep = body.cep.replace(/[^0-9]+/g, "");
+    body.numerotelefone = body.numerotelefone.replace(/[^0-9]+/g, "");
+    body.cpf = body.cpf.replace(/[^0-9]+/g, "");
+    body.datanascimento = validador.formatarDataAmericana(body.datanascimento) || '';
+
     var data = {
         criadoEm: new Date(),
         susep: '5600PJ',//susep,
@@ -95,13 +111,17 @@ router.post("/enviar-dados", async (req, res) => {
                 numero: body.numero,
                 bairro: body.bairro,
                 cidade: body.cidade,
-                uf: body.uf
+                uf: body.uf,
+                complemento: body.complemento
             },
         }
     };
+
+    return res.status(200).json({fomulario: data, dadosCobertura: body.dadosCobertura, valoresCobertura: body.valoresCobertura});
+
     //console.log(data);
 
-    var errorList = [];
+    
 
     if (!validation.cpfPattern.test(body.cpf)){ 
         errorList.push({error: "CPF inválido.", field: "cpf", step: "1"}); 

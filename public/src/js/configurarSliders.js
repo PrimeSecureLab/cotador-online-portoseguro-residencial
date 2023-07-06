@@ -26,31 +26,35 @@ function formatarLabel(value) {
     return (value / 1000000) + " milhão";
 }
 
-function inciarCoberturaMain(produto, plano, residencia, dadosCobertura, valoresCobertura, inputChange_id){
+function inciarCoberturaMain(produto, plano, vigencia, residencia, inputChange_id){
     //console.log(event, dadosCobertura);
     let inputs = {};
     let todasInputRange = $('input[type="range"]');
     let inputChange = inputChange_id || false;
-    
-    dadosCobertura = dadosCobertura || {};
-    valoresCobertura = valoresCobertura || {};
 
-    dadosCobertura.generico = dadosCobertura.generico || {};
-    dadosCobertura.essencial = dadosCobertura.essencial || {};
-    dadosCobertura.conforto = dadosCobertura.conforto || {};
-    dadosCobertura.exclusive = dadosCobertura.exclusive || {};
+    let produtos = ['habitual', 'habitual-premium', 'veraneio'];
+    let planos = ['generico', 'essencial', 'conforto', 'exclusive'];
+    let vigencias = [1, 2, 3];
 
-    valoresCobertura.generico = valoresCobertura.generico || {};
-    valoresCobertura.essencial = valoresCobertura.essencial || {};
-    valoresCobertura.conforto = valoresCobertura.conforto || {};
-    valoresCobertura.exclusive = valoresCobertura.exclusive || {};
+    produtos.map((produto)=>{ 
+        if (!dadosCobertura[produto]){dadosCobertura[produto] = {}; } 
+        if (!valoresCobertura[produto]){valoresCobertura[produto] = {}; }
+        planos.map((plano)=>{ 
+            if (!dadosCobertura[produto][plano]){dadosCobertura[produto][plano] = {}; } 
+            if (!valoresCobertura[produto][plano]){valoresCobertura[produto][plano] = {}; } 
+            vigencias.map((vigencia)=>{
+                if (!dadosCobertura[produto][plano][vigencia]){dadosCobertura[produto][plano][vigencia] = {}; } 
+                if (!valoresCobertura[produto][plano][vigencia]){valoresCobertura[produto][plano][vigencia] = {}; } 
+            });
+        });
+    });    
 
     plano = plano || 'generico';
 
-    if (!dadosCobertura[plano].valorCoberturaIncendio){
+    if (!dadosCobertura[produto][plano][vigencia].valorCoberturaIncendio){
         todasInputRange.each((index)=>{ 
             let input = todasInputRange[index];
-            let cobertura = dadosCobertura[plano][input.id];
+            let cobertura = dadosCobertura[produto][plano][vigencia][input.id];
 
             if (!cobertura){ cobertura = input; }
             if (inputChange && inputChange == input.id){ cobertura.value = $(`#${inputChange_id}`).val(); }
@@ -65,13 +69,13 @@ function inciarCoberturaMain(produto, plano, residencia, dadosCobertura, valores
             };             
         });
         console.log('1.1 - Inputs:', inputs);
-        ajustarValoresCoberturas(produto, plano, residencia, dadosCobertura, valoresCobertura, {inputs: inputs});
+        ajustarValoresCoberturas(produto, plano, vigencia, residencia, {inputs: inputs});
         return;
     }
         
     todasInputRange.each((index)=>{ 
         let input = todasInputRange[index];
-        let cobertura = dadosCobertura[plano][input.id];
+        let cobertura = dadosCobertura[produto][plano][vigencia][input.id];
 
         if (!cobertura){ cobertura = input;}
         if (inputChange && inputChange == input.id){ cobertura.value = $(`#${inputChange_id}`).val(); }
@@ -79,10 +83,10 @@ function inciarCoberturaMain(produto, plano, residencia, dadosCobertura, valores
         inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled) ? true : false, display: true };
     }); 
     console.log('1.2 - Inputs:', inputs);
-    ajustarValoresCoberturas(produto, plano, residencia, dadosCobertura, valoresCobertura, {inputs: inputs});
+    ajustarValoresCoberturas(produto, plano, vigencia, residencia, {inputs: inputs});
 }
 
-function ajustarValoresCoberturas(produto, plano, residencia, dadosCobertura, valoresCobertura, data){
+function ajustarValoresCoberturas(produto, plano, vigencia, residencia, data){
     let inputs = data.inputs;
 
     inputs.valorCoberturaIncendio.min = 100000;
@@ -106,6 +110,7 @@ function ajustarValoresCoberturas(produto, plano, residencia, dadosCobertura, va
         inputs.valorCoberturaAlagamento.min = 5000;
         inputs.valorCoberturaAlagamento.max = 30000;
         //inputs.valorCoberturaAlagamento.disabled = !(residencia == 1 || residencia == 2 || residencia == 4);
+        //inputs.valorCoberturaAlagamento.display = (residencia == 1 || residencia == 2 || residencia == 4);
 
         inputs.valorNegocioCasa.min = 2000;
         inputs.valorNegocioCasa.max = 50000;
@@ -204,13 +209,13 @@ function ajustarValoresCoberturas(produto, plano, residencia, dadosCobertura, va
         inputs.valorSubtracaoBicicleta.display = false;
     }
     console.log('2 - Inputs:', inputs);
-    controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, valoresCobertura, {inputs: inputs});
+    controladorCoberturaDOM(produto, plano, vigencia, residencia, {inputs: inputs});
 }
 
-function controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, valoresCobertura, data){
+function controladorCoberturaDOM(produto, plano, vigencia, residencia, data){
     let inputs = data.inputs;
 
-    valoresCobertura[plano] = {};
+    valoresCobertura[produto][plano][vigencia] = {};
 
     for(let i in inputs){
         let input = inputs[i];
@@ -236,7 +241,7 @@ function controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, val
         let inativoElement = $(`#${input.id}-inativo`);
         let ativoElement = $(`#${input.id}-ativo`);
 
-        dadosCobertura[plano][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
+        dadosCobertura[produto][plano][vigencia][input.id] = { value: input.value, min: input.min, max: input.max, disabled: input.disabled, display: input.display };
         
         if (!input.disabled){ //Input Ativada
             let enable = true;     
@@ -284,9 +289,10 @@ function controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, val
                     inativoElement.css('font-size', '16px');
                 }
             }
+            /*
             if (input.id == 'valorCoberturaAlagamento'){ 
                 if (!(residencia == 1 || residencia == 2 || residencia == 4)){
-                    inativoElement.html('*Cobertura não permitida para imóveis desocupados');
+                    inativoElement.html('*Cobertura não permitida para Casas de Madeira ou Desocupadas');
                     inativoElement.css('font-size', '13px');
                     enable = false; 
                 }else{
@@ -294,12 +300,13 @@ function controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, val
                     inativoElement.css('font-size', '16px');
                 }
             }
+            */
             if (input.id == 'valorCoberturaPagamentoCondominio'){ 
-                valoresCobertura[plano].valorCoberturaMorteAcidental = 5000; 
-                dadosCobertura[plano].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
+                valoresCobertura[produto][plano][vigencia].valorCoberturaMorteAcidental = 5000; 
+                dadosCobertura[produto][plano][vigencia].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
             }
             if (enable){
-                valoresCobertura[plano][nomeCobertura] = input.value;
+                valoresCobertura[produto][plano][vigencia][nomeCobertura] = input.value;
                 inputElement.prop("disabled", false);
 
                 toggleElement.css('background-color', '#03A8DB');
@@ -329,54 +336,64 @@ function controladorCoberturaDOM(produto, plano, residencia, dadosCobertura, val
 
         let rangeContainer = inputElement.parent();
         let coberturaContainer = rangeContainer.parent();
+
+        if (input.id == 'valorCoberturaAlagamento'){ 
+            console.log('A', input.id, input.display, residencia);
+            if (residencia == 1 || residencia == 2 || residencia == 4){ input.display = true; }else{ input.display = false; }
+            console.log('B', input.id, input.display, residencia);
+        }
+
+
         if (input.display){ coberturaContainer.show(); }else{ coberturaContainer.hide(); }
 
         toggleElement.off("click").on("click", ()=>{
             if (input.id == 'valorCoberturaIncendio'){ return; }
             if (input.id == 'valorSubtracaoBicicleta' && inputs.valorCoberturaIncendio.value < 250000){ 
-                dadosCobertura[plano][input.id].disabled = true;
+                dadosCobertura[produto][plano][vigencia][input.id].disabled = true;
                 inputElement.prop("disabled", true);
                 inativoElement.html('(Inativo)');
                 inativoElement.css('font-size', '16px');
                 return; 
             }
             if (input.id == 'valorPequenasReformas' && (residencia == 5 || residencia == 6 || residencia == 7)){ 
-                dadosCobertura[plano][input.id].disabled = true;
+                dadosCobertura[produto][plano][vigencia][input.id].disabled = true;
                 inputElement.prop("disabled", true);
                 inativoElement.html('(Inativo)');
                 inativoElement.css('font-size', '16px');
                 return;
             }
             if (input.id == 'valorNegocioCasa' && (inputs.valorCoberturaDanosEletricos.disabled && inputs.valorCoberturaSubstracaoBens.disabled)){ 
-                dadosCobertura[plano][input.id].disabled = true;
+                dadosCobertura[produto][plano][vigencia][input.id].disabled = true;
                 inputElement.prop("disabled", true);
                 inativoElement.html('(Inativo)');
                 inativoElement.css('font-size', '16px');
                 return; 
             }
             if (input.id == 'valorDanosMorais' && (inputs.valorCoberturaRCFamiliar.value == 0 || inputs.valorCoberturaRCFamiliar.disabled)){ 
-                dadosCobertura[plano][input.id].disabled = true;
+                dadosCobertura[produto][plano][vigencia][input.id].disabled = true;
                 inputElement.prop("disabled", true);
                 inativoElement.html('(Inativo)');
                 inativoElement.css('font-size', '16px');
                 return; 
             }
             if (input.id == 'valorCoberturaAlagamento' && (!(residencia == 1 || residencia == 2 || residencia == 4))){ 
-                dadosCobertura[plano][input.id].disabled = true;
+                dadosCobertura[produto][plano][vigencia][input.id].disabled = true;
                 inputElement.prop("disabled", true);
                 inativoElement.html('(Inativo)');
                 inativoElement.css('font-size', '16px');
                 return; 
             }
-            dadosCobertura[plano][input.id].disabled = !(dadosCobertura[plano][input.id].disabled);
-            inputElement.prop("disabled", dadosCobertura[plano][input.id].disabled);
+            dadosCobertura[produto][plano][vigencia][input.id].disabled = !(dadosCobertura[produto][plano][vigencia][input.id].disabled);
+            inputElement.prop("disabled", dadosCobertura[produto][plano][vigencia][input.id].disabled);
             //console.log(input.id, !(dadosCobertura[produto][input.id].disabled));
 
-            inciarCoberturaMain(produto, plano, residencia, dadosCobertura, valoresCobertura, false);
-            //console.log(valoresCobertura);
+            inciarCoberturaMain(produto, plano, vigencia, residencia, false);
             //controleCoberturasHabitual();
             return;
         });
+        console.log(plano)
+        console.log(dadosCobertura);
+        console.log(valoresCobertura);
     }
     /*let coberturas = {
         essencial: {}, conforto: {}, exclusive: {}

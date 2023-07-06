@@ -11,12 +11,12 @@ dotenv.config();
 
 router.post("/", async (req, res)=>{
     let session = req.session ? req.session : {};
-    let data = req.body || {};
+    let body = req.body || {};
     let user = false;
     let dados = {};
 
-    let etapa = data.etapa || '0';
-    let newLead = data.newLead || false;
+    let etapa = body.etapa || '0';
+    let newLead = body.newLead || false;
 
     etapa = etapa.replace(/[^0-9]+/g, '');
     etapa = `etapa_${etapa}`;
@@ -34,25 +34,24 @@ router.post("/", async (req, res)=>{
     }
 
     if (etapa == 'etapa_1' || etapa == 'etapa_2'){
-        let formList = ['cpf', 'nome', 'numerotelefone', 'datanascimento', 'tipotelefone', 'cep', 
-            'logradouro', 'numero', 'bairro', 'cidade', 'uf', 'tiporesidencia', 'tiporua'];
+        let formList = ['cpf', 'nome', 'numerotelefone', 'datanascimento', 'tipotelefone', 'cep', 'logradouro', 'numero', 'bairro', 'cidade', 'uf', 'tiporesidencia', 'tiporua', 'complemento'];
 
         if (!session.cotacao){ session.cotacao = {} }
         session.cotacao.criadoEm = new Date().toISOString();
 
-        for(let key in data){ 
+        for(let key in body){ 
             if (!formList.includes(key)){ continue; }            
-            if (!session.cotacao[key]){ session.cotacao[key] = data[key]; continue; }
-            if (session.cotacao[key] != data[key]){ session.cotacao[key] = data[key]; }            
+            if (!session.cotacao[key]){ session.cotacao[key] = body[key]; continue; }
+            if (session.cotacao[key] != body[key]){ session.cotacao[key] = body[key]; }            
         }              
     }
     if (etapa == 'etapa_3'){
         if (!session.cotacao){ session.cotacao = {}; }
         if (!session.cotacao.itens){ session.cotacao.itens = {}; }
         if (!session.cotacao.itens.generico){ session.cotacao.itens.generico = {}; }
-        if (!data.inputRange){ data.inputRange = {}; }
+        if (!body.inputRange){ body.inputRange = {}; }
         
-        let coberturas = data.inputRange;
+        let coberturas = body.inputRange;
         for(let key in coberturas){
             if (!coberturas[key]){ continue; }
             session.cotacao.itens.generico[key] = { value: coberturas[key].value, disabled: (coberturas[key].disabled) };
@@ -73,7 +72,7 @@ router.post("/", async (req, res)=>{
     if (!entry){
         if (!dados[etapa]){ dados[etapa] = {}; }
 
-        for(let key in data){ 
+        for(let key in body){ 
             if (key == 'etapa'){ continue; }
             if (key == 'newLead'){ continue; }
             if (key == 'codigocanal'){ continue; }
@@ -82,7 +81,7 @@ router.post("/", async (req, res)=>{
             if (key == 'codigooperacao'){ continue; }
             if (etapa == 'etapa_3'){ continue; }
 
-            let value = data[key]; 
+            let value = body[key]; 
             dados[etapa][key] = [value]; 
         } 
 
@@ -90,8 +89,8 @@ router.post("/", async (req, res)=>{
             let portoCoberturas = new PortoCoberturas;
             listaCoberturas = portoCoberturas.listaCoberturas('all', false);
             listaCoberturas.map((item)=>{ relacaoCoberturas[item.toLowerCase()] = item; });
-            for(let key in data){
-                let value = data[key];
+            for(let key in body){
+                let value = body[key];
                 let item = relacaoCoberturas[key];
                 if (item){ dados[etapa][item] = [value]; }
             }
@@ -126,8 +125,8 @@ router.post("/", async (req, res)=>{
         let portoCoberturas = new PortoCoberturas;
         listaCoberturas = portoCoberturas.listaCoberturas('all', false);
         listaCoberturas.map((item)=>{ relacaoCoberturas[item.toLowerCase()] = item; });
-        for(let key in data){
-            let value = data[key];
+        for(let key in body){
+            let value = body[key];
             let item = relacaoCoberturas[key];
             if (!dados[etapa][item]){ dados[etapa][item] = [value]; continue; }
             if (dados[etapa][item][dados[etapa][item].length - 1] == value){ continue; }
@@ -135,7 +134,7 @@ router.post("/", async (req, res)=>{
         }
     }
 
-    for(let key in data){
+    for(let key in body){
         if (key == 'etapa'){ continue; }
         if (key == 'newLead'){ continue; }
         if (key == 'codigocanal'){ continue; }
@@ -144,7 +143,7 @@ router.post("/", async (req, res)=>{
         if (key == 'codigooperacao'){ continue; }
         if (etapa == 'etapa_3' ){ continue; }
 
-        let value = data[key];
+        let value = body[key];
         if (!dados[etapa][key]){ dados[etapa][key] = [value]; continue; }
         if (dados[etapa][key][dados[etapa][key].length - 1] == value){ continue; }
         dados[etapa][key].push(value);

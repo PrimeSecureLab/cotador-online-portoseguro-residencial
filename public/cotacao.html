@@ -71,46 +71,6 @@
                                 </h2>
 
                                 <div class="row ">
-                                    <div class="col d-none">
-                                        <div class="form-group">
-                                            <label for="susep">susep </label>
-                                            <input type="text" class="form-control col" id="susep" name="susep" required
-                                                minlength="6" maxlength="6" value="COL10J" />
-                                        </div>
-                                    </div>
-                                    <div class="col d-none">
-                                        <div class="form-group">
-                                            <label for="codigooperacao">codigooperacao</label>
-                                            <input type="number" class="form-control col" id="codigooperacao"
-                                                name="codigooperacao" required minlength="1" maxlength="9999"
-                                                value="10" />
-                                        </div>
-                                    </div>
-                                    <div class="col d-none">
-                                        <div class="form-group">
-                                            <label for="flagimprimircodigooperacaoorcamento">imprimir codigo
-                                                operação</label>
-                                            <input type="checkbox" class="form-control col"
-                                                id="flagimprimircodigooperacaoorcamento"
-                                                name="flagimprimircodigooperacaoorcamento" />
-                                        </div>
-                                    </div>
-                                    <div class="col d-none">
-                                        <div class="form-group">
-                                            <label for="codigocanal">codigo canal</label>
-                                            <input type="number" class="form-control col" id="codigocanal"
-                                                name="codigocanal" required minlength="1" maxlength="9999"
-                                                value="999" />
-                                        </div>
-                                    </div>
-                                    <div class="col d-none">
-                                        <div class="form-group">
-                                            <label for="codigocanal">codigo canal</label>
-                                            <input type="number" class="form-control col" id="codigocanal"
-                                                name="codigocanal" required minlength="1" maxlength="9999"
-                                                value="999" />
-                                        </div>
-                                    </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="cpf">CPF:</label>
@@ -428,7 +388,7 @@
                                             <div class="range-container">
                                                 <input type="range" class="form-range input-coberturas"
                                                     id="valorCoberturaPagamentoCondominio" min="1000" max="5000"
-                                                    value="5000" step="500" />
+                                                    value="5000" step="100" />
                                                 <div class="range-value9" id="valorCoberturaPagamentoCondominio-label">R$10.000</div>
                                             </div>
                                         </div>
@@ -783,6 +743,11 @@
         <!-- Copyright -->
     </footer>
     <!-- Footer -->
+
+    <div id="loading-screen"> 
+        <div class="loading-background"></div>
+        <div class="loading-wheel"></div>
+    </div>
 
     <script src="./src/js/jquery-3.6.4.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
