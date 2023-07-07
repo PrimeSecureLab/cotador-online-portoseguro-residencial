@@ -682,13 +682,14 @@ input[type="number"] {
 }
 
 div.cobertura-ativa {
-    padding-right: 10px;
+    padding-right: 5px;
     font-size: 15px;
     font-weight: 500;
     line-height: 25px;
 }
 
 div.main-toggle-conteiner {
+    height: 25px;
     position: absolute;
     display: flex;
     right: 15px;

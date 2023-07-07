@@ -200,5 +200,74 @@ class ValidadorGeral extends Object {
         if (this.pattern.dataAmerica.test(date)){ return date; }
         return false;
     }
+
+    validarDataAmericana(data){ return /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/.test(data); }
+
+    validarProduto(produto){
+        if (!produto){ return false; }
+        produto = produto.toString().toLowerCase();
+        if (!['habitual', 'habitual-premium', 'veraneio'].includes(produto)){ return false; }
+        return true;
+    }
+
+    validarPlano(plano){
+        if (!plano){ return false; }
+        plano = plano.toString().toLowerCase();
+        if (!['essencial', 'conforto', 'exclusive'].includes(plano)){ return false; }
+        return true;
+    }
+
+    validarVigencia(vigencia){ return /^[1-3]{1}$/.test(vigencia); }
+
+    validarDadosCobertura(dadosCobertura){
+        if (!dadosCobertura){ return false; }
+        if (!dadosCobertura.valorCoberturaIncendio){ return false; }
+        if (!dadosCobertura.valorCoberturaIncendio.value){ return false; }
+        if (!dadosCobertura.valorCoberturaIncendio.hasOwnProperty('disabled')){ return false; }
+        return true;
+    }
+
+    formatarItensCobertura(dadosCobertura){
+        let items = {};
+        for(let key in dadosCobertura){
+            let cobertura = dadosCobertura[key];
+            if (cobertura.disabled){ continue; }
+            items[key] = cobertura.value;            
+        }
+        return items;
+    }
+
+    validarSeguradoEndereco(endereco){
+        if (!endereco){ return false; }
+        endereco.complemento = endereco.complemento || '';
+        if (!/^[0-9]{8}$/.test(endereco.cep)){ return false; }
+        if (!this.validarBairro(endereco.bairro)){ return false; }
+        if (!this.validarMunicipio(endereco.cidade)){ return false; }
+        if (!this.validarComplemento(endereco.complemento)){ return false; }
+        if (!this.validarLogradouro(endereco.logradouro)){ return false; }
+        if (!this.validarNumero(endereco.numero)){ return false; }
+        if (!this.validarTipoRua(endereco.tipo)){ return false; }
+        if (!this.validarUF(endereco.uf)){ return false; }
+        return true;
+    }
+
+    validarFormularioSegurado(segurado){  
+        if (!segurado){ return false; }
+        if (!this.validarSeguradoEndereco(segurado.endereco)){ return false; }
+        if (!/^[0-9]{11}$/.test(segurado.cpf)){ return false; }
+        if (!this.validarDataAmericana(segurado.dataNascimento)){ return false; }
+        if (!this.validarNome(segurado.nome)){ return false; }
+        if (!/^[0-9]{10,11}$/.test(segurado.numeroTelefone)){ return false; }
+        if (segurado.numeroTelefone.toString().length == 11 && segurado.tipoTelefone != 3){ return false; }
+        if (segurado.numeroTelefone.toString().length == 10 && segurado.tipoTelefone != 1){ return false; }
+        return true;
+    }
+
+    validarFormulario(formulario){
+        if (!this.validarTipoResidencia(formulario.tipoResidencia)){ return false; }
+        if (!this.validarFormularioSegurado(formulario.segurado)){ return false; }
+        return true;
+    }
+
 };
 module.exports = ValidadorGeral;

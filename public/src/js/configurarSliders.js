@@ -27,7 +27,7 @@ function formatarLabel(value) {
 }
 
 function inciarCoberturaMain(produto, plano, vigencia, residencia, inputChange_id){
-    //console.log(event, dadosCobertura);
+    console.log('Iniciar:', dadosCobertura);
     let inputs = {};
     let todasInputRange = $('input[type="range"]');
     let inputChange = inputChange_id || false;
@@ -68,7 +68,7 @@ function inciarCoberturaMain(produto, plano, vigencia, residencia, inputChange_i
                 display: true 
             };             
         });
-        console.log('1.1 - Inputs:', inputs);
+        //console.log('1.1 - Inputs:', inputs);
         ajustarValoresCoberturas(produto, plano, vigencia, residencia, {inputs: inputs});
         return;
     }
@@ -82,7 +82,7 @@ function inciarCoberturaMain(produto, plano, vigencia, residencia, inputChange_i
 
         inputs[input.id] = { id: input.id, value: cobertura.value, min: cobertura.min, max: cobertura.max, disabled: (cobertura.disabled) ? true : false, display: true };
     }); 
-    console.log('1.2 - Inputs:', inputs);
+    //console.log('1.2 - Inputs:', inputs);
     ajustarValoresCoberturas(produto, plano, vigencia, residencia, {inputs: inputs});
 }
 
@@ -208,7 +208,7 @@ function ajustarValoresCoberturas(produto, plano, vigencia, residencia, data){
         inputs.valorSubtracaoBicicleta.disabled = true;
         inputs.valorSubtracaoBicicleta.display = false;
     }
-    console.log('2 - Inputs:', inputs);
+    //console.log('2 - Inputs:', inputs);
     controladorCoberturaDOM(produto, plano, vigencia, residencia, {inputs: inputs});
 }
 
@@ -311,7 +311,7 @@ function controladorCoberturaDOM(produto, plano, vigencia, residencia, data){
 
                 toggleElement.css('background-color', '#03A8DB');
                 toggleElement.css('border-color', '#03A8DB');
-                switchElement.css('margin-left', '20px');
+                switchElement.css('margin-left', '18px');
                 labelElement.css('display', 'block');
                 inativoElement.css('display', 'none');
                 ativoElement.css('display', 'block');   
@@ -338,9 +338,9 @@ function controladorCoberturaDOM(produto, plano, vigencia, residencia, data){
         let coberturaContainer = rangeContainer.parent();
 
         if (input.id == 'valorCoberturaAlagamento'){ 
-            console.log('A', input.id, input.display, residencia);
+            //console.log('A', input.id, input.display, residencia);
             if (residencia == 1 || residencia == 2 || residencia == 4){ input.display = true; }else{ input.display = false; }
-            console.log('B', input.id, input.display, residencia);
+            //console.log('B', input.id, input.display, residencia);
         }
 
 
@@ -391,9 +391,9 @@ function controladorCoberturaDOM(produto, plano, vigencia, residencia, data){
             //controleCoberturasHabitual();
             return;
         });
-        console.log(plano)
-        console.log(dadosCobertura);
-        console.log(valoresCobertura);
+        //console.log(plano)
+        //console.log(dadosCobertura);
+        //console.log(valoresCobertura);
     }
     /*let coberturas = {
         essencial: {}, conforto: {}, exclusive: {}

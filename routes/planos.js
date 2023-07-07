@@ -8,6 +8,9 @@ const authToken = require('../configs/authToken');
 const Orcamentos = require('../collections/orcamentos');
 const Usuarios = require('../collections/usuarios');
 
+const ValidadorGeral = require('../configs/validacaoGeral');
+var validador = new ValidadorGeral;
+
 dotenv.config();
 
 // Define a rota para a página HTML
@@ -62,10 +65,20 @@ router.post('/salvar-orcarmento', async (req, res) => {
 
 // Define a rota para receber os dados do formulário
 router.post('/', async (req, res) => {
-    let data = req.body;
+    let body = req.body;
     let redirect = '/cadastro';
     let session = (req.session) ? req.session : {};
 
+    if (!body){ return res.status(400).json({error: "Ocorreu um erro durante o envio do fomulário.", redirect: '/'}); }
+    if (!validador.validarProduto(body.produto)){ return res.status(400).json({redirect: '/'}); }
+    if (!validador.validarPlano(body.plano)){ return res.status(400).json({redirect: '/'}); }
+    if (!validador.validarVigencia(body.vigencia)){ return res.status(400).json({redirect: '/'}); }
+    if (!validador.validarDadosCobertura(body.dadosCobertura)){ return res.status(400).json({redirect: '/'}); }
+    if (!validador.validarFormulario(body.formulario)){ return res.status(400).json({redirect: '/'}); }
+
+    let listaCoberturas = validador.formatarItensCobertura(body.dadosCobertura);
+
+    /*
     if (!session.cotacao){ session.cotacao = {}; }
     if (!session.cotacao.itens){ session.cotacao.itens = {}; }
 
@@ -100,25 +113,34 @@ router.post('/', async (req, res) => {
     if (/^\d{11}$/.test(data.segurado.cpf.replace(/[^0-9]+/g, ""))){
         let user = await Usuarios.findOne({"pessoaFisica.cpf": data.segurado.cpf}); 
         if (user){ redirect = "/login"; }
-    }
+    }*/
     
     let token = await authToken();
-    let orcamento = await portoOrcamentoApi(produto, data, token);    
+    let orcamento = await portoOrcamentoApi(body.produto, body.plano, body.vigencia, body.formulario, listaCoberturas, token);    
 
     let response = {};
+    let errorData = {};
+    
     if (orcamento){
+        if (!orcamento.data){ orcamento.data = {}; }
         if (orcamento.status == 200){
-            orcamento.data.tipo = produto;
+            orcamento.data.tipo = body.produto;
+            orcamento.data.plano = body.plano;
             orcamento.data.criadoEm = new Date();
+            orcamento.data.vigencia = body.vigencia;
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
         }else{
             errorData = orcamento.data;
-            errorData.tipo = produto;
+            errorData.tipo = body.produto;
+            errorData.plano = body.plano;
+            errorData.vigencia = body.vigencia;
             response = { error: true, status: orcamento.status, data: errorData, redirect: false };
         }
     }else{
         errorData = orcamento.data;
-        errorData.tipo = produto;
+        errorData.tipo = body.produto;
+        errorData.plano = body.plano;
+        errorData.vigencia = body.vigencia;
         response = { error: true, status: 504, data: errorData, redirect: false };
     }
     res.status(200).json(response);
@@ -129,21 +151,21 @@ const CodigoServicos = require('../configs/servicos');
 var portoCoberturas = new PortoCoberturas;
 var codigoServicos = new CodigoServicos;
 
-async function portoOrcamentoApi(produto, formData, token){
+async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, token){
     return new Promise(async (resolve, reject)=>{
-        let data = formData;
+        //let data = formData;
         
-        data.susep = "5600PJ";
-        data.codigoOperacao = 40;
-        data.codigoCanal = 60;
-        data.flagImprimirCodigoOperacaoOrcamento = false;
-        data.flagSinistrosUltimos12Meses = false;
+        //data.susep = "5600PJ";
+        //data.codigoOperacao = 40;
+        //data.codigoCanal = 60;
+        //data.flagImprimirCodigoOperacaoOrcamento = false;
+        //data.flagSinistrosUltimos12Meses = false;
 
         let dataInicio = new Date();
         dataInicio = dataInicio.toISOString().split('T')[0];
 
         let dataSegmentada = dataInicio.split('-');
-        dataSegmentada[0] = parseInt(dataSegmentada[0]) + data.vigencia;
+        dataSegmentada[0] = parseInt(dataSegmentada[0]) + parseInt(vigencia);
 
         if (dataSegmentada[1] == 2 && dataSegmentada[2] == 29){ dataSegmentada[2] = 28; }
         dataSegmentada[1] = parseInt(dataSegmentada[1]) - 1;
@@ -151,31 +173,31 @@ async function portoOrcamentoApi(produto, formData, token){
         let dataFim = new Date(dataSegmentada[0], dataSegmentada[1], dataSegmentada[2]);
         dataFim = dataFim.toISOString().split('T')[0];
 
-        let dataNascimento = data.segurado.dataNascimento.toString();
-        dataNascimento = dataNascimento.split("-");
-        dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
+        //let dataNascimento = data.segurado.dataNascimento.toString();
+        //dataNascimento = dataNascimento.split("-");
+        //dataNascimento = `${dataNascimento[2]}-${dataNascimento[1]}-${dataNascimento[0]}`;
 
         let allItens = portoCoberturas.listaCoberturas(produto, false);
-        let itens = data.item;
+        let items = itens;
         let itemList = {};
 
         for(let i in allItens){
             let item = allItens[i];
             if (!item){ continue; }
-            if (itens[item]){ itemList[item] = itens[item]; } 
+            if (items[item]){ itemList[item] = items[item]; } 
         }
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
-        itemList.valorCoberturaMorteAcisdental = 0;
+        itemList.valorCoberturaMorteAcidental = 0;
 
         let servico = null;
-        if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(data.vigencia, data.tipoResidencia); }
-        if (produto == 'habitual-premium'){ servico = codigoServicos.listaServicosHabitualPremium(data.vigencia, data.tipoResidencia); }
-        if (produto == 'veraneio'){ servico = codigoServicos.listaServicosVeraneio(data.vigencia, data.tipoResidencia); }
+        if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(plano, vigencia, formulario.tipoResidencia); }
+        if (produto == 'habitual-premium'){ servico = codigoServicos.listaServicosHabitualPremium(plano, vigencia, formulario.tipoResidencia); }
+        if (produto == 'veraneio'){ servico = codigoServicos.listaServicosVeraneio(plano, vigencia, formulario.tipoResidencia); }
 
-        servico = servico[1];
-        if (!servico){ servico = []; }
+        //servico = servico[1];
+        //if (!servico){ servico = []; }
         servico = servico[0];
         if (!servico){ servico = {cod: null, desc: ''}; }
         itemList.codigoClausulasPortoSeguroServicos = servico.cod;
@@ -186,29 +208,30 @@ async function portoOrcamentoApi(produto, formData, token){
 
         let url = `https://portoapi${subUrl}.portoseguro.com.br/re/residencial/v1/${produto}/orcamentos`;
         let payload = {
-            "susep": data.susep,
-            "codigoOperacao": data.codigoOperacao,
-            "codigoCanal": data.codigoCanal,
-            "flagImprimirCodigoOperacaoOrcamento": data.flagImprimirCodigoOperacaoOrcamento,
-            "tipoResidencia": parseInt(data.tipoResidencia),
+            "susep": "5600PJ",
+            "codigoOperacao": 40,
+            "codigoCanal": 60,
+            "flagImprimirCodigoOperacaoOrcamento": false,
+            "tipoResidencia": parseInt(formulario.tipoResidencia),
             "tipoVigencia": 2,
             "dataInicioVigencia": dataInicio,
             "dataFimVigencia": dataFim,
-            "flagSinistrosUltimos12Meses": data.flagSinistrosUltimos12Meses,
+            "flagSinistrosUltimos12Meses": false,//data.flagSinistrosUltimos12Meses,
             "segurado": {
-                "nome": data.segurado.nome,
-                "numeroTelefone": data.segurado.numeroTelefone.replace(/[^0-9]+/g, ''),
-                "tipoTelefone": data.segurado.tipoTelefone,
-                "cpfCnpj": data.segurado.cpf.replace(/[^0-9]+/g, ''),
-                "dataNascimento": dataNascimento,
+                "nome": formulario.segurado.nome,
+                "numeroTelefone": formulario.segurado.numeroTelefone,
+                "tipoTelefone": formulario.segurado.tipoTelefone,
+                "cpfCnpj": formulario.segurado.cpf,
+                "dataNascimento": formulario.segurado.dataNascimento,
                 "endereco": {
-                    "cep": data.segurado.endereco.cep.replace(/[^0-9]+/g, ''),
-                    "logradouro": data.segurado.endereco.logradouro,
-                    "tipo": data.segurado.endereco.tipo,
-                    "numero": parseInt(data.segurado.endereco.numero.replace(/[^0-9]+/g, '')),
-                    "bairro": data.segurado.endereco.bairro,
-                    "cidade": data.segurado.endereco.cidade,
-                    "uf": data.segurado.endereco.uf
+                    "cep": formulario.segurado.endereco.cep,
+                    "logradouro": formulario.segurado.endereco.logradouro,
+                    "tipo": formulario.segurado.endereco.tipo,
+                    "numero": formulario.segurado.endereco.numero,
+                    "bairro": formulario.segurado.endereco.bairro,
+                    "cidade": formulario.segurado.endereco.cidade,
+                    "uf": formulario.segurado.endereco.uf,
+                    "complemento": formulario.segurado.endereco.complemento || ''
                 }
             },
             "item": itemList
@@ -219,12 +242,11 @@ async function portoOrcamentoApi(produto, formData, token){
 
         if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
+        console.log(payload);
 
-        delay += (data.vigencia - 1) * 30;
+        delay += (parseInt(vigencia) - 1) * 30;
         setTimeout(async () => { 
-            let request = await axios.post( url, payload, header).catch((error)=>{ 
-                console.log(produto + ':', error.response.status); resolve(error.response); 
-            });
+            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
             resolve( request ); 
         }, delay);
     });
