@@ -117,7 +117,7 @@ router.post("/enviar-dados", async (req, res) => {
         }
     };
 
-    return res.status(200).json({fomulario: data, dadosCobertura: body.dadosCobertura, valoresCobertura: body.valoresCobertura});
+    return res.status(200).json({formulario: data, dadosCobertura: body.dadosCobertura, valoresCobertura: body.valoresCobertura});
 
     //console.log(data);
 

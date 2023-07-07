@@ -1,10 +1,10 @@
 
 // ESSENCIAL -> CONFORTO -> EXCLUSIVE
-
+var valoresCobertura = {};
+var dadosCobertura = {};
 
 $(document).ready(function() {
-    var valoresCobertura = {};
-    var dadosCobertura = {};
+    
 
     var armazenarVigencia = [];
 
@@ -12,6 +12,7 @@ $(document).ready(function() {
     var tempoVigencia = 0;
     var tipoProduto = false;
     var listaPlano = ['essencial', 'conforto', 'exclusive'];
+    var tipoResidencia = 0;
 
     var tentativaTimeOut = { 
         essencial: [0, 0, 0], 
@@ -30,33 +31,36 @@ $(document).ready(function() {
     $(".modal-dialog").on("click", function(e) { e.stopPropagation(); });
 
     function validacaoInicial(){
-        loadingScreen.show();
+        //loadingScreen.show();
         let storageForm = localStorage.getItem('prime-form');
         let storageDadosCoberturas = localStorage.getItem('prime-dadosCobertura');
         let storageValoresCoberturas = localStorage.getItem('prime-valoresCobertura');
 
         if (!storageForm || !storageDadosCoberturas || !storageValoresCoberturas){  
-            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            window.location.href = '/';
+            console.log('A');
+            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            //window.location.href = '/';
             return;
         }
 
         storageForm = JSON.parse(storageForm);
-        storageDadosCoberturas = JSON.parse(storageDadosCoberturas);
-        storageValoresCoberturas = JSON.parse(storageValoresCoberturas);
+        dadosCobertura = JSON.parse(storageDadosCoberturas);
+        valoresCobertura = JSON.parse(storageValoresCoberturas);
 
         if (!validarTipoResidencia(storageForm.tipoResidencia)){  
-            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            window.location.href = '/';
+            console.log('B');
+            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            //window.location.href = '/';
             return;
         }      
 
-        storageForm.tipoResidencia = parseInt(storageForm.tipoResidencia);
-        if ([1, 2, 3].includes(storageForm.tipoResidencia)){ tipoProduto = 'habitual'; }
-        if ([4, 8].includes(storageForm.tipoResidencia)){ tipoProduto = 'veraneio'; }
+        tipoResidencia = parseInt(storageForm.tipoResidencia);
+        if ([1, 2, 3].includes(tipoResidencia)){ tipoProduto = 'habitual'; }
+        if ([4, 8].includes(tipoResidencia)){ tipoProduto = 'veraneio'; }
         if (!tipoProduto){
-            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            window.location.href = '/';
+            console.log('C');
+            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            //window.location.href = '/';
             return;
         }
 
