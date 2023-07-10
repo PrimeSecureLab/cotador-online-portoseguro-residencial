@@ -119,10 +119,14 @@
                       <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
                       <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
                     </ul>
-                    <button type="button" id="editar-plano-1" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                      data-bs-target="#modal-editar-plano1">
-                      <i class="fas fa-edit"></i></i> editar plano
-                    </button>
+                    <div style="display: flex; font-size: 14px; flex-wrap: wrap;">
+                      <button type="button" id="editar-plano-1" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-editar-plano1" style="margin: 0 auto 15px">
+                        <i class="fas fa-edit"></i></i> editar plano
+                      </button>
+                      <button type="button" id="ver-assistencias" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-assistencias" style="margin: 0 auto 15px">
+                        <i class="fas fa-edit"></i></i> ver assistências
+                      </button>
+                    </div>
                     <div class="d-grid">
                       <a href="#" class="btn btn-primary text-uppercase botao" id="btn-plano-1">Contratar</a>
                     </div>
@@ -243,6 +247,35 @@
   </div>
   <div class="text-center">
     <span class="move"><i class="fas fa-arrows-alt-h"></i> Arraste Para o Lado e Veja as Opções </span>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade modal-edit" id="modal-assistencias" tabindex="-1" aria-labelledby="modal-assistencias" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:430px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-assistencias">Confira suas Assistências</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="janela-assistencias" style="width: fit-content; margin: 0 10px;">
+            <h6 class="titulo-assistencia-sinistro" id="titulo-sinistro" style="font-size: 17px;">Serviços de Sinistro:</h6>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+
+            <h6 class="titulo-assistencia-emergencial" id="titulo-sinistro" style="font-size: 17px; margin-top: 25px;">Serviços Emergenciais:</h6>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -740,34 +773,9 @@
   </footer>
   <!-- Footer -->
   </div>
-  <style>
-    @-webkit-keyframes spin {
-      0% {
-        -webkit-transform: rotate(0deg);
-      }
-
-      100% {
-        -webkit-transform: rotate(360deg);
-      }
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-  <div id="loading-screen">
-    <div
-      style="height: 100%; width: 100%; background-color: black; position: fixed; top: 0px; left: 0px; opacity: 0.35;">
-    </div>
-    <div
-      style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 85px; height: 85px; border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #007bff; animation: spin 2s linear infinite">
-    </div>
+  <div id="loading-screen"> 
+      <div class="loading-background"></div>
+      <div class="loading-wheel"></div>
   </div>
 
 
@@ -790,48 +798,6 @@
     integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/"
     crossorigin="anonymous"></script>
 
-  <script>
-    /*$(document).ready(function () {
-      $('.slick-carousel').slick({
-        infinite: false,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-          {
-            breakpoint: 768,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1
-            }
-          }
-        ]
-      });
-    });*/
-  </script>
-  <script>
-    /*document.addEventListener('DOMContentLoaded', function () {
-      // Get all the tab buttons
-      var tabButtons = document.querySelectorAll(".my-pills-link");
-
-      // Function to remove 'active' class
-      function removeActiveClass() {
-        tabButtons.forEach(function (btn) {
-          btn.classList.remove('active');
-          document.querySelector(btn.getAttribute('data-bs-target')).classList.remove('show', 'active');
-        });
-      }
-
-      // Adding click event listeners to the buttons
-      tabButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          removeActiveClass();
-          btn.classList.add('active');
-          document.querySelector(btn.getAttribute('data-bs-target')).classList.add('show', 'active');
-        });
-      });
-
-    });*/
-  </script>
 
 </body>
 
