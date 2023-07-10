@@ -123,7 +123,7 @@
                       <button type="button" id="editar-plano-1" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-editar-plano1" style="margin: 0 auto 15px">
                         <i class="fas fa-edit"></i></i> editar plano
                       </button>
-                      <button type="button" id="ver-assistencias" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-assistencias" style="margin: 0 auto 15px">
+                      <button type="button" id="ver-assistencias-1" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-assistencias" style="margin: 0 auto 15px">
                         <i class="fas fa-edit"></i></i> ver assistências
                       </button>
                     </div>
@@ -173,10 +173,14 @@
                       <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
                       <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
                     </ul>
-                    <button type="button" id="editar-plano-2" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                      data-bs-target="#modal-editar-plano1">
-                      <i class="fas fa-edit"></i></i> editar plano
-                    </button>
+                    <div style="display: flex; font-size: 14px; flex-wrap: wrap;">
+                      <button type="button" id="editar-plano-2" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-editar-plano1" style="margin: 0 auto 15px">
+                        <i class="fas fa-edit"></i></i> editar plano
+                      </button>
+                      <button type="button" id="ver-assistencias-2" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-assistencias" style="margin: 0 auto 15px">
+                        <i class="fas fa-edit"></i></i> ver assistências
+                      </button>
+                    </div>                    
                     <div class="d-grid">
                       <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-2">Contratar</a>
                     </div>
@@ -223,10 +227,14 @@
                       <li><span class="fa-li"><i class="fas fa-users"></i></span>Responsabilidade Civil Familiar</li>
                       <li><span class="fa-li"><i class="fas fa-dollar-sign"></i></span>Perda ou Pagamento de Aluguel</li>
                     </ul>
-                    <button type="button" id="editar-plano-3" class="btn-editar-plano text-uppercase" data-bs-toggle="modal"
-                      data-bs-target="#modal-editar-plano1">
-                      <i class="fas fa-edit"></i></i> editar plano
-                    </button>
+                    <div style="display: flex; font-size: 14px; flex-wrap: wrap;">
+                      <button type="button" id="editar-plano-3" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-editar-plano1">
+                        <i class="fas fa-edit"></i></i> editar plano
+                      </button>
+                      <button type="button" id="ver-assistencias-3" class="btn-editar-plano text-uppercase" data-bs-toggle="modal" data-bs-target="#modal-assistencias" style="margin: 0 auto 15px">
+                        <i class="fas fa-edit"></i></i> ver assistências
+                      </button>
+                    </div>                    
                     <div class="d-grid">
                       <a href="#" class="btn btn-primary text-uppercase" id="btn-plano-3">Contratar</a>
                     </div>
@@ -259,20 +267,10 @@
         </div>
         <div class="modal-body">
           <div id="janela-assistencias" style="width: fit-content; margin: 0 10px;">
-            <h6 class="titulo-assistencia-sinistro" id="titulo-sinistro" style="font-size: 17px;">Serviços de Sinistro:</h6>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-
-            <h6 class="titulo-assistencia-emergencial" id="titulo-sinistro" style="font-size: 17px; margin-top: 25px;">Serviços Emergenciais:</h6>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
-            <div class="assistencia-linha" id="linha-sinistro-0" style="width: 100%; padding: 10px 0 0; font-size: 15px;">Cuidados de crianças e idosos</div>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel">Fechar</button>
         </div>
       </div>
     </div>
@@ -789,6 +787,7 @@
     src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/21470fa9-a2c0-43a4-951c-d2956a0806cd-loader.js"></script>-->
   <script src="./src/js/sendFormCotation.js"></script>
   <script src="./src/js/receiveFormCotation.js"></script>
+  <script src="./src/js/configurarAssistencias.js"></script>
   <script src="./src/js/controladorValidacao.js"></script>
   <script src="./src/js/configurarSliders.js"></script>
   <script src="./src/js/controladorPlanos.js"></script>

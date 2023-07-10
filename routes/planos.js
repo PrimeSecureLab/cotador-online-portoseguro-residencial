@@ -11,6 +11,13 @@ const Usuarios = require('../collections/usuarios');
 const ValidadorGeral = require('../configs/validacaoGeral');
 var validador = new ValidadorGeral;
 
+const PortoCoberturas = require('../configs/coberturas');
+var portoCoberturas = new PortoCoberturas;
+
+const CodigoServicos = require('../configs/servicos');
+var codigoServicos = new CodigoServicos;
+
+
 dotenv.config();
 
 // Define a rota para a página HTML
@@ -116,8 +123,16 @@ router.post('/', async (req, res) => {
     }*/
     
     let token = await authToken();
-    let orcamento = await portoOrcamentoApi(body.produto, body.plano, body.vigencia, body.formulario, listaCoberturas, token);    
+    let orcamento = await portoOrcamentoApi(body.produto, body.plano, body.vigencia, body.formulario, listaCoberturas, token);   
+    let codServico = null;
 
+    if (body.produto == 'habitual'){ codServico = codigoServicos.listaServicosHabitual(body.plano, body.vigencia, body.formulario.tipoResidencia); }
+    if (body.produto == 'habitual-premium'){ codServico = codigoServicos.listaServicosHabitualPremium(body.plano, body.vigencia, body.formulario.tipoResidencia); }
+    if (body.produto == 'veraneio'){ codServico = codigoServicos.listaServicosVeraneio(body.plano, body.vigencia, body.formulario.tipoResidencia); }
+
+    if (codServico){ codServico = codServico[0].cod; }
+    console.log(codServico);
+    
     let response = {};
     let errorData = {};
     
@@ -128,12 +143,16 @@ router.post('/', async (req, res) => {
             orcamento.data.plano = body.plano;
             orcamento.data.criadoEm = new Date();
             orcamento.data.vigencia = body.vigencia;
+            orcamento.data.servico = codServico;
+            orcamento.data.residencia = body.formulario.tipoResidencia;
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
         }else{
             errorData = orcamento.data;
             errorData.tipo = body.produto;
             errorData.plano = body.plano;
             errorData.vigencia = body.vigencia;
+            errorData.servico = codServico;
+            errorData.residencia = body.formulario.tipoResidencia;
             response = { error: true, status: orcamento.status, data: errorData, redirect: false };
         }
     }else{
@@ -141,15 +160,12 @@ router.post('/', async (req, res) => {
         errorData.tipo = body.produto;
         errorData.plano = body.plano;
         errorData.vigencia = body.vigencia;
+        errorData.servico = codServico;
+        errorData.residencia = body.formulario.tipoResidencia;
         response = { error: true, status: 504, data: errorData, redirect: false };
     }
     res.status(200).json(response);
 });
-
-const PortoCoberturas = require('../configs/coberturas');
-const CodigoServicos = require('../configs/servicos');
-var portoCoberturas = new PortoCoberturas;
-var codigoServicos = new CodigoServicos;
 
 async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, token){
     return new Promise(async (resolve, reject)=>{
@@ -242,11 +258,10 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
 
         if (produto == 'habitual-premium'){ delay = 200; }
         if (produto == 'veraneio'){ delay = 300; }
-        console.log(payload);
 
-        delay += (parseInt(vigencia) - 1) * 30;
+        delay += (parseInt(vigencia)) * 30;
         setTimeout(async () => { 
-            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
+            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error.data); resolve(error); });
             resolve( request ); 
         }, delay);
     });

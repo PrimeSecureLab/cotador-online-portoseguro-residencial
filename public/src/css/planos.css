@@ -297,3 +297,18 @@ div.main-toggle-conteiner {
 @media (max-width: 500px) {
   .cobertura-ativa { display: none; }
 }
+
+#janela-assistencias {
+  width: fit-content; 
+  margin: 0 10px;
+}
+
+.titulo-assistencia {
+  font-size: 15px;
+}
+
+.assistencia-linha {
+  width: 100%; 
+  padding: 0px 0px 5px; 
+  font-size: 13px;
+}

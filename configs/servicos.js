@@ -3,6 +3,9 @@ class CodigoServicos {
 
     }
     listaServicosHabitual(plano, vigencia, residencia){
+        vigencia = parseInt(vigencia);
+        residencia = parseInt(residencia);
+        
         let servicos = [];
         for(let i = 1; i <= 3; i++){ // Vigencias (1 ano, 2 anos, 3 anos)
             servicos[i] = [];

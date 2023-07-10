@@ -38,6 +38,9 @@ $(document).ready(function() {
     var btnSelecionarPlano = { 1: $("#btn-plano-1"), 2: $("#btn-plano-2"), 3: $("#btn-plano-3") };
     var btnFecharJanela = [$("div#modal-editar-plano1"), $("button#btn-save"), $("button.btn-close"), $("button#btn-cancel")];
     var btnVigencia = { 1: $('#btn-vigencia-1'), 2: $('#btn-vigencia-2') };
+    var btnAssistencia = { 1: $('#ver-assistencias-1'), 2: $('#ver-assistencias-2'), 3: $('#ver-assistencias-3') };
+
+    var modalAssistencia = $('#janela-assistencias');
 
     var slickCarousel = $('.slick-carousel');   
     var modalScreen = $(".modal-dialog");
@@ -227,6 +230,7 @@ $(document).ready(function() {
                 button.css('background-color', '');
                 atualizarCard(produto, plano, vigencia, res.data, false);
                 console.log(`[${vigencia} ANO] ${produto} - ${plano}: OK`);
+                console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status} -`, res.data);
             },
             error: function(xhr, status, error) {  
                 let stopLoading = true;
@@ -334,6 +338,27 @@ $(document).ready(function() {
         return;
     }
 
+    function janelaAssistenciaDOM(orcamento){
+        modalAssistencia.empty();
+        if (!orcamentos){ return false; }
+        let todasAssistencias = retornarAssistencia(orcamento.tipo, orcamento.plano, orcamento.vigencia, orcamento.residencia, orcamento.servico);
+        let primeiraLinha = true;
+        todasAssistencias.map((assistencias)=>{
+            assistencias.map((assistencia, index)=>{
+                console.log(primeiraLinha);
+                let elemento = `<div class="assistencia-linha">${assistencia}</div>`;
+                if (index == 0){ 
+                    if (primeiraLinha){  
+                        elemento = `<h6 class="titulo-assistencia">${assistencia}:</h6>`;
+                        primeiraLinha = false;
+                    }else{ elemento = `<h6 class="titulo-assistencia" style="margin-top: 15px;">${assistencia}:</h6>`; }
+                }
+                //if (index == 0 && !primeiraLinha){ elemento = `<h6 class="titulo-assistencia" style="margin-top: 15px;">${assistencia}:</h6>`; }
+                modalAssistencia.append(elemento);
+            });
+        });
+    }
+
     function validacaoInicial(){
         //loadingScreen.show();
         inciarConfiguracaoDOM();
@@ -342,10 +367,9 @@ $(document).ready(function() {
         let storageDadosCoberturas = localStorage.getItem('prime-dadosCobertura');
         let storageValoresCoberturas = localStorage.getItem('prime-valoresCobertura');
 
-        if (!storageForm || !storageDadosCoberturas || !storageValoresCoberturas){  
-            console.log('A');
-            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            //window.location.href = '/';
+        if (!storageForm || !storageDadosCoberturas || !storageValoresCoberturas){
+            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            window.location.href = '/';
             return;
         }
 
@@ -353,10 +377,9 @@ $(document).ready(function() {
         dadosCobertura = JSON.parse(storageDadosCoberturas);
         valoresCobertura = JSON.parse(storageValoresCoberturas);
 
-        if (!validarTipoResidencia(storageForm.tipoResidencia)){  
-            console.log('B');
-            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            //window.location.href = '/';
+        if (!validarTipoResidencia(storageForm.tipoResidencia)){
+            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            window.location.href = '/';
             return;
         }      
 
@@ -365,9 +388,8 @@ $(document).ready(function() {
         if ([1, 2, 3].includes(tipoResidencia)){ tipoProduto = 'habitual'; }
         if ([4, 8].includes(tipoResidencia)){ tipoProduto = 'veraneio'; }
         if (!tipoProduto){
-            console.log('C');
-            //$(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
-            //window.location.href = '/';
+            $(window).on('beforeunload', ()=>{ loadingScreen.hide(); });
+            window.location.href = '/';
             return;
         }
 
@@ -381,6 +403,22 @@ $(document).ready(function() {
         inciarCoberturaMain(tipoProduto, 'essencial', tempoVigencia, tipoResidencia, false);
         inciarCoberturaMain(tipoProduto, 'conforto', tempoVigencia, tipoResidencia, false);
         inciarCoberturaMain(tipoProduto, 'exclusive', tempoVigencia, tipoResidencia, false);
+
+        btnAssistencia[1].on('click', ()=>{ 
+            if (!['habitual', 'veraneio'].includes(tipoProduto)){ return false; }
+            janelaAssistenciaDOM(orcamentos[tipoProduto]['essencial'][tempoVigencia]);
+            console.log(orcamentos[tipoProduto]['essencial'][tempoVigencia]); 
+        });
+        btnAssistencia[2].on('click', ()=>{ 
+            if (!['habitual', 'veraneio'].includes(tipoProduto)){ return false; }
+            janelaAssistenciaDOM(orcamentos[tipoProduto]['conforto'][tempoVigencia])
+            console.log(orcamentos[tipoProduto]['conforto'][tempoVigencia]); 
+        });
+        btnAssistencia[3].on('click', ()=>{ 
+            if (!['habitual', 'veraneio'].includes(tipoProduto)){ return false; }
+            janelaAssistenciaDOM(orcamentos[tipoProduto]['exclusive'][tempoVigencia])
+            console.log(orcamentos[tipoProduto]['exclusive'][tempoVigencia]); 
+        });
 
         setTimeout(()=>{ apiCallOrcamento(tipoProduto, 'essencial', 1); }, 10); 
         setTimeout(()=>{ apiCallOrcamento(tipoProduto, 'conforto', 1); }, 120); 
