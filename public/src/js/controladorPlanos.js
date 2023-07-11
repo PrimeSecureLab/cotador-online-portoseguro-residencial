@@ -121,7 +121,7 @@ $(document).ready(function() {
                     error: false 
                 };                
                 if (tempoVigencia == vigencia){
-                    let cardTitle = (vigencia == 0) ? `${plano.toUpperCase()}` : `${plano.toUpperCase()} - ${vigencia} ANOS`;
+                    let cardTitle = (vigencia == 1) ? `${plano.toUpperCase()}` : `${plano.toUpperCase()} - ${vigencia} ANOS`;
                     //let textParcela = priceContainer.contents().filter(function() { return this.nodeType === 3;});
                     let valor = primeiraParcela.split(',');
                     //textParcela.each(function() { this.textContent = valor[0];/*primeiraParcela;*/ });
@@ -253,6 +253,46 @@ $(document).ready(function() {
         });
     }
 
+    async function salvarOrcamento(produto, plano, vigencia){
+        let orcamento = orcamentos[produto][plano][vigencia]
+        if (/^[1-3]{1}$/.test(vigencia)){ return; }
+        if (!orcamento){ return; }
+        if (!orcamento.tipo){ return; }
+        if (!orcamento.criadoEm){ return; }
+
+        let criadoEm = orcamento.criadoEm.toString().split('T')[0];
+        let outdated = new Date() - new Date(criadoEm);
+        outdated = (outdated / (1000 * 60 * 60 * 24)) > 5;
+        if (outdated){ apiCallOrcamento(produto, plano, vigencia); return; }
+
+        //console.log(encryptedData);
+        localStorage.setItem('final-form', JSON.stringify(encryptedData));
+
+        let payload = JSON.parse(JSON.stringify(orcamento));
+        payload.coberturas = dadosCobertura;
+        $("#loading-screen").show();
+        try {
+            const response = await fetch("/planos/salvar-orcarmento", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify(payload),
+            });
+            if (response.ok) {
+                let data = await response.json();
+                $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
+                window.location.href = data.redirect;//'./login';
+            } else {
+                let data = await response.json();
+                $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
+                window.location.href = data.redirect;//'./login';
+            } 
+        } catch (error) {
+            let data = await response.json();
+            $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
+            window.location.href = data.redirect;//'./login';
+        }      
+    }
+
     function inciarConfiguracaoDOM(){
         slickCarousel.slick({ infinite: false, slidesToShow: 3, slidesToScroll: 1, responsive: [ { breakpoint: 768, settings: { slidesToShow: 1, slidesToScroll: 1 } } ] });
 
@@ -314,7 +354,7 @@ $(document).ready(function() {
 
         let cardContainer = mainContainer.parent();
         let titleContainer = cardContainer.children('h5.card-title');
-        let cardTitle = (vigencia == 0) ? `${plano.toUpperCase()}` : `${plano.toUpperCase()} - ${vigencia} ANOS`;
+        let cardTitle = (vigencia == 1) ? `${plano.toUpperCase()}` : `${plano.toUpperCase()} - ${vigencia} ANOS`;
         titleContainer.html(cardTitle);
 
         //console.log(dadosCobertura[produto]);
