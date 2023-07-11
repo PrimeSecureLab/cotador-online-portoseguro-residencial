@@ -41,7 +41,7 @@ const authToken = async ()=>{
         };
         token = new Tokens(token);
         token = await token.save();
-        setTimeout(() => { resolve( token.access_token ); }, 200);
+        setTimeout(() => { resolve( token.access_token ); }, 10);
     });
 }
 

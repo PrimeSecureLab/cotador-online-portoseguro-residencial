@@ -410,7 +410,7 @@ class CodigoServicos {
 
         return servicos[vigencia][residencia][codPlano];
     }
-    listaServicosVeraneio(vigencia, residencia){
+    listaServicosVeraneio(plano, vigencia, residencia){
         let servicos = [];
         for(let i = 1; i <= 3; i++){ // Vigencias (1 ano, 2 anos, 3 anos)
             servicos[i] = [];

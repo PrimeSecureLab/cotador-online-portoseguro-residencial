@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require("axios");
 const router = express.Router();
 const dotenv = require('dotenv');
-const CryptoJS = require("crypto-js");
 
 const authToken = require('../configs/authToken');
 const Orcamentos = require('../collections/orcamentos');
@@ -34,11 +33,9 @@ router.post('/salvar-orcarmento', async (req, res) => {
         let user = await Usuarios.findOne({_id: session.user_id});
         if (!user){ 
             if (!session.cotacao){ session.cotacao = {}; }
-            let cpf = session.cotacao.cpf || '000.000.000-00';
-            cpf = cpf.replace(/[^0-9]+/g, '');
-            user = await Usuarios.findOne({"pessoaFisica.cpf": body.cpf.replace(/[^0-9]+/g, '')});
+            user = await Usuarios.findOne({"pessoaFisica.cpf": body.cpf});
             if (user){ redirect = "/login"; }else{ redirect = "/cadastro" }            
-        }else{ redirect = "/pagamento"; }
+        }//else{ redirect = "/pagamento"; }
     }
 
     if (!body.numeroOrcamento){ return res.status(400).json({message: 'Ocorreu um erro durante a seleção do plano.'}); }
@@ -47,14 +44,20 @@ router.post('/salvar-orcarmento', async (req, res) => {
     if (orcamento){ return res.status(200).json({redirect: redirect}); }
 
     orcamento = {
+        beneficios: body.beneficios || {},
         criadoEm: body.criadoEm || new Date(),
+        dadosCobertura: body.dadosCobertura || {},
+        diasValidadeOrcamentoEndosso: body.diasValidadeOrcamentoEndosso || null,
+        diasValidadeOrcamentoNovo: body.diasValidadeOrcamentoNovo || null,
+        diasValidadeOrcamentoRenovacao: body.diasValidadeOrcamentoRenovacao || null,
+        listaParcelamento: body.listaParcelamento || [],
+        numeroOrcamento: body.numeroOrcamento || null,
+        numeroVersaoOrcamento: body.numeroVersaoOrcamento || null,
+        plano: body.plano || '',
         produto: body.tipo || '',
-        vigencia: body.vigencia || '',
-        listaParcelamento: [],
-        propostaCriada: false,
-        numeroOrcamento: body.numeroOrcamento,
-        numeroVersaoOrcamento: body.numeroVersaoOrcamento,
-        valoresCoberturas: body.coberturas || {}
+        residencia: body.residencia || null,
+        servico: servico || null,
+        vigencia: body.vigencia || null,
     };
 
     if (Array.isArray(body.listaParcelamento)){
@@ -121,6 +124,7 @@ router.post('/', async (req, res) => {
         let user = await Usuarios.findOne({"pessoaFisica.cpf": data.segurado.cpf}); 
         if (user){ redirect = "/login"; }
     }*/
+
     
     let token = await authToken();
     let orcamento = await portoOrcamentoApi(body.produto, body.plano, body.vigencia, body.formulario, listaCoberturas, token);   
@@ -131,7 +135,7 @@ router.post('/', async (req, res) => {
     if (body.produto == 'veraneio'){ codServico = codigoServicos.listaServicosVeraneio(body.plano, body.vigencia, body.formulario.tipoResidencia); }
 
     if (codServico){ codServico = codServico[0].cod; }
-    console.log(codServico);
+    //console.log(codServico);
     
     let response = {};
     let errorData = {};
@@ -145,6 +149,7 @@ router.post('/', async (req, res) => {
             orcamento.data.vigencia = body.vigencia;
             orcamento.data.servico = codServico;
             orcamento.data.residencia = body.formulario.tipoResidencia;
+            orcamento.data.dadosCobertura = body.dadosCobertura;
             response = { error: false, status: orcamento.status, data: orcamento.data, redirect: redirect };
         }else{
             errorData = orcamento.data;
@@ -153,6 +158,7 @@ router.post('/', async (req, res) => {
             errorData.vigencia = body.vigencia;
             errorData.servico = codServico;
             errorData.residencia = body.formulario.tipoResidencia;
+            errorData.dadosCobertura = body.dadosCobertura;
             response = { error: true, status: orcamento.status, data: errorData, redirect: false };
         }
     }else{
@@ -162,6 +168,7 @@ router.post('/', async (req, res) => {
         errorData.vigencia = body.vigencia;
         errorData.servico = codServico;
         errorData.residencia = body.formulario.tipoResidencia;
+        errorData.dadosCobertura = body.dadosCobertura;
         response = { error: true, status: 504, data: errorData, redirect: false };
     }
     res.status(200).json(response);
@@ -256,8 +263,8 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let delay = 100
 
-        if (produto == 'habitual-premium'){ delay = 200; }
-        if (produto == 'veraneio'){ delay = 300; }
+        if (produto == 'habitual-premium'){ delay = 300; }
+        if (produto == 'veraneio'){ delay = 200; }
 
         delay += (parseInt(vigencia)) * 30;
         setTimeout(async () => { 

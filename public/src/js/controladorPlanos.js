@@ -141,9 +141,7 @@ $(document).ready(function() {
 
     function apiCallOrcamento(produto, plano, vigencia) {
         //if (!/^[1-3]{1}$/.test(vigencia)){ return; }
-        console.log('vigencia', vigencia)
-        console.log('AA')
-
+        
         let indexPlano = listaPlanos.indexOf(plano);
         let payload = {};
         let showLoading = true;
@@ -210,7 +208,7 @@ $(document).ready(function() {
                     planoCarregado[vigencia][indexPlano] = true;
 
                     atualizarCard(produto, plano, vigencia, {}, true);
-                    console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status} -`, res.data.messages);
+                    console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status} -`, res.data);
                     return;
                 }
                 let stopLoading = true;
@@ -254,22 +252,48 @@ $(document).ready(function() {
     }
 
     async function salvarOrcamento(produto, plano, vigencia){
-        let orcamento = orcamentos[produto][plano][vigencia]
-        if (/^[1-3]{1}$/.test(vigencia)){ return; }
+        if (!/^[1-3]{1}$/.test(vigencia)){ return; }
+
+        produto = produto.toString().toLowerCase();
+        if (!listaProdutos.includes(produto)){ return; }
+
+        plano = plano.toString().toLowerCase();
+        if (!listaPlanos.includes(plano)){ return; }
+
+        let orcamento = orcamentos[produto][plano][vigencia];
+
         if (!orcamento){ return; }
+
         if (!orcamento.tipo){ return; }
+        if (!listaProdutos.includes(orcamento.tipo)){ return; }
+
+        if (!orcamento.plano){ return; }
+        if (!listaPlanos.includes(orcamento.plano)){ return; }
+        
+        if (!orcamento.vigencia){ return; }
+        if (!/^[1-3]{1}$/.test(orcamento.vigencia)){ return; }
+
+        if (!orcamento.residencia){ return; }
+        if (![1, 2, 3, 4, 8].includes(parseInt(orcamento.residencia))){ return; }
+
+        if (!orcamento.servico === null && !/^[0-9]{1,4}$/.test(orcamento.servico)){ return; }
+        
         if (!orcamento.criadoEm){ return; }
+        if (!orcamento.numeroOrcamento){ return; }
 
         let criadoEm = orcamento.criadoEm.toString().split('T')[0];
         let outdated = new Date() - new Date(criadoEm);
-        outdated = (outdated / (1000 * 60 * 60 * 24)) > 5;
+        outdated = (outdated / (1000 * 60 * 60 * 24)) > 10;
         if (outdated){ apiCallOrcamento(produto, plano, vigencia); return; }
 
-        //console.log(encryptedData);
-        localStorage.setItem('final-form', JSON.stringify(encryptedData));
+        console.log(orcamento);
+        console.log(formulario);
+
+        //return;
+        localStorage.setItem('prime-orcamento', JSON.stringify(orcamento));
 
         let payload = JSON.parse(JSON.stringify(orcamento));
-        payload.coberturas = dadosCobertura;
+        //payload.coberturas = dadosCobertura;
         $("#loading-screen").show();
         try {
             const response = await fetch("/planos/salvar-orcarmento", {
@@ -279,17 +303,25 @@ $(document).ready(function() {
             });
             if (response.ok) {
                 let data = await response.json();
+                $('#loading-screen').hide();
+                console.log('Ok:', data);
                 $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
                 window.location.href = data.redirect;//'./login';
             } else {
                 let data = await response.json();
-                $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
-                window.location.href = data.redirect;//'./login';
+                $('#loading-screen').hide();
+                console.log('Error:', data);
+                apiCallOrcamento(produto, plano, vigencia); return;
+                //$(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
+                //window.location.href = data.redirect;//'./login';
             } 
         } catch (error) {
             let data = await response.json();
-            $(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
-            window.location.href = data.redirect;//'./login';
+            $('#loading-screen').hide();
+            console.log('Fetch-error:', data);
+            apiCallOrcamento(produto, plano, vigencia); return;
+            //$(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
+            //window.location.href = data.redirect;//'./login';
         }      
     }
 
@@ -305,7 +337,10 @@ $(document).ready(function() {
 
         for (let i in btnSelecionarPlano) {
             let index = parseInt(i);
-            btnSelecionarPlano[i].on('click', (e)=>{ e.preventDefault(); /*if (!loadingProduto[listaPlanos[index]][tempoVigencia]){ /*salvarOrcamento(listaPlanos[index]); }*/ });
+            btnSelecionarPlano[i].on('click', (e)=>{ 
+                e.preventDefault(); 
+                salvarOrcamento(tipoProduto, listaPlanos[index - 1], tempoVigencia); 
+            });
         }
 
         for (let i in btnFecharJanela) {
@@ -393,7 +428,6 @@ $(document).ready(function() {
                         primeiraLinha = false;
                     }else{ elemento = `<h6 class="titulo-assistencia" style="margin-top: 15px;">${assistencia}:</h6>`; }
                 }
-                //if (index == 0 && !primeiraLinha){ elemento = `<h6 class="titulo-assistencia" style="margin-top: 15px;">${assistencia}:</h6>`; }
                 modalAssistencia.append(elemento);
             });
         });

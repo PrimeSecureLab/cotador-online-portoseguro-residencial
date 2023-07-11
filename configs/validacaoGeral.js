@@ -89,8 +89,8 @@ class ValidadorGeral extends Object {
     }
 
     validarCPF(cpf){
-        if (!this.pattern._cpf.test(cpf)){ return false; }
         let numeroCpf = cpf.replace(/\D/g, '');
+        if (!this.pattern._cpf.test(cpf) && numeroCpf != cpf){ return false; }
     
         let soma = 0;
         for (let i = 1; i <= 9; i++){ soma = soma + parseInt(numeroCpf.substring(i-1, i)) * (11 - i); }
