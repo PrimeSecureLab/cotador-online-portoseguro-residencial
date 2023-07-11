@@ -269,5 +269,9 @@ class ValidadorGeral extends Object {
         return true;
     }
 
+    validarCVV(cvv){ return /^[0-9]{3,4}$/.test(cvv); }
+
+    
+
 };
 module.exports = ValidadorGeral;

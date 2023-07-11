@@ -37,9 +37,10 @@ router.post("/", async (req, res) => {
 
     let errorList = [];
     let body = req.body || {};
-    let pagamento = body.pagamento;
-    let formulario = body.formulario;
-    let orcamento = body.orcamento;
+
+    let pagamento = body.pagamento || {};
+    let formulario = body.formulario || {};
+    let orcamento = body.orcamento || {};
     //let produto = body.produto || {};
 
     if (!body){ return res.status(400).json({fatal: 3, id: 2}); }
