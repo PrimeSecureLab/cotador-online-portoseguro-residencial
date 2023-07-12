@@ -231,6 +231,7 @@ $(document).ready(function() {
                 console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status} -`, res.data);
             },
             error: function(xhr, status, error) {  
+                console.log(status, error)
                 let stopLoading = true;
                 for(let i in loadingPlanos){
                     let _plano = loadingPlanos[i];

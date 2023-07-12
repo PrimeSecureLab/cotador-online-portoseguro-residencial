@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     var inputsRange = $('input[type="range"]');
 
-    inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, 1, e.target.id); });
+    inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', 1, tipoResidencia, e.target.id); });
 
     $.ajax({
         url: '/formulario',
@@ -160,9 +160,9 @@ $(document).ready(function() {
         }
         if (nextStep.length > 0) { currentStep.removeClass("active").fadeOut(250, function() { nextStep.addClass("active").fadeIn(250); }); }
         
-        inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, 1, false);
+        inciarCoberturaMain(tipoProduto, 'generico', 1, tipoResidencia, false);
         inputsRange.off('change');
-        inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', tipoResidencia, 1, e.target.id); });
+        inputsRange.on('change', (e)=>{ inciarCoberturaMain(tipoProduto, 'generico', 1, tipoResidencia, e.target.id); });
     });
     
     $(".prev-step").click(function() {

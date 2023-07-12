@@ -14,6 +14,9 @@ const NodeMailer = require('../configs/nodeMailer');
 const ValidarCotacao = require('../configs/validarCotacao');
 var validacaoCotacao = new ValidarCotacao;
 
+const ValidadorGeral = require('../configs/validacaoGeral');
+var validador = new ValidadorGeral;
+
 dotenv.config();
 
 router.get("/", async (req, res) => {
@@ -38,20 +41,43 @@ router.post("/", async (req, res) => {
     let errorList = [];
     let body = req.body || {};
 
-    let pagamento = body.pagamento || {};
-    let formulario = body.formulario || {};
-    let orcamento = body.orcamento || {};
+    let pagamento = body.pagamento;
+    let formulario = body.formulario;
+    let orcamento = body.orcamento;
     //let produto = body.produto || {};
 
     if (!body){ return res.status(400).json({fatal: 3, id: 2}); }
-    if (!body.formData){ return res.status(400).json({redirect: '/', id: 3}); } //Verifica se dados da Cotação ainda são válidos
-    if (!body.pagamento){ return res.status(400).json({fatal: 4, id: 4}); }
-    if (!body.produto){ return res.status(400).json({redirect: '/planos', id: 5}); } // Verifica se registrou o plano
+
+    if (!formulario){ return res.status(400).json({redirect: '/', id: 3}); } //Verifica se dados da Cotação ainda são válidos
+    if (!orcamento){ return res.status(400).json({redirect: '/planos', id: 4}); } // Verifica se registrou o plano
+    if (!pagamento){ return res.status(400).json({fatal: 4, id: 5}); }
     
-    let orcamento = await Orcamentos.findOne({numeroOrcamento: body.orcamento.numeroOrcamento});
-    if (!orcamento){ orcamento = {}; }//.propostaCriada = true; await orcamento.save(); }
+    if (!orcamento.numeroOrcamento){ return res.status(400).json({redirect: '/planos', id: 6}); }
+    if (!(['habitual', 'habitual-premium', 'veraneio'].includes(orcamento.tipo))){ return res.status(400).json({redirect: '/', id: 7}); }
+    if (!(['essencial', 'conforto', 'exclusive'].includes(orcamento.plano))){ return res.status(400).json({redirect: '/planos', id: 8}); }
+    if (!/^[1-3]{1}$/.test(orcamento.vigencia)){ return res.status(400).json({redirect: '/planos', id: 9}); }
+
+    if (!validador.validarCEP(formulario.cep)){ return res.status(400).json({redirect: '/', id: 10}); }
+    if (!validador.validarTipoResidencia(formulario.tipoResidencia)){ return res.status(400).json({redirect: '/', id: 11}); }
+    if (!validador.validarLogradouro(formulario.logradouro)){ return res.status(400).json({redirect: '/', id: 12}); }
+    if (!validador.validarTipoRua(formulario.tipo)){ return res.status(400).json({redirect: '/', id: 13}); }
+    if (!validador.validarNumero(formulario.numero)){ return res.status(400).json({redirect: '/', id: 14}); }
+    if (!validador.validarBairro(formulario.bairro)){ return res.status(400).json({redirect: '/', id: 15}); }
+    if (!validador.validarMunicipio(formulario.cidade)){ return res.status(400).json({redirect: '/', id: 16}); }
+    if (!validador.validarUF(formulario.uf)){ return res.status(400).json({redirect: '/', id: 17}); }
+    if (!validador.validarComplemento(formulario.complemento)){ return res.status(400).json({redirect: '/', id: 18}); }
+
+    if (!validador.validarNumeroCartao(pagamento.numero)){ errorList.push({message: "Número de cartão inválido", id: "numero-cartao"}); }
     
-    if (orcamento.propostaCriada && process.env.AMBIENTE != 'SANDBOX'){ return res.status(400).json({redirect: '/planos', id: 6}); } // Orçamento ja teve proposta realizada
+    let codigoBandeira = validador.retornarCodigoBandeira()
+
+
+    
+    
+    //let orcamento = await Orcamentos.findOne({numeroOrcamento: body.orcamento.numeroOrcamento});
+    //if (!orcamento){ orcamento = {}; }//.propostaCriada = true; await orcamento.save(); }
+    
+    /*if (orcamento.propostaCriada && process.env.AMBIENTE != 'SANDBOX'){ return res.status(400).json({redirect: '/planos', id: 6}); } // Orçamento ja teve proposta realizada
 
     let formData = validacaoCotacao.decriptarDados(body.formData);
     if (!formData){ return res.status(400).json({redirect: '/', id: 7}); }

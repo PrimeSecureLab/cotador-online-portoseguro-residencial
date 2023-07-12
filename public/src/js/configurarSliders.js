@@ -50,7 +50,7 @@ function inciarCoberturaMain(produto, plano, vigencia, residencia, inputChange_i
     });    
 
     plano = plano || 'generico';
-
+    console.log(produto, plano, vigencia);
     if (!dadosCobertura[produto][plano][vigencia].valorCoberturaIncendio){
         todasInputRange.each((index)=>{ 
             let input = todasInputRange[index];

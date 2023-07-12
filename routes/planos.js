@@ -141,6 +141,7 @@ router.post('/', async (req, res) => {
     let errorData = {};
     
     if (orcamento){
+        //console.log(orcamento);
         if (!orcamento.data){ orcamento.data = {}; }
         if (orcamento.status == 200){
             orcamento.data.tipo = body.produto;
@@ -263,12 +264,14 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let delay = 100
 
-        if (produto == 'habitual-premium'){ delay = 300; }
-        if (produto == 'veraneio'){ delay = 200; }
+        //if (produto == 'habitual-premium'){ delay = 300; }
+        //if (produto == 'veraneio'){ delay = 200; }
+        //if (plano == 'exclusive'){ delay = 300; }
+        //if (plano == 'conforto'){ delay = 200; }
 
         delay += (parseInt(vigencia)) * 30;
         setTimeout(async () => { 
-            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error.data); resolve(error); });
+            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
             resolve( request ); 
         }, delay);
     });

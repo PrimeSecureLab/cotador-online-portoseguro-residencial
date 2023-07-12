@@ -233,12 +233,13 @@ function validarNumeroCartao(numero){
     numero = numero.replace(/[^\d]/g, "");
 
     if (!/^[0-9]{16}$/.test(numero)){ return false; }
+    numero = numero.toString();
 
     let soma = 0;
     let dobrar = false;
 
-    for (var i = form.numero.length - 1; i >= 0; i--) {
-        let digito = parseInt(form.numero.charAt(i), 10);
+    for (var i = numero.length - 1; i >= 0; i--) {
+        let digito = parseInt(numero.charAt(i), 10);
         if (dobrar) { if ((digito *= 2) > 9){ digito -= 9; }}
         soma += digito;
         dobrar = !dobrar;

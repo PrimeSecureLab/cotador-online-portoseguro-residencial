@@ -271,6 +271,44 @@ class ValidadorGeral extends Object {
 
     validarCVV(cvv){ return /^[0-9]{3,4}$/.test(cvv); }
 
+    retornarCodigoBandeira(numero){
+        if (this.pattern.eloCard(numero)){ return 5; } 
+        if (this.pattern.dinersCard(numero)){ return 3; }
+        if (this.pattern.visaCard(numero)){ return 2; }
+        if (this.pattern.masterCard(numero)){ return 1; }
+        return false;
+    }
+
+    validarNumeroCartao(numero){
+        numero = numero || '';
+        numero = numero.replace(/[^\d]/g, "");
+
+        if (!/^[0-9]{16}$/.test(numero)){ return false; }       
+        numero = numero.toString(); 
+
+        let soma = 0;
+        let dobrar = false;
+
+        for (let i = numero.length - 1; i >= 0; i--) {
+            let digito = parseInt(numero.charAt(i), 10);
+            if (dobrar) { if ((digito *= 2) > 9){ digito -= 9; } }
+
+            soma += digito; 
+            dobrar = !dobrar;
+        }
+
+        if ((soma % 10) != 0){ return false; }
+        return true;
+    }
+
+    validarCodigoPlanos(codigo){
+        let listaCodigos = [501, 505, 509, 572, 576, 577, 580, 582, 593, 1192, 1193, 1194, 1195, 1200, 1201, 1206, 1207, 1208, 1209, 1215, 1217, 1237, 1239, 1248, 1257, 1259, 1267];
+        codigo = codigo || null;
+        if (!listaCodigos.includes(codigo)){ return false; }
+        return true;
+    }
+
+    
     
 
 };
