@@ -178,7 +178,7 @@ $(document).ready(function() {
     setupRangeInput(valorcoberturavazamentostanquestubulacoes);
     setupRangeInput(valorcoberturaquebravidros);
     setupRangeInput(valorcoberturapagamentocondominio);
-    setupRangeInput(valorcoberturamorteacidental);
+    //setupRangeInput(valorcoberturamorteacidental);
     setupRangeInput(valorcoberturatremorterraterremoto);
     setupRangeInput(valorcoberturaalagamento);
     setupRangeInput(flagcontratarvalordenovo);

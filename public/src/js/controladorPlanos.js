@@ -139,12 +139,11 @@ $(document).ready(function() {
         return;
     }
 
-    function apiCallOrcamento(produto, plano, vigencia) {
+    async function apiCallOrcamento(produto, plano, vigencia) {
         //if (!/^[1-3]{1}$/.test(vigencia)){ return; }
-        
-        let indexPlano = listaPlanos.indexOf(plano);
         let payload = {};
         let showLoading = true;
+        let indexPlano = listaPlanos.indexOf(plano);
         let button = $(`#btn-plano-${indexPlano + 1}`);
 
         if (loadingPlanos[plano][vigencia -1]){ return; }
@@ -169,26 +168,27 @@ $(document).ready(function() {
             payload.dadosCobertura[key].value = parseInt(dadosCobertura[produto][plano][vigencia][key].value);            
             payload.dadosCobertura[key].disabled = dadosCobertura[produto][plano][vigencia][key].disabled;
         }
-        console.log('payload:', payload);
+        console.log('payload:', payload);        
 
         $.ajax({
             url: '/planos',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(payload),
-            success: function(res) {
+            success: function(res, status, jqXHR) {
+                console.log(jqXHR.status);
                 loadingPlanos[plano][vigencia - 1] = false; 
                 if (res.error && (res.status == 504 || res.status == 401 || res.status == 429) && tentativaTimeOut[plano][vigencia - 1] < 4){ 
                     tentativaTimeOut[plano][vigencia - 1] += 1; 
                     orcamentos[produto][plano][vigencia] = false;
-                    apiCallOrcamento(produto, plano, plano, vigencia); 
+                    apiCallOrcamento(produto, plano, vigencia); 
                     console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status}, Tentativas: ${tentativaTimeOut[plano][vigencia - 1]}`); 
                     return;
                 }
                 if (res.error && res.status > 499 && tentativaTimeOut[plano][vigencia - 1] < 3){ 
                     tentativaTimeOut[plano][vigencia - 1] += 1; 
                     orcamentos[produto][plano][vigencia] = false;
-                    apiCallOrcamento(produto, plano, plano, vigencia); 
+                    apiCallOrcamento(produto, plano, vigencia); 
                     console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status}, Tentativas: ${tentativaTimeOut[plano][vigencia - 1]}`); 
                     return;
                 }
@@ -231,7 +231,7 @@ $(document).ready(function() {
                 console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${res.status} -`, res.data);
             },
             error: function(xhr, status, error) {  
-                console.log(status, error)
+                console.log(status, error, xhr.status)
                 let stopLoading = true;
                 for(let i in loadingPlanos){
                     let _plano = loadingPlanos[i];
@@ -250,6 +250,129 @@ $(document).ready(function() {
                 console.log(`[${vigencia} ANO] ${produto} - ${plano}`, 'Error:', error, 'Status:', status); 
             }
         });
+    }
+
+    async function _apiCallOrcamento(produto, plano, vigencia){
+        let payload = {};
+        let showLoading = true;
+        let indexPlano = listaPlanos.indexOf(plano);
+        let button = $(`#btn-plano-${indexPlano + 1}`);
+
+        if (loadingPlanos[plano][vigencia -1]){ return; }
+        listaPlanos.forEach((plano)=>{ loadingPlanos[plano].forEach((loading)=>{ if (loading){ showLoading = false; } }); });
+
+        if (showLoading){ loadingScreen.show(); }
+        loadingPlanos[plano][vigencia - 1] = true;
+
+        payload.formulario = formulario;
+        payload.produto = produto;
+        payload.plano = plano;
+        payload.vigencia = vigencia;
+        payload.dadosCobertura = {};
+        button.css('background-color', 'gray');
+
+        for (let key in dadosCobertura[produto][plano][vigencia]){
+            cobertura = dadosCobertura[produto][plano][vigencia][key];
+            if (!cobertura){ continue; }
+            if (key == 'card'){ continue; }
+            if (!payload.dadosCobertura[key]){ payload.dadosCobertura[key] = {}; }
+            payload.dadosCobertura[key].value = parseInt(dadosCobertura[produto][plano][vigencia][key].value);            
+            payload.dadosCobertura[key].disabled = dadosCobertura[produto][plano][vigencia][key].disabled;
+        }
+
+        try {
+            const response = await fetch("/planos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify(payload),
+            });
+
+            loadingPlanos[plano][vigencia - 1] = false; 
+            if (response.ok) {
+                let res = await response.json();
+                let stopLoading = true;
+
+                for(let i in loadingPlanos){
+                    let _plano = loadingPlanos[i];
+                    for(let k in _plano){ 
+                        let loading = _plano[k]; 
+                        if (loading){ stopLoading = false; } 
+                    }
+                } 
+                if (stopLoading){ loadingScreen.hide(); }
+
+                console.log(loadingPlanos);
+
+                tentativaTimeOut[plano][vigencia - 1] = 0;  
+                orcamentos[produto][plano][vigencia] = res.data; 
+                planoCarregado[vigencia][indexPlano] = true;
+
+                button.css('background-color', '');
+                console.log(`[${vigencia} ANO] ${produto} - ${plano}: [${response.status}] -`, res.data);
+
+                atualizarCard(produto, plano, vigencia, res.data, false);
+                return;
+
+            } else {
+                let res = await response.json();
+                loadingPlanos[plano][vigencia - 1] = false; 
+
+                if (res.data.error && (response.status == 504 || response.status == 401 || response.status == 429) && tentativaTimeOut[plano][vigencia - 1] < 4){ 
+                    tentativaTimeOut[plano][vigencia - 1] += 1; 
+                    orcamentos[produto][plano][vigencia] = false;
+                    
+                    console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${response.status}, Tentativas: ${tentativaTimeOut[plano][vigencia - 1]}`);
+                    apiCallOrcamento(produto, plano, vigencia);  
+                    return;
+                }
+
+                if (res.data.error && response.status > 499 && tentativaTimeOut[plano][vigencia - 1] < 3){ 
+                    tentativaTimeOut[plano][vigencia - 1] += 1; 
+                    orcamentos[produto][plano][vigencia] = false;
+                    
+                    console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${response.status}, Tentativas: ${tentativaTimeOut[plano][vigencia - 1]}`); 
+                    apiCallOrcamento(produto, plano, vigencia); 
+                    return;
+                }
+
+                if (res.data.error && response.status != 200){
+                    let stopLoading = true;
+                    for(let i in loadingPlanos){
+                        let plano = loadingPlanos[i];
+                        for(let k in plano){ 
+                            let loading = plano[k]; 
+                            if (loading){ stopLoading = false; } 
+                        }
+                    }            
+                    if (stopLoading){ loadingScreen.hide(); }
+
+                    tentativaTimeOut[plano][vigencia - 1] = 0; 
+                    orcamentos[produto][plano][vigencia] = false;  
+                    planoCarregado[vigencia][indexPlano] = true;
+
+                    console.log(`[${vigencia} ANO] ${produto} - ${plano}: ${response.status} -`, res.data);
+                    atualizarCard(produto, plano, vigencia, {}, true);
+                    return;
+                }
+            } 
+        } catch (error) {
+            let stopLoading = true;
+            for(let i in loadingPlanos){
+                let plano = loadingPlanos[i];
+                for(let k in plano){ 
+                    let loading = plano[k]; 
+                    if (loading){ stopLoading = false; } 
+                }
+            } 
+            if (stopLoading){ loadingScreen.hide(); }
+
+            tentativaTimeOut[plano][vigencia - 1] = 0;    
+            loadingPlanos[plano][vigencia - 1] = false;
+            planoCarregado[vigencia][indexPlano] = true;
+            
+            console.log(`[${vigencia} ANO] ${produto} - ${plano}`, 'Error:', error);
+            atualizarCard(produto, plano, vigencia, {}, true);
+        }
     }
 
     async function salvarOrcamento(produto, plano, vigencia){
@@ -312,7 +435,8 @@ $(document).ready(function() {
                 let data = await response.json();
                 $('#loading-screen').hide();
                 console.log('Error:', data);
-                apiCallOrcamento(produto, plano, vigencia); return;
+                apiCallOrcamento(produto, plano, vigencia); 
+                return;
                 //$(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
                 //window.location.href = data.redirect;//'./login';
             } 
@@ -320,7 +444,8 @@ $(document).ready(function() {
             let data = await response.json();
             $('#loading-screen').hide();
             console.log('Fetch-error:', data);
-            apiCallOrcamento(produto, plano, vigencia); return;
+            apiCallOrcamento(produto, plano, vigencia); 
+            return;
             //$(window).on('beforeunload', ()=>{ $('#loading-screen').hide(); });
             //window.location.href = data.redirect;//'./login';
         }      

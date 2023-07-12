@@ -303,7 +303,7 @@ function controladorCoberturaDOM(produto, plano, vigencia, residencia, data){
             */
             if (input.id == 'valorCoberturaPagamentoCondominio'){ 
                 valoresCobertura[produto][plano][vigencia].valorCoberturaMorteAcidental = 5000; 
-                dadosCobertura[produto][plano][vigencia].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
+                dadosCobertura[produto][plano][vigencia].valorCoberturaMorteAcidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
             }
             if (enable){
                 valoresCobertura[produto][plano][vigencia][nomeCobertura] = input.value;

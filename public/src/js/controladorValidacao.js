@@ -61,7 +61,7 @@ function validarNome(nome){
 
 function validarCPF(cpf){
     let numeroCpf = cpf.replace(/\D/g, '');
-    console.log(cpf, numeroCpf);
+    //console.log(cpf, numeroCpf);
     if (!patterns._cpf.test(cpf) && cpf != numeroCpf){ return false; }    
 
     let soma = 0;

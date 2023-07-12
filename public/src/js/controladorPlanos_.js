@@ -896,10 +896,10 @@ $(document).ready(function() {
                         inativoElement.css('font-size', '16px');
                     }
                 }
-                if (input.id == 'valorcoberturapagamentocondominio'){ 
-                    valoresCobertura[produto].valorCoberturaMorteAcidental = 5000; 
-                    dadosCobertura[produto].valorcoberturamorteacidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
-                }
+                //if (input.id == 'valorcoberturapagamentocondominio'){ 
+                //    valoresCobertura[produto].valorCoberturaMorteAcidental = 5000; 
+                //    dadosCobertura[produto].valorCoberturaMorteAcidental = { value: 5000, min: 5000, max: 5000, disabled: false, display: false, display: false };
+                //}
                 if (enable){
                     valoresCobertura[produto][nomeCobertura] = input.value;
                     inputElement.prop("disabled", false);

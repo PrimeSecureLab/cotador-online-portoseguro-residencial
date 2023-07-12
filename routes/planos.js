@@ -56,7 +56,7 @@ router.post('/salvar-orcarmento', async (req, res) => {
         plano: body.plano || '',
         produto: body.tipo || '',
         residencia: body.residencia || null,
-        servico: servico || null,
+        servico: body.servico || null,
         vigencia: body.vigencia || null,
     };
 
@@ -213,7 +213,7 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
 
         itemList.flagLMIDiscriminado = 0;
         itemList.flagContratarValorDeNovo = 0;
-        itemList.valorCoberturaMorteAcidental = 0;
+        //itemList.valorCoberturaMorteAcidental = 0;
 
         let servico = null;
         if (produto == 'habitual'){ servico = codigoServicos.listaServicosHabitual(plano, vigencia, formulario.tipoResidencia); }
@@ -260,19 +260,39 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
             },
             "item": itemList
         }
+        console.log(itemList)
 
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let delay = 100
 
         //if (produto == 'habitual-premium'){ delay = 300; }
         //if (produto == 'veraneio'){ delay = 200; }
-        //if (plano == 'exclusive'){ delay = 300; }
-        //if (plano == 'conforto'){ delay = 200; }
+        if (plano == 'exclusive'){ delay = 300; }
+        if (plano == 'conforto'){ delay = 200; }
 
         delay += (parseInt(vigencia)) * 30;
         setTimeout(async () => { 
-            let request = await axios.post( url, payload, header).catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
-            resolve( request ); 
+
+            let request = await axios.post( url, payload, header)//.catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
+                .then((response)=>{
+                    resolve( response ); 
+                    console.log('Request successful');
+                    //console.log('Response data:', response.data);
+                })
+                .catch((error)=>{
+                    if (error.response) {    
+                        resolve({ data: error.response.data, status: error.response.status });                    
+                        console.log('Request failed with status:', error.response.status);
+                        console.log('Error message:', error.response.data);
+                    } else if (error.request) {
+                        resolve({ data: {}, status: 504 });
+                        console.log('No response received from the server', console.log(error.request));
+                    } else {
+                        resolve({ data: {}, status: 504 });
+                        console.log('Error setting up the request:', error);
+                    }
+                });
+            
         }, delay);
     });
 }

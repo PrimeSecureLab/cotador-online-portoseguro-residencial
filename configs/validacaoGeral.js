@@ -272,10 +272,10 @@ class ValidadorGeral extends Object {
     validarCVV(cvv){ return /^[0-9]{3,4}$/.test(cvv); }
 
     retornarCodigoBandeira(numero){
-        if (this.pattern.eloCard(numero)){ return 5; } 
-        if (this.pattern.dinersCard(numero)){ return 3; }
-        if (this.pattern.visaCard(numero)){ return 2; }
-        if (this.pattern.masterCard(numero)){ return 1; }
+        if (this.pattern.eloCard.test(numero)){ return 5; } 
+        if (this.pattern.dinersCard.test(numero)){ return 3; }
+        if (this.pattern.visaCard.test(numero)){ return 2; }
+        if (this.pattern.masterCard.test(numero)){ return 1; }
         return false;
     }
 

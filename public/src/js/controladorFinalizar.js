@@ -16,6 +16,9 @@ $(document).ready(function () {
         if (!orcamento){ window.location.href = '/planos'; return; }
         orcamento.produto = orcamento.tipo;
 
+        console.log(formulario);
+        console.log(orcamento);
+
         if (!validarOrcamento(orcamento)){ console.log('orcamento'); return; }
 
         $.ajax({
@@ -43,11 +46,11 @@ $(document).ready(function () {
 
         $("input#protocolo").val(orcamento.numeroOrcamento);
 
-        if (orcamento.servico == "essencial"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano'); }
+        if (orcamento.plano == "essencial"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Essencial - ${orcamento.vigencia} Anos` : 'Essencial - 1 Ano'); }
 
-        if (orcamento.servico == "conforto"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); }
+        if (orcamento.plano == "conforto"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Conforto - ${orcamento.vigencia} Anos` : 'Conforto - 1 Ano'); }
 
-        if (orcamento.servico == "exclusive"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); }
+        if (orcamento.plano == "exclusive"){ $("input#plano-escolhido").val((orcamento.vigencia > 1) ? `Exclusive - ${orcamento.vigencia} Anos` : 'Exclusive - 1 Ano'); }
 
         let juros = true;
         let valorSemJuros = 0;
@@ -127,8 +130,6 @@ $(document).ready(function () {
 
             try{
                 $("#loading-screen").show();
-                let _localData = localData;
-                _localData.produto = localData.orcamento.tipo;
                 const response = await fetch( "/pagamento", { 
                     method: "POST", 
                     headers: { "Content-Type": "application/json" }, 
@@ -136,16 +137,17 @@ $(document).ready(function () {
                 });
                 if (response.ok) {
                     let data = await response.json();
-                    $.ajax({
+                    /*$.ajax({
                         url: '/datalayer',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({etapa: 'step-7', page: 'pagamento', proposta: data}),
                         success: function(res) { console.log('Sucesso:', res); },
                         error: function(xhr, status, error) { console.error('Error:', error); }
-                    });
+                    });*/
                     //localStorage.removeItem("finalData");
                     //localStorage.removeItem("formData");
+                    console.log('OK:', data);
                     $("#loading-screen").hide();
                     //window.location.href = "./obrigado";
                 } else {

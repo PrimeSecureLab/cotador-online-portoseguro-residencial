@@ -31,7 +31,7 @@ const authToken = async ()=>{
         let buffer =  Buffer.from(process.env[`${ambiente}_AUTH_USERNAME`] + ':' + process.env[`${ambiente}_AUTH_PASSWORD`]);
         let dataBase64 = buffer.toString('base64');
         let header = { headers: { "Content-Type": "application/json", "Authorization": `Basic ${dataBase64}` } };
-        let newToken = await axios.post( url, { grant_type : "client_credentials"}, header ).catch((error)=>{ console.log(error.response) });
+        let newToken = await axios.post( url, { grant_type : "client_credentials" }, header )//.catch((error)=>{ console.log(error.response) });
         let token = {
             access_token: newToken.data.access_token,
             token_type: newToken.data.token_type,
