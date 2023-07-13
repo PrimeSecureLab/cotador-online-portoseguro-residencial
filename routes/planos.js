@@ -260,7 +260,7 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
             },
             "item": itemList
         }
-        console.log(itemList)
+        //console.log(itemList)
 
         let header = { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } };
         let delay = 100
@@ -275,8 +275,8 @@ async function portoOrcamentoApi(produto, plano, vigencia, formulario, itens, to
 
             let request = await axios.post( url, payload, header)//.catch((error)=>{ console.log(produto, '-', plano + ':', error); resolve(error); });
                 .then((response)=>{
+                    console.log(`Produto: ${produto} | Plano: ${plano} | Orçamento: ${response.data.numeroOrcamento}`);
                     resolve( response ); 
-                    console.log('Request successful');
                     //console.log('Response data:', response.data);
                 })
                 .catch((error)=>{
